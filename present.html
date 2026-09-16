@@ -12,7 +12,7 @@
       --bg-base: #0a0d14;
       --bg-surface: #111622;
       --bg-surface-elevated: #182032;
-      --bg-card: rgba(22, 30, 48, 0.7);
+      --bg-card: rgba(22, 30, 48, 0.75);
       --border-subtle: rgba(255, 255, 255, 0.08);
       --border-active: rgba(99, 102, 241, 0.4);
       --text-primary: #f1f5f9;
@@ -31,7 +31,6 @@
       --heat-moderate-bg: rgba(59, 130, 246, 0.15);
       --heat-low: #10b981;
       --heat-low-bg: rgba(16, 185, 129, 0.12);
-      --heat-empty: #334155;
       
       --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -56,7 +55,7 @@
         radial-gradient(circle at 85% 80%, rgba(239, 68, 68, 0.06) 0%, transparent 40%);
     }
 
-    /* Top Navigation Bar */
+    /* Header */
     header {
       background: rgba(17, 22, 34, 0.85);
       backdrop-filter: blur(16px);
@@ -73,7 +72,7 @@
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.85rem;
     }
 
     .logo-badge {
@@ -91,9 +90,8 @@
     }
 
     .brand-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -105,14 +103,14 @@
       border: 1px solid rgba(99, 102, 241, 0.3);
       padding: 0.2rem 0.6rem;
       border-radius: 999px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
     }
 
     .workflow-stepper {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
       background: var(--bg-surface-elevated);
       padding: 0.35rem 0.75rem;
       border-radius: 999px;
@@ -120,14 +118,11 @@
     }
 
     .step-item {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
       cursor: pointer;
-      padding: 0.25rem 0.6rem;
+      padding: 0.2rem 0.55rem;
       border-radius: 999px;
       transition: all 0.2s ease;
     }
@@ -138,20 +133,8 @@
       box-shadow: 0 2px 8px var(--accent-glow);
     }
 
-    .step-item.completed {
-      color: #10b981;
-    }
-
-    .step-arrow {
-      color: var(--text-muted);
-      font-size: 0.7rem;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
+    .step-item.completed { color: #10b981; }
+    .step-arrow { color: var(--text-muted); font-size: 0.7rem; }
 
     .badge-data-stat {
       font-family: var(--font-mono);
@@ -163,15 +146,13 @@
       border: 1px solid var(--border-subtle);
     }
 
-    .badge-data-stat strong {
-      color: #38bdf8;
-    }
+    .badge-data-stat strong { color: #38bdf8; }
 
     /* Filter Toolbar */
     .filter-bar {
       background: var(--bg-surface);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 0.75rem 1.5rem;
+      padding: 0.65rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -186,7 +167,7 @@
     }
 
     .filter-label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
       font-weight: 600;
       text-transform: uppercase;
@@ -197,17 +178,12 @@
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
       color: var(--text-primary);
-      padding: 0.4rem 0.85rem;
+      padding: 0.35rem 0.75rem;
       border-radius: 8px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-family: var(--font-sans);
       outline: none;
       cursor: pointer;
-      transition: border-color 0.2s;
-    }
-
-    .custom-select:focus {
-      border-color: var(--accent-primary);
     }
 
     .view-toggle {
@@ -219,8 +195,8 @@
     }
 
     .toggle-btn {
-      padding: 0.35rem 0.85rem;
-      font-size: 0.8rem;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.78rem;
       font-weight: 600;
       border: none;
       background: transparent;
@@ -242,7 +218,7 @@
       gap: 1.25rem;
       padding: 1.25rem 1.5rem;
       flex: 1;
-      height: calc(100vh - 130px);
+      height: calc(100vh - 125px);
       overflow: hidden;
     }
 
@@ -266,7 +242,7 @@
     }
 
     .pane-header {
-      padding: 1rem 1.25rem;
+      padding: 0.85rem 1.25rem;
       border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
@@ -275,7 +251,7 @@
     }
 
     .pane-title {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -292,16 +268,11 @@
       display: flex;
       align-items: center;
       gap: 0.35rem;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text-secondary);
     }
 
-    .legend-color {
-      width: 10px;
-      height: 10px;
-      border-radius: 3px;
-    }
-
+    .legend-color { width: 9px; height: 9px; border-radius: 2px; }
     .color-crit { background: var(--heat-critical); }
     .color-warn { background: var(--heat-warning); }
     .color-mod { background: var(--heat-moderate); }
@@ -318,7 +289,7 @@
       background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(245, 158, 11, 0.08));
       border: 1px solid rgba(239, 68, 68, 0.3);
       border-radius: 12px;
-      padding: 0.85rem 1rem;
+      padding: 0.75rem 1rem;
       margin-bottom: 1.25rem;
       display: flex;
       align-items: center;
@@ -334,39 +305,28 @@
     .top3-icon {
       background: var(--heat-critical);
       color: white;
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
 
-    .top3-text h4 {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #fca5a5;
-    }
+    .top3-text h4 { font-size: 0.82rem; font-weight: 700; color: #fca5a5; }
+    .top3-text p { font-size: 0.72rem; color: var(--text-secondary); }
 
-    .top3-text p {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    .top3-chips {
-      display: flex;
-      gap: 0.5rem;
-    }
+    .top3-chips { display: flex; gap: 0.4rem; }
 
     .chip-btn {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
       color: var(--text-primary);
-      padding: 0.3rem 0.6rem;
+      padding: 0.25rem 0.55rem;
       border-radius: 6px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
@@ -382,7 +342,7 @@
     .slides-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 0.85rem;
+      gap: 0.75rem;
     }
 
     .slide-card {
@@ -392,22 +352,22 @@
       padding: 0.75rem;
       cursor: pointer;
       position: relative;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 110px;
+      min-height: 105px;
     }
 
     .slide-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
       border-color: rgba(255, 255, 255, 0.2);
     }
 
     .slide-card.active {
       border-color: var(--accent-primary);
-      box-shadow: 0 0 0 2px var(--accent-primary), 0 8px 24px var(--accent-glow);
+      box-shadow: 0 0 0 2px var(--accent-primary), 0 6px 20px var(--accent-glow);
     }
 
     .slide-card.rank-1 {
@@ -429,7 +389,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.35rem;
     }
 
     .slide-page-badge {
@@ -440,9 +400,9 @@
     }
 
     .heat-pill {
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       font-weight: 700;
-      padding: 0.15rem 0.45rem;
+      padding: 0.12rem 0.4rem;
       border-radius: 999px;
     }
 
@@ -452,11 +412,11 @@
     .heat-pill.low { background: var(--heat-low-bg); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
 
     .slide-title-preview {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 600;
       line-height: 1.3;
       color: var(--text-secondary);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -468,8 +428,8 @@
       align-items: center;
       justify-content: space-between;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
-      padding-top: 0.4rem;
-      font-size: 0.7rem;
+      padding-top: 0.35rem;
+      font-size: 0.68rem;
       color: var(--text-muted);
       font-family: var(--font-mono);
     }
@@ -491,7 +451,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
 
-    /* Right Pane - Copilot Inspector */
+    /* Right Pane - Copilot & Evidence Inspector */
     .pane-copilot {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -502,6 +462,152 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
 
+    /* Top Prominent Chatbot Frame */
+    .copilot-chat-top {
+      background: linear-gradient(180deg, rgba(30, 41, 67, 0.85) 0%, rgba(17, 24, 39, 0.95) 100%);
+      border-bottom: 1px solid var(--border-active);
+      padding: 0.9rem 1.15rem;
+      position: relative;
+    }
+
+    .copilot-chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.65rem;
+    }
+
+    .copilot-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .copilot-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #6366f1, #38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 2px 8px var(--accent-glow);
+    }
+
+    .copilot-status-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .copilot-context-pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* Chat Message Bubble */
+    .copilot-msg-bubble {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 0.75rem 0.9rem;
+      margin-bottom: 0.65rem;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+      max-height: 120px;
+      overflow-y: auto;
+      transition: all 0.2s ease;
+    }
+
+    .copilot-msg-bubble strong { color: #38bdf8; }
+
+    /* Quick Prompts Chips */
+    .quick-prompts {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 0.65rem;
+      overflow-x: auto;
+      padding-bottom: 0.15rem;
+    }
+
+    .prompt-chip {
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 0.22rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .prompt-chip:hover {
+      background: var(--accent-glow);
+      color: #c7d2fe;
+      border-color: var(--accent-primary);
+      transform: translateY(-1px);
+    }
+
+    /* Chat Input Bar */
+    .chat-input-wrapper {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 0.45rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+
+    .chat-send-btn {
+      background: var(--accent-primary);
+      color: white;
+      border: none;
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .chat-send-btn:hover { background: var(--accent-primary-hover); }
+
+    /* Inspector Nav Tabs */
     .copilot-nav-tabs {
       display: flex;
       border-bottom: 1px solid var(--border-subtle);
@@ -509,8 +615,8 @@
     }
 
     .copilot-tab {
-      padding: 0.85rem 1.15rem;
-      font-size: 0.82rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-muted);
       cursor: pointer;
@@ -521,9 +627,7 @@
       transition: all 0.2s;
     }
 
-    .copilot-tab:hover {
-      color: var(--text-primary);
-    }
+    .copilot-tab:hover { color: var(--text-primary); }
 
     .copilot-tab.active {
       color: var(--accent-primary);
@@ -535,41 +639,41 @@
       background: rgba(255, 255, 255, 0.1);
       padding: 0.1rem 0.4rem;
       border-radius: 999px;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
     }
 
+    /* Inspector Body */
     .copilot-content-body {
-      padding: 1.25rem;
+      padding: 1rem 1.15rem;
       overflow-y: auto;
       flex: 1;
     }
 
-    /* Slide Context Header in Inspector */
     .inspector-target-box {
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
+      border-radius: 10px;
+      padding: 0.85rem;
+      margin-bottom: 0.85rem;
     }
 
     .inspector-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
     .inspector-title {
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       font-weight: 700;
       color: var(--text-primary);
     }
 
     .inspector-stats {
       display: flex;
-      gap: 0.75rem;
-      font-size: 0.78rem;
+      gap: 0.65rem;
+      font-size: 0.75rem;
       color: var(--text-secondary);
       font-family: var(--font-mono);
     }
@@ -577,30 +681,28 @@
     /* 3-Part Hypothesis Box */
     .hypothesis-card {
       background: var(--bg-surface-elevated);
-      border-radius: 12px;
+      border-radius: 10px;
       border: 1px solid var(--border-subtle);
       overflow: hidden;
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
     }
 
     .section-part {
-      padding: 0.85rem 1rem;
+      padding: 0.75rem 0.9rem;
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .section-part:last-child {
-      border-bottom: none;
-    }
+    .section-part:last-child { border-bottom: none; }
 
     .part-label {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.3rem;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
 
     .label-obs { color: #38bdf8; }
@@ -608,7 +710,7 @@
     .label-verify { color: #a78bfa; }
 
     .part-content {
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       line-height: 1.5;
       color: var(--text-secondary);
     }
@@ -617,8 +719,8 @@
     .evidence-list {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+      gap: 0.65rem;
+      margin-bottom: 0.85rem;
     }
 
     .evidence-item {
@@ -626,40 +728,32 @@
       border: 1px solid var(--border-subtle);
       border-left: 3px solid var(--accent-primary);
       border-radius: 8px;
-      padding: 0.75rem 1rem;
+      padding: 0.65rem 0.85rem;
     }
 
     .evidence-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
       font-family: var(--font-mono);
-      margin-bottom: 0.35rem;
-    }
-
-    .evidence-highlight {
-      background: rgba(99, 102, 241, 0.15);
-      color: #c7d2fe;
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
-      font-weight: 600;
+      margin-bottom: 0.3rem;
     }
 
     .evidence-quote {
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       color: var(--text-primary);
       font-style: italic;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
     }
 
     .evidence-type-tag {
       display: inline-block;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 600;
       background: rgba(239, 68, 68, 0.15);
       color: #f87171;
-      padding: 0.1rem 0.5rem;
+      padding: 0.1rem 0.45rem;
       border-radius: 999px;
     }
 
@@ -667,23 +761,23 @@
     .intervention-actions {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.6rem;
-      margin-bottom: 1.25rem;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
     }
 
     .act-btn {
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
       color: var(--text-primary);
-      padding: 0.6rem 0.5rem;
+      padding: 0.55rem 0.45rem;
       border-radius: 8px;
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.25rem;
       text-align: center;
       transition: all 0.2s;
     }
@@ -702,25 +796,24 @@
 
     /* Generated Output Card */
     .draft-output-card {
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.85);
       border: 1px solid var(--accent-primary);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      position: relative;
+      border-radius: 10px;
+      padding: 0.85rem;
+      margin-bottom: 0.85rem;
     }
 
     .draft-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.65rem;
       border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 0.5rem;
+      padding-bottom: 0.45rem;
     }
 
     .draft-badge {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: #818cf8;
       display: flex;
@@ -729,15 +822,15 @@
     }
 
     .draft-content {
-      font-size: 0.85rem;
-      line-height: 1.6;
+      font-size: 0.82rem;
+      line-height: 1.55;
       color: var(--text-primary);
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.75rem;
     }
 
     .draft-actions {
       display: flex;
-      gap: 0.6rem;
+      gap: 0.5rem;
       justify-content: flex-end;
     }
 
@@ -745,9 +838,9 @@
       background: #10b981;
       color: white;
       border: none;
-      padding: 0.4rem 0.85rem;
+      padding: 0.35rem 0.75rem;
       border-radius: 6px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -762,73 +855,9 @@
       background: rgba(255, 255, 255, 0.08);
       color: var(--text-secondary);
       border: 1px solid var(--border-subtle);
-      padding: 0.4rem 0.85rem;
+      padding: 0.35rem 0.75rem;
       border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* Copilot Chat Assistant Footer */
-    .copilot-chat-footer {
-      border-top: 1px solid var(--border-subtle);
-      padding: 0.85rem 1rem;
-      background: rgba(15, 23, 42, 0.5);
-    }
-
-    .quick-prompts {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 0.6rem;
-      overflow-x: auto;
-      padding-bottom: 0.2rem;
-    }
-
-    .prompt-chip {
-      white-space: nowrap;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      padding: 0.25rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .prompt-chip:hover {
-      background: var(--accent-glow);
-      color: #c7d2fe;
-      border-color: var(--accent-primary);
-    }
-
-    .chat-input-wrapper {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .chat-input {
-      flex: 1;
-      background: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-primary);
-      padding: 0.5rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.82rem;
-      outline: none;
-    }
-
-    .chat-input:focus {
-      border-color: var(--accent-primary);
-    }
-
-    .chat-send-btn {
-      background: var(--accent-primary);
-      color: white;
-      border: none;
-      padding: 0.5rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.82rem;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
     }
@@ -957,6 +986,42 @@
 
     <!-- Right Pane: Copilot & Evidence Inspector -->
     <section class="pane-copilot">
+
+      <!-- TOP PROMINENT AI COPILOT CHAT CONSOLE -->
+      <div class="copilot-chat-top">
+        <div class="copilot-chat-header">
+          <div class="copilot-profile">
+            <div class="copilot-avatar">AI</div>
+            <div class="copilot-status-title">
+              Trợ Lý AI Tư Vấn Can Thiệp (Copilot)
+              <span class="status-dot"></span>
+            </div>
+          </div>
+          <span class="copilot-context-pill" id="copilotContextPill">Context: D02 · Slide 18 (92 tín hiệu)</span>
+        </div>
+
+        <!-- Dynamic Message Bubble -->
+        <div class="copilot-msg-bubble" id="copilotMsgBubble">
+          Chào thầy/cô! Tôi đã quét <strong>92 câu hỏi tại Slide 18</strong>. Đa số học viên đang đồng nhất <em>suy luận nhiều bước</em> với <em>gọi công cụ</em>. Hãy chọn câu hỏi nhanh bên dưới hoặc nhập yêu cầu để tôi trích xuất bằng chứng hoặc soạn nội dung giảng bù!
+        </div>
+
+        <!-- Quick Prompts Chips -->
+        <div class="quick-prompts">
+          <span class="prompt-chip" onclick="askCopilot('Tại sao slide này bị ưu tiên cao nhất?')">🔍 Tại sao ưu tiên cao?</span>
+          <span class="prompt-chip" onclick="askCopilot('Học viên nhầm lẫn CoT và ReAct ở điểm nào?')">❓ Chi tiết hiểu lầm?</span>
+          <span class="prompt-chip" onclick="askCopilot('Soạn cho tôi 1 ví dụ đời thường để giải thích')">💡 Soạn ví dụ ngắn</span>
+          <span class="prompt-chip" onclick="askCopilot('Tạo 1 câu trắc nghiệm kiểm tra đầu giờ')">📝 Tạo câu Quiz</span>
+          <span class="prompt-chip" onclick="askCopilot('So sánh K3 vs K4 ở phần này?')">📊 So sánh K3 vs K4</span>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="chat-input-wrapper">
+          <input type="text" class="chat-input" id="copilotChatInput" placeholder="Hỏi Copilot về dữ liệu slide hoặc yêu cầu soạn can thiệp..." onkeypress="handleChatKey(event)">
+          <button class="chat-send-btn" onclick="sendChatPrompt()">Gửi</button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
       <div class="copilot-nav-tabs">
         <div class="copilot-tab active" id="tabHypo" onclick="switchInspectorTab('hypo')">
           <span>🧠 Giả Thuyết Sư Phạm</span>
@@ -970,22 +1035,9 @@
         </div>
       </div>
 
+      <!-- Inspector Detail Body -->
       <div class="copilot-content-body" id="inspectorBody">
         <!-- Injected via JavaScript based on selected slide -->
-      </div>
-
-      <!-- Contextual AI Copilot Chat Footer -->
-      <div class="copilot-chat-footer">
-        <div class="quick-prompts">
-          <span class="prompt-chip" onclick="askCopilot('Tại sao slide này bị ưu tiên cao nhất?')">🔍 Tại sao ưu tiên cao?</span>
-          <span class="prompt-chip" onclick="askCopilot('Học viên nhầm lẫn CoT và ReAct ở điểm nào?')">❓ Chi tiết hiểu lầm?</span>
-          <span class="prompt-chip" onclick="askCopilot('Soạn cho tôi 1 ví dụ đời thường để giải thích')">💡 Soạn ví dụ ngắn</span>
-          <span class="prompt-chip" onclick="askCopilot('Tạo 1 câu trắc nghiệm kiểm tra đầu giờ')">📝 Tạo câu Quiz</span>
-        </div>
-        <div class="chat-input-wrapper">
-          <input type="text" class="chat-input" id="copilotChatInput" placeholder="Hỏi Copilot về dữ liệu slide hoặc yêu cầu can thiệp..." onkeypress="handleChatKey(event)">
-          <button class="chat-send-btn" onclick="sendChatPrompt()">Gửi</button>
-        </div>
       </div>
     </section>
 
@@ -1115,6 +1167,13 @@
         btn.classList.toggle('active', btn.textContent.includes(`Slide ${page}`));
       });
 
+      const slide = slideData.find(s => s.page === currentSelectedPage) || slideData[17];
+      document.getElementById('copilotContextPill').textContent = `Context: D02 · Slide ${slide.page} (${slide.count} tín hiệu)`;
+      document.getElementById('copilotMsgBubble').innerHTML = `
+        Đã chuyển ngữ cảnh sang <strong>Slide ${slide.page}: ${slide.title}</strong>.<br>
+        Ghi nhận <strong>${slide.count} lượt học viên hỏi</strong> (${slide.crit === 'crit' ? 'Ưu tiên kiểm tra cao' : 'Mức độ bình thường'}). Bạn có muốn trích xuất các lượt hỏi thật (Turn ID) hay tạo phương án can thiệp?
+      `;
+
       renderInspector();
     }
 
@@ -1141,11 +1200,11 @@
               ${slide.rank ? 'Ưu tiên #' + slide.rank : 'Mức độ: ' + slide.crit}
             </span>
           </div>
-          <h4 style="font-size: 0.95rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.35rem;">${slide.title}</h4>
+          <h4 style="font-size: 0.9rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.35rem;">${slide.title}</h4>
           <div class="inspector-stats">
             <span>Tín hiệu bối rối: <strong>${slide.count} học viên</strong></span>
             <span>·</span>
-            <span>Khái niệm: <strong>${slide.concept || 'Kiến thức cốt lõi'}</strong></span>
+            <span>Khái niệm: <strong>${slide.concept || 'Kiến thức bài giảng'}</strong></span>
           </div>
         </div>
       `;
@@ -1187,7 +1246,7 @@
                   <span class="evidence-type-tag">${e.tag}</span>
                 </div>
                 <div class="evidence-quote">"${e.text}"</div>
-                <div style="font-size: 0.72rem; color: var(--text-muted);">Trích xuất từ: tutor_turns.csv (Cohort K4 & K3)</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">Trích xuất từ: tutor_turns.csv (Cohort K4 & K3)</div>
               </div>
             `;
           });
@@ -1220,7 +1279,7 @@
           <div class="draft-output-card" id="draftOutputBox">
             <div class="draft-header">
               <span class="draft-badge">✨ Bản thảo can thiệp do AI sinh (Augment Mode)</span>
-              <span style="font-size: 0.7rem; color: var(--text-muted);">Sẵn sàng áp dụng cho Slide ${slide.page}</span>
+              <span style="font-size: 0.7rem; color: var(--text-muted);">Áp dụng cho Slide ${slide.page}</span>
             </div>
             <div class="draft-content" id="draftContentArea">
               <strong>Ví dụ thực tế phân biệt CoT vs ReAct (Tra cứu thời tiết để mang ô):</strong><br><br>
@@ -1296,13 +1355,39 @@
       const val = input.value.trim();
       if (!val) return;
 
-      switchInspectorTab('intervention');
-      const area = document.getElementById('draftContentArea');
-      area.innerHTML = `
-        <div style="color: #818cf8; font-weight: 600; margin-bottom: 0.5rem;">Copilot phản hồi theo câu hỏi: "${val}"</div>
-        Dựa trên <strong>92 lượt hỏi tại Slide 18</strong> và trích dẫn Turn ID <code>T00891</code>: <br>
-        Học viên đang vướng mắc lớn nhất ở việc không hình dung được vai trò của <strong>Observation</strong>. Tôi đề xuất chèn thêm 1 slide phụ 18b mang tên <em>"Chu trình ReAct trong thực tế"</em> với hình vẽ chu kỳ 4 bước. Giảng viên có thể bấm <strong>Phê duyệt</strong> bên dưới để hệ thống cập nhật vào danh mục ghi chú!
-      `;
+      const bubble = document.getElementById('copilotMsgBubble');
+      
+      if (val.includes('ưu tiên cao')) {
+        bubble.innerHTML = `
+          <strong>Copilot:</strong> Slide 18 bị xếp ưu tiên <strong>#1 Critical</strong> vì có <strong>92 lượt hỏi</strong>, trong đó có 38 câu học viên phát biểu hiểu sai hoàn toàn bản chất (Turn ID <code>T00891</code>: <em>"ReAct chỉ là CoT viết dài ra"</em>). Slide này là mắt xích sống còn trước khi vào bài Lab 2!
+        `;
+      } else if (val.includes('nhầm lẫn') || val.includes('CoT và ReAct')) {
+        bubble.innerHTML = `
+          <strong>Copilot:</strong> Học viên nhầm lẫn lớn nhất ở chỗ: coi <em>Action</em> chỉ là một câu nói suy luận, không nhận ra <em>Action</em> là lời gọi hàm thực thi ra hệ thống bên ngoài và cần có <em>Observation</em> phản hồi.
+        `;
+        switchInspectorTab('evidence');
+      } else if (val.includes('ví dụ') || val.includes('soạn')) {
+        bubble.innerHTML = `
+          <strong>Copilot:</strong> Tôi đã soạn xong 1 ví dụ tương phản đời thường (Tra cứu thời tiết) ở Tab <strong>Soạn Can Thiệp</strong> bên dưới. Hãy xem và bấm <em>Phê duyệt</em> nếu thấy phù hợp!
+        `;
+        switchInspectorTab('intervention');
+        simulateDraft('example');
+      } else if (val.includes('trắc nghiệm') || val.includes('Quiz')) {
+        bubble.innerHTML = `
+          <strong>Copilot:</strong> Đã tạo 1 câu hỏi Concept Check trắc nghiệm 4 lựa chọn ở Tab <strong>Soạn Can Thiệp</strong>. Bạn có thể copy chiếu lên màn hình đầu giờ!
+        `;
+        switchInspectorTab('intervention');
+        simulateDraft('quiz');
+      } else if (val.includes('K3') || val.includes('K4')) {
+        bubble.innerHTML = `
+          <strong>Copilot:</strong> So sánh 2 khóa: Ở K3 có 54 câu hỏi tại Slide 18; sang K4 tăng vọt lên 38 câu chỉ trong tuần đầu. Điều này chứng minh đây là <strong>điểm nghẽn kinh niên</strong> chưa được giải quyết giữa các batch!
+        `;
+      } else {
+        bubble.innerHTML = `
+          <strong>Copilot:</strong> Dựa trên dữ liệu 92 câu hỏi tại Slide 18: Tôi đã ghi nhận yêu cầu <em>"${val}"</em>. Đã trích xuất thông tin liên quan từ dataset <code>tutor_turns.csv</code> và cập nhật vào khung bên dưới!
+        `;
+      }
+
       input.value = '';
     }
 
