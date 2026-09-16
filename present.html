@@ -21,7 +21,7 @@
       
       --accent-primary: #6366f1;
       --accent-primary-hover: #4f46e5;
-      --accent-glow: rgba(99, 102, 241, 0.25);
+      --accent-glow: rgba(99, 102, 241, 0.28);
       
       --heat-critical: #ef4444;
       --heat-critical-bg: rgba(239, 68, 68, 0.15);
@@ -57,7 +57,7 @@
 
     /* Header */
     header {
-      background: rgba(17, 22, 34, 0.85);
+      background: rgba(17, 22, 34, 0.88);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-subtle);
       padding: 0.75rem 1.5rem;
@@ -66,7 +66,7 @@
       justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 40;
     }
 
     .brand-group {
@@ -135,6 +135,12 @@
 
     .step-item.completed { color: #10b981; }
     .step-arrow { color: var(--text-muted); font-size: 0.7rem; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
 
     .badge-data-stat {
       font-family: var(--font-mono);
@@ -451,7 +457,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
 
-    /* Right Pane - Copilot & Evidence Inspector */
+    /* Right Pane - Full Height Evidence & Intervention Inspector */
     .pane-copilot {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -462,150 +468,42 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
 
-    /* Top Prominent Chatbot Frame */
-    .copilot-chat-top {
-      background: linear-gradient(180deg, rgba(30, 41, 67, 0.85) 0%, rgba(17, 24, 39, 0.95) 100%);
-      border-bottom: 1px solid var(--border-active);
-      padding: 0.9rem 1.15rem;
-      position: relative;
-    }
-
-    .copilot-chat-header {
+    .inspector-header-bar {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.65rem;
+      background: rgba(255, 255, 255, 0.02);
     }
 
-    .copilot-profile {
+    .inspector-header-title {
+      font-size: 0.92rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
-    .copilot-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
+    .btn-open-copilot {
       background: linear-gradient(135deg, #6366f1, #38bdf8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 800;
-      color: white;
-      box-shadow: 0 2px 8px var(--accent-glow);
-    }
-
-    .copilot-status-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
-    }
-
-    .copilot-context-pill {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      background: rgba(99, 102, 241, 0.2);
-      color: #a5b4fc;
-      border: 1px solid rgba(99, 102, 241, 0.35);
-      padding: 0.2rem 0.55rem;
-      border-radius: 6px;
-      font-weight: 600;
-    }
-
-    /* Chat Message Bubble */
-    .copilot-msg-bubble {
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 0.75rem 0.9rem;
-      margin-bottom: 0.65rem;
-      font-size: 0.82rem;
-      line-height: 1.5;
-      color: #e2e8f0;
-      max-height: 120px;
-      overflow-y: auto;
-      transition: all 0.2s ease;
-    }
-
-    .copilot-msg-bubble strong { color: #38bdf8; }
-
-    /* Quick Prompts Chips */
-    .quick-prompts {
-      display: flex;
-      gap: 0.4rem;
-      margin-bottom: 0.65rem;
-      overflow-x: auto;
-      padding-bottom: 0.15rem;
-    }
-
-    .prompt-chip {
-      white-space: nowrap;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      padding: 0.22rem 0.55rem;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .prompt-chip:hover {
-      background: var(--accent-glow);
-      color: #c7d2fe;
-      border-color: var(--accent-primary);
-      transform: translateY(-1px);
-    }
-
-    /* Chat Input Bar */
-    .chat-input-wrapper {
-      display: flex;
-      gap: 0.4rem;
-    }
-
-    .chat-input {
-      flex: 1;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-primary);
-      padding: 0.45rem 0.75rem;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .chat-input:focus {
-      border-color: var(--accent-primary);
-      box-shadow: 0 0 0 2px var(--accent-glow);
-    }
-
-    .chat-send-btn {
-      background: var(--accent-primary);
       color: white;
       border: none;
-      padding: 0.45rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 2px 8px var(--accent-glow);
+      transition: transform 0.2s ease;
     }
 
-    .chat-send-btn:hover { background: var(--accent-primary-hover); }
+    .btn-open-copilot:hover {
+      transform: translateY(-1px);
+    }
 
     /* Inspector Nav Tabs */
     .copilot-nav-tabs {
@@ -615,8 +513,8 @@
     }
 
     .copilot-tab {
-      padding: 0.75rem 1rem;
-      font-size: 0.8rem;
+      padding: 0.75rem 1.1rem;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-muted);
       cursor: pointer;
@@ -644,7 +542,7 @@
 
     /* Inspector Body */
     .copilot-content-body {
-      padding: 1rem 1.15rem;
+      padding: 1.25rem;
       overflow-y: auto;
       flex: 1;
     }
@@ -652,28 +550,28 @@
     .inspector-target-box {
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 0.85rem;
-      margin-bottom: 0.85rem;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
     }
 
     .inspector-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.45rem;
     }
 
     .inspector-title {
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-primary);
     }
 
     .inspector-stats {
       display: flex;
-      gap: 0.65rem;
-      font-size: 0.75rem;
+      gap: 0.75rem;
+      font-size: 0.78rem;
       color: var(--text-secondary);
       font-family: var(--font-mono);
     }
@@ -681,28 +579,28 @@
     /* 3-Part Hypothesis Box */
     .hypothesis-card {
       background: var(--bg-surface-elevated);
-      border-radius: 10px;
+      border-radius: 12px;
       border: 1px solid var(--border-subtle);
       overflow: hidden;
-      margin-bottom: 0.85rem;
+      margin-bottom: 1rem;
     }
 
     .section-part {
-      padding: 0.75rem 0.9rem;
+      padding: 0.9rem 1.1rem;
       border-bottom: 1px solid var(--border-subtle);
     }
 
     .section-part:last-child { border-bottom: none; }
 
     .part-label {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.35rem;
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.4rem;
     }
 
     .label-obs { color: #38bdf8; }
@@ -710,8 +608,8 @@
     .label-verify { color: #a78bfa; }
 
     .part-content {
-      font-size: 0.82rem;
-      line-height: 1.5;
+      font-size: 0.85rem;
+      line-height: 1.55;
       color: var(--text-secondary);
     }
 
@@ -719,8 +617,8 @@
     .evidence-list {
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
-      margin-bottom: 0.85rem;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
     }
 
     .evidence-item {
@@ -728,32 +626,32 @@
       border: 1px solid var(--border-subtle);
       border-left: 3px solid var(--accent-primary);
       border-radius: 8px;
-      padding: 0.65rem 0.85rem;
+      padding: 0.75rem 1rem;
     }
 
     .evidence-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
       font-family: var(--font-mono);
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.35rem;
     }
 
     .evidence-quote {
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: var(--text-primary);
       font-style: italic;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.35rem;
     }
 
     .evidence-type-tag {
       display: inline-block;
-      font-size: 0.65rem;
+      font-size: 0.68rem;
       font-weight: 600;
       background: rgba(239, 68, 68, 0.15);
       color: #f87171;
-      padding: 0.1rem 0.45rem;
+      padding: 0.1rem 0.5rem;
       border-radius: 999px;
     }
 
@@ -761,23 +659,23 @@
     .intervention-actions {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      gap: 0.6rem;
+      margin-bottom: 1.15rem;
     }
 
     .act-btn {
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
       color: var(--text-primary);
-      padding: 0.55rem 0.45rem;
+      padding: 0.65rem 0.5rem;
       border-radius: 8px;
-      font-size: 0.74rem;
+      font-size: 0.76rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.25rem;
+      gap: 0.3rem;
       text-align: center;
       transition: all 0.2s;
     }
@@ -798,22 +696,22 @@
     .draft-output-card {
       background: rgba(15, 23, 42, 0.85);
       border: 1px solid var(--accent-primary);
-      border-radius: 10px;
-      padding: 0.85rem;
-      margin-bottom: 0.85rem;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
     }
 
     .draft-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.75rem;
       border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 0.45rem;
+      padding-bottom: 0.5rem;
     }
 
     .draft-badge {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: #818cf8;
       display: flex;
@@ -822,15 +720,15 @@
     }
 
     .draft-content {
-      font-size: 0.82rem;
-      line-height: 1.55;
+      font-size: 0.84rem;
+      line-height: 1.6;
       color: var(--text-primary);
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.85rem;
     }
 
     .draft-actions {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.6rem;
       justify-content: flex-end;
     }
 
@@ -838,9 +736,9 @@
       background: #10b981;
       color: white;
       border: none;
-      padding: 0.35rem 0.75rem;
+      padding: 0.4rem 0.85rem;
       border-radius: 6px;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -855,17 +753,479 @@
       background: rgba(255, 255, 255, 0.08);
       color: var(--text-secondary);
       border: 1px solid var(--border-subtle);
-      padding: 0.35rem 0.75rem;
+      padding: 0.4rem 0.85rem;
       border-radius: 6px;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
     }
 
+    /* ========================================================= */
+    /* FLOATING DETACHABLE COPILOT WIDGET (CORNER POPOVER)       */
+    /* ========================================================= */
+    
+    /* Launcher Bubble Button (Collapsed State) */
+    .copilot-floating-launcher {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: linear-gradient(135deg, #6366f1, #38bdf8);
+      color: white;
+      border: none;
+      padding: 0.7rem 1.25rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .copilot-floating-launcher:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 12px 30px rgba(99, 102, 241, 0.6);
+    }
+
+    .launcher-pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulseAnim 2s infinite;
+    /* Floating Widget Launcher Pill */
+    .copilot-floating-launcher {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 0.65rem 1.15rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.45);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      z-index: 999;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .copilot-floating-launcher:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 14px 36px rgba(99, 102, 241, 0.6);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .launcher-pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #10b981;
+      display: inline-block;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulseAnim 2s infinite;
+    }
+
+    /* Floating Widget Window */
+    .copilot-widget-window {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 520px;
+      height: 640px;
+      min-width: 340px;
+      max-width: 96vw;
+      min-height: 420px;
+      max-height: 94vh;
+      background: rgba(15, 22, 38, 0.96);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border-active);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s, transform 0.25s;
+      transform-origin: bottom right;
+    }
+
+    .copilot-widget-window.resizing,
+    .copilot-widget-window.dragging {
+      transition: none !important;
+      user-select: none;
+    }
+
+    /* Resize Grip Handle (Top-Left corner for free dragging resize) */
+    .widget-resize-grip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 22px;
+      height: 22px;
+      cursor: nwse-resize;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+
+    .widget-resize-grip:hover {
+      opacity: 1;
+      color: #38bdf8;
+    }
+
+    /* Preset Sizes */
+    .copilot-widget-window.size-compact {
+      width: 380px !important;
+      height: 500px !important;
+    }
+
+    .copilot-widget-window.size-standard {
+      width: 520px !important;
+      height: 640px !important;
+    }
+
+    .copilot-widget-window.size-large {
+      width: 760px !important;
+      height: 740px !important;
+    }
+
+    /* Hidden State */
+    .copilot-widget-window.state-hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.7) translateY(40px);
+    }
+
+    /* Maximized / Expanded State */
+    .copilot-widget-window.state-maximized {
+      width: calc(100vw - 3rem) !important;
+      height: calc(100vh - 3rem) !important;
+      top: 1.5rem !important;
+      left: 1.5rem !important;
+      bottom: auto !important;
+      right: auto !important;
+      border-color: rgba(99, 102, 241, 0.7);
+      box-shadow: 0 24px 72px rgba(0, 0, 0, 0.85), 0 0 40px var(--accent-glow);
+    }
+
+    /* Widget Titlebar (Draggable) */
+    .widget-titlebar {
+      padding: 0.65rem 0.9rem 0.65rem 1.6rem;
+      background: rgba(26, 35, 58, 0.95);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      cursor: grab;
+    }
+
+    .widget-titlebar:active {
+      cursor: grabbing;
+    }
+
+    .widget-title-info {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .widget-logo {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #6366f1, #38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    .widget-title-text {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .drag-hint-badge {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+    }
+
+    .widget-window-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .win-btn {
+      height: 26px;
+      padding: 0 0.45rem;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .win-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--text-primary);
+    }
+
+    .win-btn.size-cycle {
+      gap: 0.25rem;
+      font-weight: 600;
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.3);
+      color: #c7d2fe;
+    }
+
+    .win-btn.size-cycle:hover {
+      background: rgba(99, 102, 241, 0.3);
+      color: white;
+    }
+
+    .win-btn.close:hover {
+      background: #ef4444;
+      color: white;
+      border-color: #ef4444;
+    }
+
+    /* Widget Context Sub-header & Size quick bar */
+    .widget-context-sub {
+      background: rgba(15, 23, 42, 0.85);
+      padding: 0.4rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .widget-size-presets {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .size-pill-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .size-pill-btn:hover {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+    }
+
+    .size-pill-btn.active {
+      background: rgba(99, 102, 241, 0.3);
+      border-color: rgba(99, 102, 241, 0.6);
+      color: #a5b4fc;
+    }
+
+    .btn-top-copilot {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+      color: #c7d2fe;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      padding: 0.35rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-top-copilot:hover {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .widget-context-tag {
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    /* Widget Chat Body */
+    .widget-chat-history {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .chat-bubble {
+      max-width: 90%;
+      padding: 0.75rem 0.9rem;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    .chat-bubble.assistant {
+      align-self: flex-start;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: #e2e8f0;
+      border-bottom-left-radius: 3px;
+    }
+
+    .chat-bubble.user {
+      align-self: flex-end;
+      background: var(--accent-primary);
+      color: white;
+      border-bottom-right-radius: 3px;
+    }
+
+    .bubble-meta {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .bubble-action-links {
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .bubble-action-btn {
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #c7d2fe;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .bubble-action-btn:hover {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    /* Widget Footer & Input */
+    .widget-footer {
+      padding: 0.75rem 1rem;
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .widget-quick-prompts {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 0.55rem;
+      overflow-x: auto;
+      padding-bottom: 0.15rem;
+    }
+
+    .w-chip {
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .w-chip:hover {
+      background: var(--accent-glow);
+      color: #c7d2fe;
+      border-color: var(--accent-primary);
+    }
+
+    .widget-input-row {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .widget-input {
+      flex: 1;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 0.45rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .widget-input:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .widget-send-btn {
+      background: var(--accent-primary);
+      color: white;
+      border: none;
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .widget-send-btn:hover { background: var(--accent-primary-hover); }
+
     /* Toast Notification */
     .toast-msg {
       position: fixed;
-      bottom: 1.5rem;
+      bottom: 5.5rem;
       right: 1.5rem;
       background: #10b981;
       color: white;
@@ -876,7 +1236,7 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.4);
       display: none;
       animation: slideUp 0.3s ease;
-      z-index: 100;
+      z-index: 2000;
     }
 
     @keyframes slideUp {
@@ -916,6 +1276,9 @@
       <div class="badge-data-stat">
         Dataset: <strong>13.494</strong> chatlogs · <strong>448</strong> HV K4
       </div>
+      <button class="btn-top-copilot" onclick="toggleWidget()" title="Bật/Tắt Cửa Sổ AI Copilot Widget">
+        🤖 <span>AI Copilot Widget</span>
+      </button>
     </div>
   </header>
 
@@ -984,41 +1347,16 @@
       </div>
     </section>
 
-    <!-- Right Pane: Copilot & Evidence Inspector -->
+    <!-- Right Pane: Evidence & Intervention Inspector -->
     <section class="pane-copilot">
-
-      <!-- TOP PROMINENT AI COPILOT CHAT CONSOLE -->
-      <div class="copilot-chat-top">
-        <div class="copilot-chat-header">
-          <div class="copilot-profile">
-            <div class="copilot-avatar">AI</div>
-            <div class="copilot-status-title">
-              Trợ Lý AI Tư Vấn Can Thiệp (Copilot)
-              <span class="status-dot"></span>
-            </div>
-          </div>
-          <span class="copilot-context-pill" id="copilotContextPill">Context: D02 · Slide 18 (92 tín hiệu)</span>
+      <div class="inspector-header-bar">
+        <div class="inspector-header-title">
+          <span>🔎 Bảng Kiểm Tra Bằng Chứng & Can Thiệp Sư Phạm</span>
         </div>
-
-        <!-- Dynamic Message Bubble -->
-        <div class="copilot-msg-bubble" id="copilotMsgBubble">
-          Chào thầy/cô! Tôi đã quét <strong>92 câu hỏi tại Slide 18</strong>. Đa số học viên đang đồng nhất <em>suy luận nhiều bước</em> với <em>gọi công cụ</em>. Hãy chọn câu hỏi nhanh bên dưới hoặc nhập yêu cầu để tôi trích xuất bằng chứng hoặc soạn nội dung giảng bù!
-        </div>
-
-        <!-- Quick Prompts Chips -->
-        <div class="quick-prompts">
-          <span class="prompt-chip" onclick="askCopilot('Tại sao slide này bị ưu tiên cao nhất?')">🔍 Tại sao ưu tiên cao?</span>
-          <span class="prompt-chip" onclick="askCopilot('Học viên nhầm lẫn CoT và ReAct ở điểm nào?')">❓ Chi tiết hiểu lầm?</span>
-          <span class="prompt-chip" onclick="askCopilot('Soạn cho tôi 1 ví dụ đời thường để giải thích')">💡 Soạn ví dụ ngắn</span>
-          <span class="prompt-chip" onclick="askCopilot('Tạo 1 câu trắc nghiệm kiểm tra đầu giờ')">📝 Tạo câu Quiz</span>
-          <span class="prompt-chip" onclick="askCopilot('So sánh K3 vs K4 ở phần này?')">📊 So sánh K3 vs K4</span>
-        </div>
-
-        <!-- Chat Input Bar -->
-        <div class="chat-input-wrapper">
-          <input type="text" class="chat-input" id="copilotChatInput" placeholder="Hỏi Copilot về dữ liệu slide hoặc yêu cầu soạn can thiệp..." onkeypress="handleChatKey(event)">
-          <button class="chat-send-btn" onclick="sendChatPrompt()">Gửi</button>
-        </div>
+        <!-- Trigger to open/focus floating Copilot -->
+        <button class="btn-open-copilot" onclick="openWidget()">
+          <span>💬 Mở AI Copilot</span>
+        </button>
       </div>
 
       <!-- Navigation Tabs -->
@@ -1042,6 +1380,89 @@
     </section>
 
   </main>
+
+  <!-- ========================================================= -->
+  <!-- FLOATING DETACHABLE COPILOT WIDGET                        -->
+  <!-- ========================================================= -->
+
+  <!-- Launcher Pill Button (Shown when widget is minimized) -->
+  <button class="copilot-floating-launcher" id="widgetLauncher" onclick="openWidget()">
+    <span class="launcher-pulse"></span>
+    <span>💬 Copilot AI</span>
+    <span style="font-size: 0.72rem; opacity: 0.85;" id="launcherContextTag">Slide 18</span>
+  </button>
+
+  <!-- Resizable Floating Widget Window -->
+  <div class="copilot-widget-window state-hidden size-standard" id="copilotWidgetWindow">
+    
+    <!-- Manual Corner Resize Grip Handle (Top-Left) -->
+    <div class="widget-resize-grip" id="widgetResizeGrip" title="Kéo góc này để phóng to / thu nhỏ cửa sổ tuỳ ý">⤡</div>
+
+    <!-- Widget Titlebar with Drag Handle and Window Controls -->
+    <div class="widget-titlebar" id="widgetTitlebar" title="Nhấn giữ và kéo để di chuyển cửa sổ bất kỳ đâu; Nhấp đúp để phóng to/thu nhỏ">
+      <div class="widget-title-info">
+        <div class="widget-logo">AI</div>
+        <span class="widget-title-text">
+          Trợ Lý AI Copilot Can Thiệp
+          <span class="drag-hint-badge">✥ Kéo di chuyển</span>
+        </span>
+      </div>
+      <div class="widget-window-controls">
+        <button class="win-btn size-cycle" id="btnCycleSize" title="Đổi nhanh kích cỡ: Nhỏ 380p ➔ Vừa 520p ➔ Lớn 760p" onclick="cycleWidgetSize()">📐 <span id="sizeLabel">Vừa (520p)</span></button>
+        <button class="win-btn" title="Gắn lại góc dưới bên phải màn hình" onclick="dockWidget()">📌</button>
+        <button class="win-btn" title="Thu nhỏ thành icon góc (Minimize)" onclick="minimizeWidget()">_</button>
+        <button class="win-btn" id="btnMaximize" title="Phóng to / Khôi phục kích thước" onclick="toggleMaximizeWidget()">⤢</button>
+        <button class="win-btn close" title="Đóng cửa sổ" onclick="closeWidget()">✕</button>
+      </div>
+    </div>
+
+    <!-- Context Subheader with Instant Size Presets -->
+    <div class="widget-context-sub">
+      <div>
+        <span>Ngữ cảnh: <span class="widget-context-tag" id="widgetContextLabel">D02 · Slide 18 (92 câu hỏi)</span></span>
+        <span style="margin-left: 0.5rem; opacity: 0.8;">| GPT-4o RAG</span>
+      </div>
+      <div class="widget-size-presets">
+        <span style="font-size: 0.65rem; color: var(--text-muted);">Cỡ:</span>
+        <button class="size-pill-btn" id="pillCompact" onclick="setWidgetSize('compact')">Nhỏ (380p)</button>
+        <button class="size-pill-btn active" id="pillStandard" onclick="setWidgetSize('standard')">Vừa (520p)</button>
+        <button class="size-pill-btn" id="pillLarge" onclick="setWidgetSize('large')">Lớn (760p)</button>
+        <button class="size-pill-btn" id="pillMax" onclick="toggleMaximizeWidget()">Phóng to</button>
+      </div>
+    </div>
+
+    <!-- Chat History Message List -->
+    <div class="widget-chat-history" id="widgetChatHistory">
+      <div class="chat-bubble assistant">
+        <div class="bubble-meta">
+          <span>🤖 Copilot</span>
+          <span>·</span>
+          <span>Vừa xong</span>
+        </div>
+        Chào thầy/cô! Tôi đã quét <strong>92 lượt hỏi tại Slide 18</strong>. Học viên đang đồng nhất <em>suy luận nội tại (CoT)</em> với <em>gọi hàm tương tác (ReAct)</em>.
+        <div class="bubble-action-links">
+          <button class="bubble-action-btn" onclick="askCopilot('Tại sao slide này bị ưu tiên cao nhất?')">🔍 Tại sao ưu tiên cao?</button>
+          <button class="bubble-action-btn" onclick="askCopilot('Soạn cho tôi 1 ví dụ đời thường để giải thích')">💡 Soạn ví dụ ngắn</button>
+          <button class="bubble-action-btn" onclick="askCopilot('Tạo 1 câu trắc nghiệm kiểm tra đầu giờ')">📝 Tạo câu Quiz</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widget Footer with Quick Prompts and Input Bar -->
+    <div class="widget-footer">
+      <div class="widget-quick-prompts">
+        <span class="w-chip" onclick="askCopilot('Tại sao slide này bị ưu tiên cao nhất?')">🔍 Tại sao ưu tiên cao?</span>
+        <span class="w-chip" onclick="askCopilot('Học viên nhầm lẫn CoT và ReAct ở điểm nào?')">❓ Chi tiết hiểu lầm?</span>
+        <span class="w-chip" onclick="askCopilot('Soạn cho tôi 1 ví dụ đời thường để giải thích')">💡 Soạn ví dụ ngắn</span>
+        <span class="w-chip" onclick="askCopilot('Tạo 1 câu trắc nghiệm kiểm tra đầu giờ')">📝 Tạo câu Quiz</span>
+        <span class="w-chip" onclick="askCopilot('So sánh K3 vs K4 ở phần này?')">📊 K3 vs K4</span>
+      </div>
+      <div class="widget-input-row">
+        <input type="text" class="widget-input" id="widgetChatInput" placeholder="Hỏi Copilot hoặc yêu cầu chỉnh sửa..." onkeypress="handleWidgetKey(event)">
+        <button class="widget-send-btn" onclick="sendWidgetPrompt()">Gửi</button>
+      </div>
+    </div>
+  </div>
 
   <div class="toast-msg" id="toast">✅ Đã phê duyệt can thiệp & lưu vào danh mục chuẩn bị giảng dạy!</div>
 
@@ -1125,6 +1546,7 @@
 
     let currentSelectedPage = 18;
     let currentInspectorTab = 'hypo';
+    let isWidgetMaximized = false;
 
     function initHeatmap() {
       const container = document.getElementById('slidesGridContainer');
@@ -1168,11 +1590,8 @@
       });
 
       const slide = slideData.find(s => s.page === currentSelectedPage) || slideData[17];
-      document.getElementById('copilotContextPill').textContent = `Context: D02 · Slide ${slide.page} (${slide.count} tín hiệu)`;
-      document.getElementById('copilotMsgBubble').innerHTML = `
-        Đã chuyển ngữ cảnh sang <strong>Slide ${slide.page}: ${slide.title}</strong>.<br>
-        Ghi nhận <strong>${slide.count} lượt học viên hỏi</strong> (${slide.crit === 'crit' ? 'Ưu tiên kiểm tra cao' : 'Mức độ bình thường'}). Bạn có muốn trích xuất các lượt hỏi thật (Turn ID) hay tạo phương án can thiệp?
-      `;
+      document.getElementById('launcherContextTag').textContent = `Slide ${slide.page}`;
+      document.getElementById('widgetContextLabel').textContent = `D02 · Slide ${slide.page} (${slide.count} câu hỏi)`;
 
       renderInspector();
     }
@@ -1200,7 +1619,7 @@
               ${slide.rank ? 'Ưu tiên #' + slide.rank : 'Mức độ: ' + slide.crit}
             </span>
           </div>
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.35rem;">${slide.title}</h4>
+          <h4 style="font-size: 0.95rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.35rem;">${slide.title}</h4>
           <div class="inspector-stats">
             <span>Tín hiệu bối rối: <strong>${slide.count} học viên</strong></span>
             <span>·</span>
@@ -1246,7 +1665,7 @@
                   <span class="evidence-type-tag">${e.tag}</span>
                 </div>
                 <div class="evidence-quote">"${e.text}"</div>
-                <div style="font-size: 0.7rem; color: var(--text-muted);">Trích xuất từ: tutor_turns.csv (Cohort K4 & K3)</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Trích xuất từ: tutor_turns.csv (Cohort K4 & K3)</div>
               </div>
             `;
           });
@@ -1341,54 +1760,323 @@
       setStep(5);
     }
 
+    /* ========================================================= */
+    /* WIDGET WINDOW CONTROLS & CHAT INTERACTIONS                */
+    /* ========================================================= */
+    let currentWidgetSize = 'standard'; // 'compact' | 'standard' | 'large'
+
+    function toggleWidget() {
+      const win = document.getElementById('copilotWidgetWindow');
+      if (win.classList.contains('state-hidden')) {
+        openWidget();
+      } else {
+        closeWidget();
+      }
+    }
+
+    function openWidget() {
+      const win = document.getElementById('copilotWidgetWindow');
+      const launcher = document.getElementById('widgetLauncher');
+      win.classList.remove('state-hidden');
+      launcher.style.display = 'none';
+      document.getElementById('widgetChatInput').focus();
+    }
+
+    function closeWidget() {
+      const win = document.getElementById('copilotWidgetWindow');
+      const launcher = document.getElementById('widgetLauncher');
+      win.classList.add('state-hidden');
+      launcher.style.display = 'flex';
+    }
+
+    function minimizeWidget() {
+      closeWidget();
+    }
+
+    function setWidgetSize(size) {
+      const win = document.getElementById('copilotWidgetWindow');
+      const sizeLabel = document.getElementById('sizeLabel');
+      
+      // Clear maximized state and inline custom width/height if setting preset
+      if (isWidgetMaximized) {
+        isWidgetMaximized = false;
+        win.classList.remove('state-maximized');
+        document.getElementById('btnMaximize').textContent = '⤢';
+      }
+
+      win.style.width = '';
+      win.style.height = '';
+      win.classList.remove('size-compact', 'size-standard', 'size-large');
+
+      currentWidgetSize = size;
+      if (size === 'compact') {
+        win.classList.add('size-compact');
+        if (sizeLabel) sizeLabel.textContent = 'Nhỏ (380p)';
+      } else if (size === 'large') {
+        win.classList.add('size-large');
+        if (sizeLabel) sizeLabel.textContent = 'Lớn (760p)';
+      } else {
+        win.classList.add('size-standard');
+        if (sizeLabel) sizeLabel.textContent = 'Vừa (520p)';
+      }
+
+      // Update pills
+      document.querySelectorAll('.size-pill-btn').forEach(btn => btn.classList.remove('active'));
+      const activePill = document.getElementById(`pill${size.charAt(0).toUpperCase() + size.slice(1)}`);
+      if (activePill) activePill.classList.add('active');
+    }
+
+    function cycleWidgetSize() {
+      if (currentWidgetSize === 'compact') setWidgetSize('standard');
+      else if (currentWidgetSize === 'standard') setWidgetSize('large');
+      else setWidgetSize('compact');
+    }
+
+    function toggleMaximizeWidget() {
+      const win = document.getElementById('copilotWidgetWindow');
+      const btn = document.getElementById('btnMaximize');
+      isWidgetMaximized = !isWidgetMaximized;
+      win.classList.toggle('state-maximized', isWidgetMaximized);
+      btn.textContent = isWidgetMaximized ? '⤡' : '⤢';
+      btn.title = isWidgetMaximized ? 'Thu nhỏ về kích thước chuẩn' : 'Phóng to tối đa cửa sổ';
+
+      if (isWidgetMaximized) {
+        document.querySelectorAll('.size-pill-btn').forEach(b => b.classList.remove('active'));
+        const pMax = document.getElementById('pillMax');
+        if (pMax) pMax.classList.add('active');
+      } else {
+        setWidgetSize(currentWidgetSize);
+      }
+    }
+
+    function dockWidget() {
+      const win = document.getElementById('copilotWidgetWindow');
+      win.style.top = '';
+      win.style.left = '';
+      win.style.bottom = '1.5rem';
+      win.style.right = '1.5rem';
+      win.style.transform = '';
+      
+      const toast = document.getElementById('toast');
+      toast.textContent = '📌 Đã gắn cửa sổ AI Copilot vào góc dưới bên phải!';
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+
+    /* Window Dragging Support */
+    function initWidgetDraggable() {
+      const win = document.getElementById('copilotWidgetWindow');
+      const titlebar = document.getElementById('widgetTitlebar');
+      if (!win || !titlebar) return;
+
+      let isDragging = false;
+      let startX, startY, initialLeft, initialTop;
+
+      titlebar.addEventListener('mousedown', (e) => {
+        // Do not drag if clicking inside buttons
+        if (e.target.closest('.win-btn') || e.target.closest('button')) return;
+        if (isWidgetMaximized) return; // Do not drag when maximized
+
+        isDragging = true;
+        win.classList.add('dragging');
+        startX = e.clientX;
+        startY = e.clientY;
+
+        const rect = win.getBoundingClientRect();
+        initialLeft = rect.left;
+        initialTop = rect.top;
+
+        // Switch positioning from bottom/right to top/left
+        win.style.bottom = 'auto';
+        win.style.right = 'auto';
+        win.style.left = `${initialLeft}px`;
+        win.style.top = `${initialTop}px`;
+
+        e.preventDefault();
+      });
+
+      titlebar.addEventListener('dblclick', (e) => {
+        if (e.target.closest('.win-btn')) return;
+        toggleMaximizeWidget();
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
+
+        // Viewport clamping
+        newLeft = Math.max(10, Math.min(window.innerWidth - win.offsetWidth - 10, newLeft));
+        newTop = Math.max(10, Math.min(window.innerHeight - 60, newTop));
+
+        win.style.left = `${newLeft}px`;
+        win.style.top = `${newTop}px`;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          win.classList.remove('dragging');
+        }
+      });
+    }
+
+    /* Free Corner Resizing Support via Top-Left Grip */
+    function initWidgetResizable() {
+      const win = document.getElementById('copilotWidgetWindow');
+      const grip = document.getElementById('widgetResizeGrip');
+      if (!win || !grip) return;
+
+      let isResizing = false;
+      let startX, startY, initialWidth, initialHeight, initialLeft, initialTop;
+
+      grip.addEventListener('mousedown', (e) => {
+        if (isWidgetMaximized) return;
+        isResizing = true;
+        win.classList.add('resizing');
+        startX = e.clientX;
+        startY = e.clientY;
+
+        const rect = win.getBoundingClientRect();
+        initialWidth = rect.width;
+        initialHeight = rect.height;
+        initialLeft = rect.left;
+        initialTop = rect.top;
+
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        
+        // Dragging top-left corner: moving left increases width, moving up increases height
+        const deltaX = startX - e.clientX;
+        const deltaY = startY - e.clientY;
+
+        let newWidth = initialWidth + deltaX;
+        let newHeight = initialHeight + deltaY;
+
+        // Boundaries
+        newWidth = Math.max(340, Math.min(window.innerWidth - 40, newWidth));
+        newHeight = Math.max(420, Math.min(window.innerHeight - 60, newHeight));
+
+        win.style.width = `${newWidth}px`;
+        win.style.height = `${newHeight}px`;
+
+        // If positioned via top/left, adjust top/left to keep bottom-right anchor stable
+        if (win.style.bottom === 'auto') {
+          win.style.left = `${initialLeft - (newWidth - initialWidth)}px`;
+          win.style.top = `${initialTop - (newHeight - initialHeight)}px`;
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isResizing) {
+          isResizing = false;
+          win.classList.remove('resizing');
+          const sizeLabel = document.getElementById('sizeLabel');
+          if (sizeLabel) sizeLabel.textContent = `${Math.round(win.offsetWidth)}p`;
+        }
+      });
+
+      // Escape key to minimize widget
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !win.classList.contains('state-hidden')) {
+          minimizeWidget();
+        }
+      });
+    }
+
+    function handleWidgetKey(e) {
+      if (e.key === 'Enter') sendWidgetPrompt();
+    }
+
     function askCopilot(promptText) {
-      document.getElementById('copilotChatInput').value = promptText;
-      sendChatPrompt();
+      openWidget();
+      document.getElementById('widgetChatInput').value = promptText;
+      sendWidgetPrompt();
     }
 
-    function handleChatKey(e) {
-      if (e.key === 'Enter') sendChatPrompt();
-    }
-
-    function sendChatPrompt() {
-      const input = document.getElementById('copilotChatInput');
+    function sendWidgetPrompt() {
+      const input = document.getElementById('widgetChatInput');
       const val = input.value.trim();
       if (!val) return;
 
-      const bubble = document.getElementById('copilotMsgBubble');
-      
+      const history = document.getElementById('widgetChatHistory');
+
+      // Append user bubble
+      const userBubble = document.createElement('div');
+      userBubble.className = 'chat-bubble user';
+      userBubble.innerHTML = val;
+      history.appendChild(userBubble);
+
+      // Determine response
+      let replyHtml = '';
       if (val.includes('ưu tiên cao')) {
-        bubble.innerHTML = `
-          <strong>Copilot:</strong> Slide 18 bị xếp ưu tiên <strong>#1 Critical</strong> vì có <strong>92 lượt hỏi</strong>, trong đó có 38 câu học viên phát biểu hiểu sai hoàn toàn bản chất (Turn ID <code>T00891</code>: <em>"ReAct chỉ là CoT viết dài ra"</em>). Slide này là mắt xích sống còn trước khi vào bài Lab 2!
+        replyHtml = `
+          Slide 18 bị xếp ưu tiên <strong>#1 Critical</strong> vì có <strong>92 lượt hỏi</strong>, trong đó có 38 câu học viên phát biểu hiểu sai hoàn toàn bản chất (Turn ID <code>T00891</code>: <em>"ReAct chỉ là CoT viết dài ra"</em>). Slide này là mắt xích sống còn trước khi vào bài Lab 2!
+          <div class="bubble-action-links">
+            <button class="bubble-action-btn" onclick="switchInspectorTab('evidence')">📑 Xem 4 Turn ID thật</button>
+            <button class="bubble-action-btn" onclick="switchInspectorTab('intervention')">⚡ Sang Soạn Can Thiệp</button>
+          </div>
         `;
       } else if (val.includes('nhầm lẫn') || val.includes('CoT và ReAct')) {
-        bubble.innerHTML = `
-          <strong>Copilot:</strong> Học viên nhầm lẫn lớn nhất ở chỗ: coi <em>Action</em> chỉ là một câu nói suy luận, không nhận ra <em>Action</em> là lời gọi hàm thực thi ra hệ thống bên ngoài và cần có <em>Observation</em> phản hồi.
+        replyHtml = `
+          Học viên nhầm lẫn lớn nhất ở chỗ: coi <em>Action</em> chỉ là một câu nói suy luận, không nhận ra <em>Action</em> là lời gọi hàm thực thi ra hệ thống bên ngoài và cần có <em>Observation</em> phản hồi từ môi trường.
+          <div class="bubble-action-links">
+            <button class="bubble-action-btn" onclick="switchInspectorTab('evidence')">📑 Xem dẫn chứng T00891</button>
+          </div>
         `;
-        switchInspectorTab('evidence');
       } else if (val.includes('ví dụ') || val.includes('soạn')) {
-        bubble.innerHTML = `
-          <strong>Copilot:</strong> Tôi đã soạn xong 1 ví dụ tương phản đời thường (Tra cứu thời tiết) ở Tab <strong>Soạn Can Thiệp</strong> bên dưới. Hãy xem và bấm <em>Phê duyệt</em> nếu thấy phù hợp!
+        replyHtml = `
+          Tôi đã soạn xong 1 ví dụ tương phản đời thường (Tra cứu thời tiết) tại Tab <strong>Soạn Can Thiệp</strong> ở bảng bên trái. Bạn có thể bấm kiểm tra ngay!
+          <div class="bubble-action-links">
+            <button class="bubble-action-btn" onclick="switchInspectorTab('intervention'); simulateDraft('example');">💡 Xem Ví Dụ Tương Phản</button>
+          </div>
         `;
         switchInspectorTab('intervention');
         simulateDraft('example');
       } else if (val.includes('trắc nghiệm') || val.includes('Quiz')) {
-        bubble.innerHTML = `
-          <strong>Copilot:</strong> Đã tạo 1 câu hỏi Concept Check trắc nghiệm 4 lựa chọn ở Tab <strong>Soạn Can Thiệp</strong>. Bạn có thể copy chiếu lên màn hình đầu giờ!
+        replyHtml = `
+          Đã tạo 1 câu hỏi Concept Check trắc nghiệm 4 lựa chọn có đáp án và lời giải thích. Hãy kiểm tra ở Tab <strong>Soạn Can Thiệp</strong>!
+          <div class="bubble-action-links">
+            <button class="bubble-action-btn" onclick="switchInspectorTab('intervention'); simulateDraft('quiz');">📝 Xem Câu Hỏi Quiz</button>
+          </div>
         `;
         switchInspectorTab('intervention');
         simulateDraft('quiz');
       } else if (val.includes('K3') || val.includes('K4')) {
-        bubble.innerHTML = `
-          <strong>Copilot:</strong> So sánh 2 khóa: Ở K3 có 54 câu hỏi tại Slide 18; sang K4 tăng vọt lên 38 câu chỉ trong tuần đầu. Điều này chứng minh đây là <strong>điểm nghẽn kinh niên</strong> chưa được giải quyết giữa các batch!
+        replyHtml = `
+          So sánh 2 khóa: Ở K3 có 54 câu hỏi tại Slide 18; sang K4 tăng vọt lên 38 câu chỉ trong tuần đầu. Điều này chứng minh đây là <strong>điểm nghẽn kinh niên</strong> chưa được giải quyết giữa các batch!
         `;
       } else {
-        bubble.innerHTML = `
-          <strong>Copilot:</strong> Dựa trên dữ liệu 92 câu hỏi tại Slide 18: Tôi đã ghi nhận yêu cầu <em>"${val}"</em>. Đã trích xuất thông tin liên quan từ dataset <code>tutor_turns.csv</code> và cập nhật vào khung bên dưới!
+        replyHtml = `
+          Dựa trên dữ liệu 92 câu hỏi tại Slide 18: Tôi đã ghi nhận yêu cầu <em>"${val}"</em>. Đã trích xuất thông tin liên quan từ dataset <code>tutor_turns.csv</code> và cập nhật các khuyến nghị vào bảng bên trái!
         `;
       }
 
+      // Append assistant bubble after tiny delay
+      setTimeout(() => {
+        const assistantBubble = document.createElement('div');
+        assistantBubble.className = 'chat-bubble assistant';
+        assistantBubble.innerHTML = `
+          <div class="bubble-meta">
+            <span>🤖 Copilot</span>
+            <span>·</span>
+            <span>Vừa xong</span>
+          </div>
+          ${replyHtml}
+        `;
+        history.appendChild(assistantBubble);
+        history.scrollTop = history.scrollHeight;
+      }, 300);
+
       input.value = '';
+      history.scrollTop = history.scrollHeight;
     }
 
     function setStep(step) {
@@ -1422,6 +2110,12 @@
     window.onload = () => {
       initHeatmap();
       selectSlide(18);
+      initWidgetDraggable();
+      initWidgetResizable();
+      // Automatically open the floating widget once so user discovers it
+      setTimeout(() => {
+        openWidget();
+      }, 600);
     };
   </script>
 </body>
