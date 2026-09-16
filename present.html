@@ -764,39 +764,6 @@
     /* FLOATING DETACHABLE COPILOT WIDGET (CORNER POPOVER)       */
     /* ========================================================= */
     
-    /* Launcher Bubble Button (Collapsed State) */
-    .copilot-floating-launcher {
-      position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
-      background: linear-gradient(135deg, #6366f1, #38bdf8);
-      color: white;
-      border: none;
-      padding: 0.7rem 1.25rem;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
-      z-index: 100;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .copilot-floating-launcher:hover {
-      transform: scale(1.05) translateY(-2px);
-      box-shadow: 0 12px 30px rgba(99, 102, 241, 0.6);
-    }
-
-    .launcher-pulse {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 10px #10b981;
-      animation: pulseAnim 2s infinite;
     /* Floating Widget Launcher Pill */
     .copilot-floating-launcher {
       position: fixed;
@@ -1385,15 +1352,15 @@
   <!-- FLOATING DETACHABLE COPILOT WIDGET                        -->
   <!-- ========================================================= -->
 
-  <!-- Launcher Pill Button (Shown when widget is minimized) -->
-  <button class="copilot-floating-launcher" id="widgetLauncher" onclick="openWidget()">
+  <!-- Launcher Pill Button (Shown only when widget is minimized) -->
+  <button class="copilot-floating-launcher" id="widgetLauncher" style="display: none;" onclick="openWidget()">
     <span class="launcher-pulse"></span>
     <span>💬 Copilot AI</span>
     <span style="font-size: 0.72rem; opacity: 0.85;" id="launcherContextTag">Slide 18</span>
   </button>
 
-  <!-- Resizable Floating Widget Window -->
-  <div class="copilot-widget-window state-hidden size-standard" id="copilotWidgetWindow">
+  <!-- Resizable Floating Widget Window (Visible by default) -->
+  <div class="copilot-widget-window size-standard" id="copilotWidgetWindow">
     
     <!-- Manual Corner Resize Grip Handle (Top-Left) -->
     <div class="widget-resize-grip" id="widgetResizeGrip" title="Kéo góc này để phóng to / thu nhỏ cửa sổ tuỳ ý">⤡</div>
@@ -2112,10 +2079,6 @@
       selectSlide(18);
       initWidgetDraggable();
       initWidgetResizable();
-      // Automatically open the floating widget once so user discovers it
-      setTimeout(() => {
-        openWidget();
-      }, 600);
     };
   </script>
 </body>
