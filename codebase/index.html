@@ -663,28 +663,44 @@ p { margin: 0; }
   gap: 12px;
   background: var(--paper);
   border: 1px solid var(--line);
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-radius: 10px;
   margin-bottom: 16px;
   flex-wrap: wrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
 }
 .filter-fields { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .filter { display: flex; align-items: center; gap: 6px; }
-.filter label { color: var(--muted); font-size: 11px; }
+.filter label { color: var(--muted); font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 9px;
+  font-weight: 700;
+  border: 1px solid #cbd5e1;
+}
 select {
   background: #ffffff;
   border: 1px solid var(--line);
-  color: #334155;
+  color: #1e293b;
   font-size: 12px;
   font-weight: 600;
-  padding: 5px 12px;
+  padding: 5px 10px;
   border-radius: 6px;
   cursor: pointer;
   outline: none;
+  transition: all 0.15s ease;
 }
-select:focus { border-color: var(--green); }
+select:hover { border-color: #94a3b8; }
+select:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15); }
 .divider { height: 20px; width: 1px; background: var(--line); }
-.sync { font-size: 10.5px; color: #64748b; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.sync { font-size: 10.5px; color: #64748b; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: color 0.15s ease; }
 .sync:hover { color: var(--green); }
 
 .coverage {
@@ -1722,48 +1738,54 @@ select:focus { border-color: var(--green); }
         </div>
       </div>
 
-      <!-- Cascading Filter Bar -->
+      <!-- Cascading Filter Bar (Phân cấp chuẩn: 1. Khóa học -> 2. Học phần -> 3. Bài giảng -> 4. Thời gian) -->
       <div class="filters">
         <div class="filter-fields">
+          <!-- 1. Khóa học (Cohort) -->
           <div class="filter">
-            <label for="course">Học phần</label>
-            <select id="course" onchange="changeCourse()">
-              <option value="COMP2010" selected>COMP2010 · AI Engineering (6.609 logs)</option>
-              <option value="BIOM3010">BIOM3010 · Biomedical AI (2.146 logs)</option>
-              <option value="COMP4010">COMP4010 · Cloud Systems (1.225 logs)</option>
-              <option value="K4P1">K4P1 · FinTech AI Batch 4 (2.146 logs)</option>
+            <label for="cohort"><span class="filter-badge">1</span> Khóa học</label>
+            <select id="cohort" onchange="onCohortChange()">
+              <option value="K4" selected>K4 · FinTech AI (3.097 lượt · 448 HV)</option>
+              <option value="K3">K3 · AI Engineering (10.397 lượt · 1.177 HV)</option>
+              <option value="ALL">K3 + K4 · Toàn hệ thống (13.494 lượt · 1.625 HV)</option>
             </select>
           </div>
           <span class="divider"></span>
+
+          <!-- 2. Học phần (Course) -->
           <div class="filter">
-            <label for="cohort">Khóa học</label>
-            <select id="cohort" onchange="changeFilters()">
-              <option value="K4" selected>K4 · AI Engineering (3.097 lượt · 448 HV)</option>
-              <option value="K3">K3 · AI Engineering (10.397 lượt · 1.169 HV)</option>
-              <option value="ALL">K3 + K4 · Toàn hệ thống (13.494 lượt · 1.617 HV)</option>
+            <label for="course"><span class="filter-badge">2</span> Học phần</label>
+            <select id="course" onchange="onCourseChange()">
+              <option value="ALL" selected>Tất cả học phần K4 (3.097 lượt · 12 bài)</option>
+              <option value="K4P1">K4P1 · FinTech AI Batch 4 (2.146 lượt)</option>
+              <option value="L2-L3-K4P1">L2-L3-K4P1 · Computer Vision Track (951 lượt)</option>
             </select>
           </div>
           <span class="divider"></span>
+
+          <!-- 3. Bài giảng (Lesson) -->
           <div class="filter">
-            <label for="lesson">Bài giảng</label>
-            <select id="lesson" onchange="changeFilters()">
-              <option value="D02" selected>D02 · AI Agents & Reasoning (24 Slides)</option>
-              <option value="D01">D01 · Nền tảng LLM & Prompt Design (20 Slides)</option>
-              <option value="D03">D03 · Multi-Agent Orchestration (18 Slides)</option>
+            <label for="lesson"><span class="filter-badge">3</span> Bài giảng</label>
+            <select id="lesson" onchange="onLessonChange()">
+              <option value="D02" selected>D02 · AI Agents & Reasoning (526 lượt · 24 Slides)</option>
+              <option value="D01">D01 · Nền tảng LLM & Prompt Design (496 lượt · 20 Slides)</option>
+              <option value="D03">D03 · Multi-Agent Orchestration (376 lượt · 18 Slides)</option>
             </select>
           </div>
           <span class="divider"></span>
+
+          <!-- 4. Thời gian (Period) -->
           <div class="filter">
-            <label for="period">Thời gian</label>
+            <label for="period"><span class="filter-badge">4</span> Thời gian</label>
             <select id="period" onchange="changeFilters()">
-              <option value="all">Toàn bộ khóa</option>
+              <option value="all" selected>Toàn bộ khóa</option>
               <option value="recent">7 ngày gần nhất</option>
             </select>
           </div>
         </div>
         <button class="link sync" id="syncBtn" onclick="rescan()">
           <svg class="icon" style="width:13px;height:13px"><use href="#i-refresh"/></svg>
-          <span id="syncText">Cập nhật 15/09 · 18:30 (Đồng bộ vlearn.db)</span>
+          <span id="syncText">Đồng bộ vlearn.db (13.494 lượt)</span>
         </button>
       </div>
 
@@ -1851,7 +1873,7 @@ try { saved = JSON.parse(localStorage.getItem('vlearn-pilot-v2') || '{}'); } cat
 
 let state = {
   view: 'heatmap',
-  course: 'COMP2010',
+  course: 'ALL',
   cohort: 'K4',
   lesson: 'D02',
   period: 'all',
@@ -1881,7 +1903,8 @@ let state = {
   busy: false,
   heatmapApiData: null,
   currentEvidence: [],
-  approvedTasksLoaded: false
+  approvedTasksLoaded: false,
+  filtersCatalog: null
 };
 
 let tourStep = 0;
@@ -2204,39 +2227,159 @@ function ranking() {
     .slice(0, 3);
 }
 
-function totals() {
-  if (state.heatmapApiData && state.heatmapApiData.total_questions) {
-    const q = state.heatmapApiData.total_questions;
-    const u = (state.heatmapApiData.slides || []).reduce((acc, cur) => acc + (cur.unique_students || 0), 0);
-    const un = 28;
-    return { q, u, un };
+/* ========================================================================== */
+/* CASCADING FILTER SYSTEM & DATA CATALOG                                      */
+/* ========================================================================== */
+
+const STATIC_CATALOG = {
+  cohorts: [
+    { id: 'K4', name: 'K4 · FinTech AI', turns: 3097, students: 448, label: 'K4 · FinTech AI (3.097 lượt · 448 HV)' },
+    { id: 'K3', name: 'K3 · AI Engineering', turns: 10397, students: 1177, label: 'K3 · AI Engineering (10.397 lượt · 1.177 HV)' },
+    { id: 'ALL', name: 'Toàn hệ thống (K3 + K4)', turns: 13494, students: 1625, label: 'K3 + K4 · Toàn hệ thống (13.494 lượt · 1.625 HV)' }
+  ],
+  courses: {
+    K4: [
+      { id: 'ALL', name: 'Tất cả học phần K4', turns: 3097, students: 448, label: 'Tất cả học phần K4 (3.097 lượt · 12 bài)' },
+      { id: 'K4P1', name: 'K4P1 · FinTech AI Batch 4', turns: 2146, students: 293, label: 'K4P1 · FinTech AI Batch 4 (2.146 lượt)' },
+      { id: 'L2-L3-K4P1', name: 'L2-L3-K4P1 · Computer Vision Track', turns: 951, students: 156, label: 'L2-L3-K4P1 · Computer Vision Track (951 lượt)' }
+    ],
+    K3: [
+      { id: 'ALL', name: 'Tất cả học phần K3', turns: 10397, students: 1177, label: 'Tất cả học phần K3 (10.397 lượt · 70 bài)' },
+      { id: 'COMP2010', name: 'COMP2010 · AI Engineering', turns: 6609, students: 950, label: 'COMP2010 · AI Engineering (6.609 lượt)' },
+      { id: 'BIOM3010', name: 'BIOM3010 · Biomedical AI', turns: 2146, students: 225, label: 'BIOM3010 · Biomedical AI (2.146 lượt)' },
+      { id: 'COMP4010', name: 'COMP4010 · Cloud Systems', turns: 1225, students: 171, label: 'COMP4010 · Cloud Systems (1.225 lượt)' },
+      { id: 'COMP3011', name: 'COMP3011 · Data Science', turns: 382, students: 93, label: 'COMP3011 · Data Science (382 lượt)' }
+    ],
+    ALL: [
+      { id: 'ALL', name: 'Tất cả học phần hệ thống', turns: 13494, students: 1625, label: 'Tất cả học phần hệ thống (13.494 lượt · 82 bài)' },
+      { id: 'COMP2010', name: 'COMP2010 · AI Engineering', turns: 6609, students: 950, label: 'COMP2010 · AI Engineering (6.609 lượt)' },
+      { id: 'K4P1', name: 'K4P1 · FinTech AI Batch 4', turns: 2146, students: 293, label: 'K4P1 · FinTech AI Batch 4 (2.146 lượt)' },
+      { id: 'BIOM3010', name: 'BIOM3010 · Biomedical AI', turns: 2146, students: 225, label: 'BIOM3010 · Biomedical AI (2.146 lượt)' },
+      { id: 'COMP4010', name: 'COMP4010 · Cloud Systems', turns: 1225, students: 171, label: 'COMP4010 · Cloud Systems (1.225 lượt)' },
+      { id: 'L2-L3-K4P1', name: 'L2-L3-K4P1 · Computer Vision Track', turns: 951, students: 156, label: 'L2-L3-K4P1 · Computer Vision Track (951 lượt)' },
+      { id: 'COMP3011', name: 'COMP3011 · Data Science', turns: 382, students: 93, label: 'COMP3011 · Data Science (382 lượt)' }
+    ]
+  },
+  lessons: {
+    'K4P1': [
+      { code: 'D01', title: 'Day 01 - AI & Prompting', turns: 643, label: 'D01 · Day 01 - AI & Prompting (643 lượt)' },
+      { code: 'D04', title: 'Day 03 - Agent Patterns', turns: 630, label: 'D04 · Day 03 - Agent Patterns (630 lượt)' },
+      { code: 'D08', title: 'Day 04 - LLM Evaluation', turns: 532, label: 'D08 · Day 04 - LLM Evaluation (532 lượt)' },
+      { code: 'D03', title: 'Day 02 - Reasoning & CoT', turns: 255, label: 'D03 · Day 02 - Reasoning & CoT (255 lượt)' },
+      { code: 'D09', title: 'Day 05 - Deployment', turns: 77, label: 'D09 · Day 05 - Deployment (77 lượt)' }
+    ],
+    'L2-L3-K4P1': [
+      { code: 'D02', title: 'Object Detection & Reasoning', turns: 391, label: 'D02 · Object Detection & Reasoning (391 lượt)' },
+      { code: 'D01', title: 'Data Preparation Pipeline', turns: 402, label: 'D01 · Data Preparation Pipeline (402 lượt)' },
+      { code: 'D03', title: 'MultiFrame Tracking', turns: 135, label: 'D03 · MultiFrame Tracking (135 lượt)' },
+      { code: 'D04', title: 'Keypoint & Pose Data', turns: 23, label: 'D04 · Keypoint & Pose Data (23 lượt)' }
+    ],
+    'COMP2010': [
+      { code: 'D02', title: 'AI Agents & Reasoning', turns: 526, label: 'D02 · AI Agents & Reasoning (526 lượt · 24 Slides)' },
+      { code: 'D01', title: 'Nền tảng LLM & Prompt Design', turns: 496, label: 'D01 · Nền tảng LLM & Prompt Design (496 lượt · 20 Slides)' },
+      { code: 'D03', title: 'Multi-Agent Orchestration', turns: 376, label: 'D03 · Multi-Agent Orchestration (376 lượt · 18 Slides)' },
+      { code: 'D05', title: 'Day 05 - Context & Memory', turns: 1060, label: 'D05 · Day 05 - Context & Memory (1.060 lượt)' },
+      { code: 'D04', title: 'Day 04 - Tool Use & JSON', turns: 262, label: 'D04 · Day 04 - Tool Use & JSON (262 lượt)' },
+      { code: 'D06', title: 'Day 06 - LangChain & Evaluation', turns: 390, label: 'D06 · Day 06 - LangChain & Evaluation (390 lượt)' }
+    ],
+    'BIOM3010': [
+      { code: 'D02', title: 'Data Pipeline Engineering', turns: 629, label: 'D02 · Data Pipeline Engineering (629 lượt)' },
+      { code: 'D01', title: 'Cloud Infrastructure', turns: 297, label: 'D01 · Cloud Infrastructure (297 lượt)' },
+      { code: 'D03', title: 'Data Lakehouse Architecture', turns: 324, label: 'D03 · Data Lakehouse Architecture (324 lượt)' }
+    ],
+    'COMP4010': [
+      { code: 'D02', title: 'Cloud Automation & Kubernetes', turns: 228, label: 'D02 · Cloud Automation (228 lượt)' },
+      { code: 'D04', title: 'Serverless AI & Microservices', turns: 227, label: 'D04 · Serverless AI (227 lượt)' },
+      { code: 'D03', title: 'Distributed Systems & Scaling', turns: 203, label: 'D03 · Distributed Systems (203 lượt)' }
+    ],
+    'ALL': [
+      { code: 'D02', title: 'AI Agents & Reasoning (Trọng điểm)', turns: 922, label: 'D02 · AI Agents & Reasoning (526 lượt · 24 Slides)' },
+      { code: 'D01', title: 'Nền tảng LLM & Prompt Design', turns: 793, label: 'D01 · Nền tảng LLM & Prompt Design (496 lượt · 20 Slides)' },
+      { code: 'D03', title: 'Multi-Agent Orchestration', turns: 700, label: 'D03 · Multi-Agent Orchestration (376 lượt · 18 Slides)' },
+      { code: 'D05', title: 'Advanced Prompting & Context', turns: 1060, label: 'D05 · Advanced Prompting & Context (1.060 lượt)' }
+    ]
   }
-  let k;
+};
+
+function totals() {
+  let scopeTurns = 3097;
+  let scopeStudents = 448;
+  let un = 28;
+
   if (state.cohort === 'K4') {
-    k = { q: 3097, u: 448, un: 28 };
+    if (state.course === 'K4P1') {
+      scopeTurns = 2146; scopeStudents = 293;
+    } else if (state.course === 'L2-L3-K4P1') {
+      scopeTurns = 951; scopeStudents = 156;
+    } else {
+      scopeTurns = 3097; scopeStudents = 448;
+    }
+    un = 0;
   } else if (state.cohort === 'K3') {
-    k = { q: 10397, u: 1169, un: 68 };
+    if (state.course === 'COMP2010') {
+      scopeTurns = 6609; scopeStudents = 950;
+    } else if (state.course === 'BIOM3010') {
+      scopeTurns = 2146; scopeStudents = 225;
+    } else if (state.course === 'COMP4010') {
+      scopeTurns = 1225; scopeStudents = 171;
+    } else if (state.course === 'COMP3011') {
+      scopeTurns = 382; scopeStudents = 93;
+    } else {
+      scopeTurns = 10397; scopeStudents = 1177;
+    }
+    un = 28;
   } else {
-    k = { q: 13494, u: 1617, un: 96 };
+    // ALL
+    if (state.course === 'COMP2010') {
+      scopeTurns = 6609; scopeStudents = 950;
+    } else if (state.course === 'K4P1') {
+      scopeTurns = 2146; scopeStudents = 293;
+    } else if (state.course === 'BIOM3010') {
+      scopeTurns = 2146; scopeStudents = 225;
+    } else if (state.course === 'COMP4010') {
+      scopeTurns = 1225; scopeStudents = 171;
+    } else if (state.course === 'L2-L3-K4P1') {
+      scopeTurns = 951; scopeStudents = 156;
+    } else {
+      scopeTurns = 13494; scopeStudents = 1625;
+    }
+    un = 96;
+  }
+
+  let lessonTurns = 0;
+  if (state.heatmapApiData && state.heatmapApiData.total_questions) {
+    lessonTurns = state.heatmapApiData.total_questions;
+  } else {
+    if (state.lesson === 'D02') lessonTurns = (state.course === 'L2-L3-K4P1') ? 391 : 526;
+    else if (state.lesson === 'D01') lessonTurns = (state.course === 'K4P1') ? 643 : 496;
+    else if (state.lesson === 'D03') lessonTurns = (state.course === 'K4P1') ? 255 : 376;
+    else lessonTurns = Math.round(scopeTurns / 8);
   }
 
   if (state.period === 'recent') {
-    k = {
-      q: Math.round(k.q * 0.62),
-      u: Math.round(k.u * 0.72),
-      un: Math.ceil(k.un * 0.6)
-    };
+    scopeTurns = Math.round(scopeTurns * 0.62);
+    scopeStudents = Math.round(scopeStudents * 0.72);
+    lessonTurns = Math.round(lessonTurns * 0.62);
   }
-  return k;
+
+  return {
+    q: scopeTurns,
+    u: scopeStudents,
+    un: un,
+    lessonTurns: lessonTurns
+  };
 }
 
 /* ========================================================================== */
 /* SERVICE LAYER CLIENT INTEGRATION (API CALLS)                               */
 /* ========================================================================== */
-async function loadHeatmapData(lesson = state.lesson, cohort = state.cohort) {
+async function loadHeatmapData(lesson = state.lesson, cohort = state.cohort, course = state.course) {
   try {
     const cohortParam = cohort === 'ALL' ? 'all' : cohort;
-    const resp = await fetch(`/api/heatmap?lesson=${encodeURIComponent(lesson)}&cohort=${encodeURIComponent(cohortParam)}`);
+    const courseParam = (course && course !== 'ALL') ? course : '';
+    let url = `/api/heatmap?lesson=${encodeURIComponent(lesson)}&cohort=${encodeURIComponent(cohortParam)}`;
+    if (courseParam) url += `&course=${encodeURIComponent(courseParam)}`;
+    const resp = await fetch(url);
     if (!resp.ok) return;
     const data = await resp.json();
     if (data && data.status === 'SUCCESS') {
@@ -2352,13 +2495,13 @@ function renderStats() {
 
   $('#coverage').innerHTML = `
     ${ic('info')}
-    <span>Phạm vi khóa: <b>${fmt(t.q)} lượt hỏi-đáp</b> · ${fmt(t.u)} học viên · Đang xem: ${state.course} / ${state.lesson} v1.2</span>
+    <span>Phạm vi: <b>${fmt(t.q)} lượt hỏi–đáp</b> · ${fmt(t.u)} học viên · Đang phân tích: <b>${state.cohort} / ${state.course} / ${state.lesson}</b> (Bài ${state.lesson}: <b>${fmt(t.lessonTurns)}</b> lượt)</span>
     <span style="color:#cbd5e1">|</span>
-    <button class="link" onclick="openUnmapped()">${t.un} câu chưa xác định trang slide ${ic('chevron')}</button>
+    <button class="link" onclick="openUnmapped()">${t.un > 0 ? `${t.un} câu chưa gán slide` : '100% câu hỏi đã chuẩn hóa đối sánh'} ${ic('chevron')}</button>
   `;
 
   $('#stats').innerHTML = [
-    ['Lượt hỏi–đáp', fmt(t.q), 'message', 'Dữ liệu thực tế từ vlearn.db'],
+    ['Lượt hỏi–đáp phạm vi chọn', fmt(t.q), 'message', `Bài ${state.lesson} chiếm ${fmt(t.lessonTurns)} lượt (từ vlearn.db)`],
     ['Học viên có tương tác', fmt(t.u), 'users', 'Học viên độc lập đã gửi câu hỏi'],
     ['Slide ưu tiên rà soát', high.toString().padStart(2, '0'), 'flame', `${(generalNames[state.lesson]||[]).length} trang trong bài ${state.lesson}`],
     ['Điểm nghẽn xuyên khóa', state.lesson === 'D02' ? '03' : '02', 'chart', 'Lặp lại giữa K3 và K4']
@@ -2371,29 +2514,119 @@ function renderStats() {
   `).join('');
 }
 
-function changeCourse() {
+function renderCourseOptions() {
+  const courseSelect = $('#course');
+  if (!courseSelect) return;
+  const catalog = state.filtersCatalog || STATIC_CATALOG;
+  const courseList = (catalog.courses && catalog.courses[state.cohort]) ? catalog.courses[state.cohort] : catalog.courses.ALL;
+  
+  const currentVal = state.course;
+  courseSelect.innerHTML = courseList.map(c => 
+    `<option value="${c.id}" ${c.id === currentVal ? 'selected' : ''}>${c.label || c.name}</option>`
+  ).join('');
+
+  if (!courseList.some(c => c.id === currentVal)) {
+    courseSelect.selectedIndex = 0;
+  }
+  state.course = courseSelect.value;
+  updateCourseTitle();
+}
+
+function renderLessonOptions() {
+  const lessonSelect = $('#lesson');
+  if (!lessonSelect) return;
+  const catalog = state.filtersCatalog || STATIC_CATALOG;
+  
+  let lessonList = (catalog.lessons && catalog.lessons[state.course]) ? catalog.lessons[state.course] : null;
+  if (!lessonList || lessonList.length === 0) {
+    lessonList = (catalog.lessons && catalog.lessons.ALL) ? catalog.lessons.ALL : STATIC_CATALOG.lessons.ALL;
+  }
+
+  const currentVal = state.lesson;
+  lessonSelect.innerHTML = lessonList.map(l =>
+    `<option value="${l.code}" ${l.code === currentVal ? 'selected' : ''}>${l.label || `${l.code} · ${l.title}`}</option>`
+  ).join('');
+
+  if (!lessonList.some(l => l.code === currentVal)) {
+    const hasD02 = lessonList.some(l => l.code === 'D02');
+    lessonSelect.value = hasD02 ? 'D02' : (lessonList[0] ? lessonList[0].code : 'D02');
+  }
+  state.lesson = lessonSelect.value;
+}
+
+function updateCourseTitle() {
+  const nameBox = $('#wsCourseName');
+  if (!nameBox) return;
+  if (state.course === 'COMP2010') nameBox.textContent = 'AI Engineering · K3';
+  else if (state.course === 'BIOM3010') nameBox.textContent = 'Biomedical AI · K3';
+  else if (state.course === 'COMP4010') nameBox.textContent = 'Cloud Systems · K3';
+  else if (state.course === 'K4P1') nameBox.textContent = 'FinTech AI Batch 4 · K4';
+  else if (state.course === 'L2-L3-K4P1') nameBox.textContent = 'Computer Vision Track · K4';
+  else nameBox.textContent = state.cohort === 'K4' ? 'FinTech AI · K4' : (state.cohort === 'K3' ? 'AI Engineering · K3' : 'Toàn hệ thống K3+K4');
+}
+
+function onCohortChange() {
+  state.cohort = $('#cohort').value;
+  activity(`Lọc khóa học: ${state.cohort}`);
+  renderCourseOptions();
+  onCourseChange();
+}
+
+function onCourseChange() {
   state.course = $('#course').value;
-  $('#wsCourseName').textContent = state.course === 'COMP2010' ? 'AI Engineering' :
-    state.course === 'BIOM3010' ? 'Biomedical AI' :
-    state.course === 'COMP4010' ? 'Cloud Systems' : 'FinTech AI Batch 4';
-  activity(`Chuyển học phần: ${state.course}`);
-  renderStats();
-  renderMain();
-  toast(`Đã chuyển sang học phần ${state.course}.`);
+  updateCourseTitle();
+  activity(`Lọc học phần: ${state.course}`);
+  renderLessonOptions();
+  onLessonChange();
+}
+
+function onLessonChange() {
+  state.lesson = $('#lesson').value;
+  state.slide = state.lesson === 'D02' ? 18 : (state.lesson === 'D01' ? 5 : 1);
+  activity(`Lọc bài giảng: ${state.lesson}`);
+  changeFilters();
+}
+
+function changeCourse() {
+  onCourseChange();
 }
 
 function changeFilters() {
-  state.cohort = $('#cohort').value;
-  state.lesson = $('#lesson').value;
-  state.period = $('#period').value;
-  state.slide = state.lesson === 'D02' ? 18 : state.lesson === 'D01' ? 5 : 10;
+  if ($('#cohort')) state.cohort = $('#cohort').value;
+  if ($('#course')) state.course = $('#course').value;
+  if ($('#lesson')) state.lesson = $('#lesson').value;
+  if ($('#period')) state.period = $('#period').value;
   state.tab = 'insight';
-  loadHeatmapData(state.lesson, state.cohort);
+  
+  loadHeatmapData(state.lesson, state.cohort, state.course);
   loadSlideEvidence(state.lesson, state.slide);
   resetChat(false);
   renderStats();
   renderMain();
-  toast('Đã cập nhật phạm vi lọc & đồng bộ dữ liệu vlearn.db.');
+  toast(`Đã đồng bộ bộ lọc: ${state.cohort} ➔ ${state.course} ➔ ${state.lesson}`);
+}
+
+async function initCascadingFilters() {
+  try {
+    const res = await fetch('/api/filters');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.status === 'SUCCESS') {
+        state.filtersCatalog = data;
+      }
+    }
+  } catch (err) {
+    console.warn('[VLearn] Dynamic filters catalog load failed, using STATIC_CATALOG');
+  }
+
+  if ($('#cohort')) $('#cohort').value = state.cohort;
+  renderCourseOptions();
+  if ($('#course')) $('#course').value = state.course;
+  renderLessonOptions();
+  if ($('#lesson')) $('#lesson').value = state.lesson;
+  if ($('#period')) $('#period').value = state.period;
+  
+  renderStats();
 }
 
 function renderMain() {
@@ -4268,6 +4501,7 @@ function returnToIntro() {
 window.onload = () => {
   initStarsCanvas();
   animate3DOrbit();
+  initCascadingFilters();
   renderMain();
   resetChat(false);
   loadHeatmapData();

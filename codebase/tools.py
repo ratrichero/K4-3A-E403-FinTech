@@ -216,13 +216,31 @@ def execute_get_slide_heatmap(
         if cohort and cohort.lower() != "all":
             query += " AND cohort_hint = ?"
             params.append(cohort.upper())
-        if course_id:
+        if course_id and course_id.lower() != "all":
             query += " AND course_id = ?"
             params.append(course_id)
 
         query += " GROUP BY slide_page ORDER BY slide_page ASC"
         cur.execute(query, params)
         rows = cur.fetchall()
+
+        is_benchmark_fallback = False
+        if not rows:
+            # Nếu khóa học hoặc học phần hiện tại chưa gán tag slide trực tiếp (ví dụ K4 hỏi đáp tự do),
+            # tự động đối sánh với phân bổ slide chuẩn (baseline từ K3 / toàn hệ thống)
+            cur.execute("""
+                SELECT 
+                    slide_page,
+                    COUNT(turn_id) as question_count,
+                    COUNT(DISTINCT student_id) as unique_students,
+                    SUM(CASE WHEN intent = 'explicit_misconception' THEN 1 ELSE 0 END) as misconception_count
+                FROM tutor_turns
+                WHERE lecture_code = ? AND slide_page IS NOT NULL AND slide_page > 0
+                GROUP BY slide_page ORDER BY slide_page ASC
+            """, (lecture_code,))
+            rows = cur.fetchall()
+            if rows:
+                is_benchmark_fallback = True
 
         if not rows:
             return json.dumps({
@@ -493,6 +511,112 @@ def execute_approve_intervention(
         return json.dumps({"status": "ERROR", "message": str(e)}, ensure_ascii=False)
 
 
+def execute_get_filters_catalog() -> str:
+    """Trả về danh mục phân cấp lọc chuẩn xác từ SQLite (Khóa học -> Học phần -> Bài giảng)."""
+    try:
+        conn = get_db_connection()
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+
+        cohorts = [
+            {"id": "K4", "name": "K4 · FinTech AI", "turns": 3097, "students": 448, "label": "K4 · FinTech AI (3.097 lượt · 448 HV)"},
+            {"id": "K3", "name": "K3 · AI Engineering", "turns": 10397, "students": 1177, "label": "K3 · AI Engineering (10.397 lượt · 1.177 HV)"},
+            {"id": "ALL", "name": "Toàn hệ thống (K3 + K4)", "turns": 13494, "students": 1625, "label": "K3 + K4 · Toàn hệ thống (13.494 lượt · 1.625 HV)"}
+        ]
+
+        COURSE_NAMES = {
+            "COMP2010": "COMP2010 · AI Engineering",
+            "BIOM3010": "BIOM3010 · Biomedical AI",
+            "COMP4010": "COMP4010 · Cloud Systems",
+            "COMP3011": "COMP3011 · Data Science",
+            "K4P1": "K4P1 · FinTech AI Batch 4",
+            "L2-L3-K4P1": "L2-L3-K4P1 · Computer Vision Track"
+        }
+
+        courses_by_cohort = {}
+        for c in ["K4", "K3", "ALL"]:
+            if c == "ALL":
+                cur.execute("""
+                    SELECT course_id, SUM(total_turns) as turns, COUNT(DISTINCT lecture_code) as lec_cnt, SUM(unique_students) as students
+                    FROM course_lectures
+                    WHERE total_turns > 0 AND course_id NOT IN ('Unknown', 'VinUni-AIInAction-3', 'biom3010', 'comp3011')
+                    GROUP BY course_id
+                    ORDER BY turns DESC
+                """)
+            else:
+                cur.execute("""
+                    SELECT course_id, SUM(total_turns) as turns, COUNT(DISTINCT lecture_code) as lec_cnt, SUM(unique_students) as students
+                    FROM course_lectures
+                    WHERE cohort_hint = ? AND total_turns > 0 AND course_id NOT IN ('Unknown', 'VinUni-AIInAction-3', 'biom3010', 'comp3011')
+                    GROUP BY course_id
+                    ORDER BY turns DESC
+                """, (c,))
+            
+            c_rows = cur.fetchall()
+            tot_turns = sum(r["turns"] for r in c_rows)
+            tot_lecs = sum(r["lec_cnt"] for r in c_rows)
+            
+            c_list = [{
+                "id": "ALL",
+                "name": f"Tất cả học phần {c}",
+                "turns": tot_turns,
+                "label": f"Tất cả học phần {c} ({tot_turns:,} lượt · {tot_lecs} bài)"
+            }]
+            for r in c_rows:
+                cid = r["course_id"]
+                cname = COURSE_NAMES.get(cid, cid)
+                c_list.append({
+                    "id": cid,
+                    "name": cname,
+                    "turns": r["turns"],
+                    "lectures_count": r["lec_cnt"],
+                    "label": f"{cname} ({r['turns']:,} lượt)"
+                })
+            courses_by_cohort[c] = c_list
+
+        cur.execute("""
+            SELECT cohort_hint, course_id, lecture_code, lecture_title, total_turns, unique_students, explicit_slide_turns
+            FROM course_lectures
+            WHERE total_turns > 0
+            ORDER BY total_turns DESC
+        """)
+        lec_rows = cur.fetchall()
+
+        lessons_catalog = {}
+        for r in lec_rows:
+            key = f"{r['cohort_hint']}:{r['course_id']}"
+            if key not in lessons_catalog:
+                lessons_catalog[key] = []
+            
+            title = r["lecture_title"] or f"Bài giảng {r['lecture_code']}"
+            if r["lecture_code"] == "D02" and "COMP" in r["course_id"]:
+                title = "AI Agents & Reasoning"
+            elif r["lecture_code"] == "D01" and "COMP" in r["course_id"]:
+                title = "Nền tảng LLM & Prompt Design"
+            elif r["lecture_code"] == "D03" and "COMP" in r["course_id"]:
+                title = "Multi-Agent Orchestration"
+
+            lessons_catalog[key].append({
+                "code": r["lecture_code"],
+                "title": title,
+                "turns": r["total_turns"],
+                "students": r["unique_students"],
+                "has_slides": (r["explicit_slide_turns"] or 0) > 0,
+                "label": f"{r['lecture_code']} · {title} ({r['total_turns']} lượt)"
+            })
+
+        conn.close()
+        return json.dumps({
+            "status": "SUCCESS",
+            "cohorts": cohorts,
+            "courses": courses_by_cohort,
+            "lessons": lessons_catalog
+        }, ensure_ascii=False)
+
+    except Exception as e:
+        return json.dumps({"status": "ERROR", "message": str(e)}, ensure_ascii=False)
+
+
 # ==============================================================================
 # 3. ROUTER & DISPATCHER TRUNG CHUYỂN TOOL
 # ==============================================================================
@@ -502,7 +626,8 @@ TOOL_ROUTER = {
     "get_slide_evidence": execute_get_slide_evidence,
     "get_slide_content": execute_get_slide_content,
     "draft_pedagogical_intervention": execute_draft_pedagogical_intervention,
-    "approve_intervention": execute_approve_intervention
+    "approve_intervention": execute_approve_intervention,
+    "get_filters_catalog": execute_get_filters_catalog
 }
 
 def dispatch_tool_call(tool_name: str, arguments: Dict[str, Any]) -> str:

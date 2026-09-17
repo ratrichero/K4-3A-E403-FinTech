@@ -50,6 +50,7 @@ from tools import (
     execute_get_slide_content,
     execute_draft_pedagogical_intervention,
     execute_approve_intervention,
+    execute_get_filters_catalog,
     get_db_connection
 )
 from agent import execute_copilot_workflow
@@ -130,9 +131,13 @@ class VLearnHandler(SimpleHTTPRequestHandler):
                 return
             except Exception as ex:
                 self._send_json(500, {"status": "ERROR", "message": str(ex)})
-                return
+        # 4. API: Lấy Danh mục Bộ lọc Phân cấp Chuẩn xác từ SQLite
+        elif clean_path == "/api/filters":
+            result_str = execute_get_filters_catalog()
+            self._send_json(200, json.loads(result_str))
+            return
 
-        # 4. Phục vụ file tĩnh thông thường (index.html, CSS, JS)
+        # 5. Phục vụ file tĩnh thông thường (index.html, CSS, JS)
         super().do_GET()
 
     def do_POST(self):
