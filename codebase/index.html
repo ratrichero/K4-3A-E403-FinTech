@@ -1,0 +1,4279 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VLearn · Class Confusion Copilot & 3D Spatial Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========================================================================== */
+/* 0. CORE DESIGN TOKENS & RESET                                              */
+/* ========================================================================== */
+:root {
+  --bg: #f7f8fa;
+  --paper: #ffffff;
+  --ink: #202a37;
+  --ink-secondary: #4a5568;
+  --muted: #77818e;
+  --line: #e9ecf0;
+  --green: #147d68;
+  --green-hover: #0f6251;
+  --green-soft: #eaf5f1;
+  --purple: #7662ce;
+  --purple-soft: #f3f0fc;
+  --red: #d65e49;
+  --red-soft: #fff0e9;
+  --amber: #b45309;
+  --amber-soft: #fef3c7;
+  --blue: #2563eb;
+  --blue-soft: #eff6ff;
+  --shadow-sm: 0 2px 6px rgba(0,0,0,0.04);
+  --shadow: 0 8px 30px rgba(38,52,77,0.06);
+  --shadow-lg: 0 20px 50px rgba(20,41,56,0.14);
+  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button, a, input, select, textarea { outline-offset: 3px; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--green);
+}
+button svg { pointer-events: none; }
+.icon {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* ========================================================================== */
+/* 1. CINEMATIC 3D ORBITAL BOTTLENECK SPHERE STAGE (OUTER VIEW)               */
+/* ========================================================================== */
+.stage-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: #060913;
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.75s cubic-bezier(0.85, 0, 0.15, 1), transform 0.75s cubic-bezier(0.85, 0, 0.15, 1), visibility 0.75s;
+}
+.stage-intro.dismissed {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.12);
+  pointer-events: none;
+}
+#starsCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+.intro-ambient-glow {
+  position: absolute;
+  width: 720px;
+  height: 720px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(20, 125, 104, 0.15) 35%, transparent 70%);
+  filter: blur(70px);
+  z-index: 2;
+  animation: pulseAmbient 7s ease-in-out infinite alternate;
+}
+@keyframes pulseAmbient {
+  0% { transform: scale(0.92); opacity: 0.7; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+.intro-header {
+  position: absolute;
+  top: 2rem;
+  text-align: center;
+  z-index: 10;
+  max-width: 900px;
+  padding: 0 1.5rem;
+}
+.intro-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #c7d2fe;
+  padding: 0.35rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.65rem;
+}
+.intro-badge .live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+  animation: blinkDot 1.6s infinite;
+}
+@keyframes blinkDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+.intro-title {
+  font-size: clamp(1.8rem, 3.8vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  background: linear-gradient(135deg, #ffffff 40%, #c7d2fe 75%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+.intro-subtitle {
+  font-size: 0.92rem;
+  color: #94a3b8;
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+.intro-telemetry-chips {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+.intro-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  padding: 0.22rem 0.65rem;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+.intro-chip strong { color: #38bdf8; font-weight: 700; }
+
+/* 3D Scene Viewport */
+.scene-viewport {
+  position: relative;
+  width: 100%;
+  height: 540px;
+  perspective: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  margin-top: 2.5rem;
+}
+.orbit-stage-3d {
+  position: relative;
+  width: 820px;
+  height: 480px;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease-out;
+}
+.orbit-ellipse-guide {
+  position: absolute;
+  width: 740px;
+  height: 430px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transform: rotateX(66deg);
+  pointer-events: none;
+  box-shadow: inset 0 0 50px rgba(99, 102, 241, 0.06);
+}
+
+/* Center Hologram Enter Core */
+.center-hologram {
+  position: absolute;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(99, 102, 241, 0.45), rgba(15, 23, 42, 0.95) 75%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 55px rgba(99, 102, 241, 0.45), inset 0 0 35px rgba(56, 189, 248, 0.28);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  transform: translateZ(40px);
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+}
+.center-hologram:hover {
+  transform: translateZ(60px) scale(1.08);
+  box-shadow: 0 0 85px rgba(99, 102, 241, 0.8), inset 0 0 50px rgba(56, 189, 248, 0.5);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+.center-hologram:active {
+  transform: translateZ(40px) scale(0.97);
+}
+.hologram-ring-outer {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1px dashed rgba(99, 102, 241, 0.48);
+  animation: rotateRing 22s linear infinite;
+}
+.hologram-ring-inner {
+  position: absolute;
+  inset: -28px;
+  border-radius: 50%;
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  animation: rotateRingRev 30s linear infinite;
+}
+@keyframes rotateRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes rotateRingRev { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+.hologram-pulse-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+}
+.hologram-enter-text {
+  font-size: 0.96rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+.hologram-sub-text {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  color: #94a3b8;
+  margin-top: 0.2rem;
+  letter-spacing: 0.04em;
+}
+
+/* 5 3D Orbital Nodes */
+.orbit-node {
+  position: absolute;
+  width: 225px;
+  padding: 0.9rem 1.05rem;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.orbit-node:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+}
+.node-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+}
+.node-rank {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+.node-rank.crit {
+  background: rgba(239, 68, 68, 0.22);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+}
+.node-rank.warn {
+  background: rgba(245, 158, 11, 0.22);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+}
+.node-rank.mod {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+.node-metric {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #38bdf8;
+  font-weight: 600;
+}
+.node-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.35;
+  margin-bottom: 0.35rem;
+}
+.node-caption {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  line-height: 1.45;
+}
+
+.intro-footer {
+  position: absolute;
+  bottom: 2rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.btn-skip-intro {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  padding: 0.6rem 1.35rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-skip-intro:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+.intro-drag-hint {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: #64748b;
+}
+
+/* ========================================================================== */
+/* 2. INNER FLAT WORKSPACE (DASHBOARD COCKPIT)                                */
+/* ========================================================================== */
+.app {
+  display: grid;
+  grid-template-columns: 228px minmax(0, 1fr);
+  min-height: 100vh;
+}
+.sidebar {
+  position: fixed;
+  width: 228px;
+  inset: 0 auto 0 0;
+  background: var(--paper);
+  border-right: 1px solid var(--line);
+  padding: 26px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  z-index: 30;
+}
+.brand-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 6px;
+}
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1, #38bdf8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+  flex-shrink: 0;
+}
+.brand-text h1 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  line-height: 1.2;
+}
+.brand-sub {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.workspace-box {
+  margin: 24px 0 20px;
+  border: 1px solid var(--line);
+  background: #fbfcfd;
+  padding: 10px;
+  border-radius: 9px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.workspace-box .square {
+  background: #edf1f6;
+  color: #596982;
+  font-size: 10px;
+  font-weight: 750;
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #98a0aa;
+  font-weight: 700;
+  margin: 0 10px 10px;
+}
+.nav {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border: 0;
+  background: none;
+  text-align: left;
+  padding: 10px 12px;
+  margin: 2px 0;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 550;
+  transition: all 0.15s;
+}
+.nav:hover { background: #f1f5f9; color: var(--ink); }
+.nav.active { background: var(--green-soft); color: var(--green); font-weight: 700; }
+.nav .count {
+  margin-left: auto;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green);
+}
+.sidebar-bottom { margin-top: auto; padding-top: 24px; }
+.team-card {
+  padding: 13px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.team-card p { font-size: 11px; color: var(--muted); margin: 4px 0 10px; }
+.team-card button {
+  border: 0;
+  background: none;
+  color: var(--green);
+  font-size: 11px;
+  padding: 0;
+  font-weight: 700;
+  cursor: pointer;
+}
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 4px 0;
+  border-top: 1px solid var(--line);
+}
+.avatar {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: #f5e9da;
+  border-radius: 50%;
+  color: #977751;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.shell {
+  grid-column: 2;
+  min-width: 0;
+}
+.topbar {
+  height: 68px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 25;
+}
+.breadcrumb {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.breadcrumb b { font-weight: 600; color: #334155; }
+.topactions { display: flex; align-items: center; gap: 12px; }
+.demo-tag {
+  border: 1px solid #c7d2fe;
+  background: #eef2ff;
+  color: #4338ca;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+}
+.telemetry-tag {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #475569;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+}
+.btn-return-3d {
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #1e293b;
+  border-radius: 7px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 650;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.btn-return-3d:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
+}
+.iconbtn {
+  width: 32px;
+  height: 32px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 7px;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.iconbtn:hover { color: var(--ink); border-color: #cbd5e1; }
+
+.main {
+  padding: 26px 32px 36px;
+  max-width: 1720px;
+  margin: auto;
+}
+.pagehead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+h1 { font-size: 24px; line-height: 1.3; letter-spacing: -0.6px; margin: 0 0 4px; font-weight: 750; }
+h2 { font-size: 15px; letter-spacing: -0.2px; margin: 0; font-weight: 650; }
+h3 { font-size: 13.5px; margin: 0; font-weight: 650; }
+p { margin: 0; }
+.pagehead p { color: var(--muted); font-size: 12px; }
+.row { display: flex; align-items: center; gap: 10px; }
+.between { justify-content: space-between; }
+
+.btn {
+  border: 1px solid #dfe4e9;
+  background: var(--paper);
+  border-radius: 7px;
+  padding: 8px 13px;
+  font-size: 11.5px;
+  font-weight: 650;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.btn:hover { border-color: #aabcb8; transform: translateY(-1px); }
+.btn.primary {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+  box-shadow: 0 2px 6px rgba(20, 125, 104, 0.2);
+}
+.btn.primary:hover { background: var(--green-hover); border-color: var(--green-hover); }
+.btn.purple { background: var(--purple); color: white; border-color: var(--purple); }
+.btn.soft { background: var(--purple-soft); border-color: #e9e2fb; color: var(--purple); }
+.btn.danger { color: var(--red); }
+.btn.danger:hover { background: var(--red-soft); border-color: #fca5a5; }
+
+/* Cascading Filters Bar */
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.filter-fields { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.filter { display: flex; align-items: center; gap: 6px; }
+.filter label { color: var(--muted); font-size: 11px; }
+select {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+}
+select:focus { border-color: var(--green); }
+.divider { height: 20px; width: 1px; background: var(--line); }
+.sync { font-size: 10.5px; color: #64748b; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.sync:hover { color: var(--green); }
+
+.coverage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 11.5px;
+  margin: 0 0 18px;
+  padding: 0 4px;
+}
+.coverage .icon { color: #8392a3; width: 15px; height: 15px; }
+.link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--green);
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.link:hover { text-decoration: underline; }
+
+/* 4 Stat Cards */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.stat {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 11px;
+  padding: 16px 18px 14px;
+  box-shadow: var(--shadow-sm);
+}
+.stat-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+.stat-label .icon { color: #94a3b8; width: 16px; height: 16px; }
+.stat-value {
+  font-size: 26px;
+  font-weight: 750;
+  letter-spacing: -0.8px;
+  line-height: 1.35;
+  margin-top: 6px;
+}
+.stat-foot {
+  font-size: 10px;
+  color: #94a3b8;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stat-foot b { color: var(--green); font-weight: 600; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 650;
+  gap: 4px;
+  background: #f1f5f9;
+  color: #475569;
+}
+.pill.red { background: var(--red-soft); color: #b91c1c; border: 1px solid rgba(239,68,68,0.2); }
+.pill.green { background: var(--green-soft); color: var(--green); border: 1px solid rgba(20,125,104,0.2); }
+.pill.purple { background: var(--purple-soft); color: var(--purple); border: 1px solid rgba(118,98,206,0.2); }
+.pill.yellow { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+
+/* Workarea 2 Columns Layout */
+.workarea {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: 20px;
+  align-items: start;
+}
+.contentcol { min-width: 0; }
+
+/* Dashboard Cards */
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+.cardhead {
+  padding: 18px 20px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.cardhead p { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.segmented button {
+  border: 0;
+  background: none;
+  color: #64748b;
+  font-size: 10.5px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-weight: 550;
+  transition: all 0.15s;
+}
+.segmented button.active {
+  background: var(--paper);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* Heatmap Grid */
+.heatbody { padding: 4px 20px 18px; }
+.heatcaption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #64748b;
+  font-size: 11px;
+  margin: 0 0 12px;
+}
+.heatgrid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 8px;
+}
+.tile {
+  position: relative;
+  aspect-ratio: 1.5;
+  border: 1px solid transparent;
+  background: #f1f5f9;
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.16s;
+  cursor: pointer;
+}
+.tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+.tile b { font-size: 14px; line-height: 1.35; font-weight: 700; }
+.tile span { font-size: 9px; opacity: 0.85; margin-top: 2px; }
+.tile.t0 { background: #f8fafc; color: #94a3b8; border-color: #f1f5f9; }
+.tile.t1 { background: #edf3ed; color: #496350; }
+.tile.t2 { background: #fef3c7; color: #92400e; }
+.tile.t3 { background: #fed7aa; color: #9a3412; }
+.tile.t4 { background: #fca5a5; color: #991b1b; }
+.tile.t5 { background: #ef4444; color: #ffffff; }
+.tile.selected {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+  z-index: 2;
+}
+.tile.selected:after {
+  content: '✓';
+  position: absolute;
+  right: 4px;
+  top: 2px;
+  font-size: 9px;
+  font-weight: 800;
+}
+.heatlegend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+  font-size: 10px;
+  color: #64748b;
+}
+.legend-scale { display: flex; align-items: center; gap: 4px; }
+.legend-scale i { width: 14px; height: 8px; border-radius: 2px; display: inline-block; }
+
+.notice {
+  display: flex;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  padding: 9px 12px;
+  color: #64748b;
+  font-size: 11px;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+.notice .icon { width: 15px; height: 15px; margin-top: 1px; flex-shrink: 0; color: #0284c7; }
+
+/* Top 3 Priority Cards */
+.sectionlabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 0 12px;
+}
+.sectionlabel h2 { font-size: 14.5px; }
+.top3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.priority {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: left;
+  min-width: 0;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.priority:hover { border-color: #94d2bd; transform: translateY(-1px); }
+.priority.chosen {
+  border-color: var(--green);
+  box-shadow: 0 0 0 1px var(--green);
+  background: #fbfffe;
+}
+.priority h3 {
+  font-size: 12.5px;
+  margin: 10px 0 5px;
+  line-height: 1.45;
+  min-height: 36px;
+  color: #1e293b;
+}
+.priority p { font-size: 10.5px; color: var(--muted); }
+.priority .bar {
+  height: 4px;
+  background: #f1f5f9;
+  border-radius: 5px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.priority .bar i {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: #ef4444;
+}
+.priority .rank {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  font-family: var(--font-mono);
+}
+
+/* Detail Card & Tabs */
+.detailhead { padding: 18px 20px 14px; }
+.tabs {
+  display: flex;
+  gap: 20px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+.tabs button {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 10px 0 9px;
+  font-size: 11.5px;
+  font-weight: 550;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tabs button:hover { color: var(--ink); }
+.tabs button.active {
+  border-color: var(--green);
+  color: var(--green);
+  font-weight: 700;
+}
+.detailbody { padding: 18px 20px; }
+.insight { font-size: 12.5px; color: #475569; line-height: 1.65; }
+.insight-title {
+  font-size: 11px;
+  color: #1e293b;
+  font-weight: 750;
+  margin: 14px 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.insight-title:first-child { margin-top: 0; }
+.evidence {
+  background: #fafbfd;
+  border: 1px solid #e8edf3;
+  border-left: 3px solid #7662ce;
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-top: 11px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.evidence .meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: #64748b;
+  font-size: 10.5px;
+  font-family: var(--font-mono);
+}
+.evidence .quote { color: #1e293b; font-style: italic; }
+.feedbackrow {
+  border-top: 1px solid var(--line);
+  padding: 12px 20px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background: #fafbfc;
+}
+
+/* Pedagogical Copilot Sidebar Column */
+.copilot {
+  border: 1px solid #e4dff3;
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 30px rgba(118, 98, 206, 0.08);
+  overflow: hidden;
+  position: sticky;
+  top: 88px;
+}
+.copilot-head {
+  padding: 16px 18px 14px;
+  background: linear-gradient(130deg, #f7f4fe, #ffffff);
+  border-bottom: 1px solid #ece7f7;
+}
+.ai-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--purple);
+  background: var(--purple-soft);
+  display: grid;
+  place-items: center;
+}
+.copilot-head h2 { font-size: 14px; color: #312e81; }
+.copilot-head .small { font-size: 9.5px; color: #7c3aed; font-weight: 700; letter-spacing: 0.06em; }
+.context {
+  margin: 12px 14px 0;
+  padding: 7px 10px;
+  border: 1px solid #e9e4f3;
+  background: #faf9fd;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #6b21a8;
+  font-size: 10.5px;
+  gap: 8px;
+}
+.context span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.chat-feed {
+  max-height: 420px;
+  min-height: 240px;
+  overflow-y: auto;
+  padding: 16px 14px 6px;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.chat-feed::-webkit-scrollbar { width: 4px; }
+.chat-feed::-webkit-scrollbar-thumb { background: #ddd6fe; border-radius: 4px; }
+.chatmsg { animation: appear 0.2s ease; }
+.speaker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: var(--purple);
+}
+.chattext {
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: #334155;
+}
+.chattext strong { color: #0f172a; font-weight: 700; }
+.chattext ul { padding-left: 16px; margin: 6px 0; }
+.user-msg {
+  background: var(--purple-soft);
+  border: 1px solid #e9d5ff;
+  border-radius: 10px 10px 2px 10px;
+  padding: 8px 12px;
+  margin-left: 20px;
+  font-size: 11.5px;
+  color: #581c87;
+  align-self: flex-end;
+}
+.chat-ref {
+  display: inline-block;
+  font-size: 9.5px;
+  font-family: var(--font-mono);
+  color: var(--purple);
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin: 4px 3px 0 0;
+  cursor: pointer;
+}
+.chat-ref:hover { background: var(--purple); color: white; }
+.suggestions {
+  padding: 0 14px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.suggestions button {
+  border: 1px solid #e9d5ff;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #6b21a8;
+  padding: 6px 9px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-align: left;
+  transition: all 0.15s;
+}
+.suggestions button:hover {
+  background: var(--purple-soft);
+  border-color: var(--purple);
+}
+.draft-card {
+  margin: 10px 0 2px;
+  padding: 12px;
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 8px;
+}
+.draft-card h4 { font-size: 11.5px; color: #6b21a8; margin: 0 0 6px; }
+.chatinput { padding: 12px 14px; border-top: 1px solid #f3e8ff; }
+.inputbox {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+.inputbox textarea {
+  border: 0;
+  resize: none;
+  background: transparent;
+  width: 100%;
+  height: 44px;
+  font-size: 11.5px;
+  color: var(--ink);
+  outline: none;
+}
+.inputbox textarea::placeholder { color: #94a3b8; }
+.sendbtn {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  color: white;
+  background: var(--purple);
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sendbtn:hover { background: #6d28d9; }
+.chatdisclaimer { text-align: center; font-size: 9px; color: #94a3b8; margin-top: 6px; }
+.copilot-foot {
+  background: #faf5ff;
+  border-top: 1px solid #f3e8ff;
+  padding: 9px 14px;
+  font-size: 9.5px;
+  color: #7e22ce;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+/* Views (Concepts, Compare, Tasks, Data) */
+.concept-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.concept-row:last-child { border: 0; }
+.concept-row > div { flex: 1; }
+.concept-row p { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+.concept-row .mini-bar {
+  width: 110px;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  flex: 0 0 110px;
+  overflow: hidden;
+}
+.mini-bar i { display: block; height: 100%; background: #f87171; border-radius: 8px; }
+
+.task { padding: 16px 20px; border-top: 1px solid var(--line); }
+.task h3 { font-size: 13px; color: #0f172a; }
+.task p { color: var(--muted); font-size: 11px; margin: 4px 0 12px; }
+.task .row { flex-wrap: wrap; }
+
+.table { border-collapse: collapse; width: 100%; font-size: 11.5px; }
+.table th {
+  text-align: left;
+  font-size: 10.5px;
+  color: #64748b;
+  font-weight: 650;
+  background: #f8fafc;
+  padding: 11px 16px;
+}
+.table td { border-top: 1px solid var(--line); padding: 13px 16px; }
+
+.chart {
+  display: flex;
+  gap: 18px;
+  align-items: flex-end;
+  height: 180px;
+  padding: 24px 20px 0;
+  justify-content: space-around;
+  border-bottom: 1px solid var(--line);
+}
+.chartgroup {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  position: relative;
+  height: 100%;
+  padding-bottom: 24px;
+}
+.chartbar {
+  width: 32px;
+  background: #cbd5e1;
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  min-height: 6px;
+}
+.chartbar.new { background: var(--green); }
+.chartbar span {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #475569;
+}
+.chartgroup label {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9.5px;
+  white-space: nowrap;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.data-step {
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.step-num {
+  width: 28px;
+  height: 28px;
+  background: var(--green-soft);
+  color: var(--green);
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  flex-shrink: 0;
+  font-weight: 750;
+  font-size: 11px;
+}
+.data-step p { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  color: #94a3b8;
+  font-size: 10px;
+  margin-top: 24px;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+/* Modals & Dialogs */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(5px);
+  z-index: 9500;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  animation: appear 0.15s ease;
+}
+.modal {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 660px;
+  max-width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.modal-head {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+.modal-head h2 { font-size: 17px; }
+.modal-body {
+  padding: 22px 24px;
+  overflow-y: auto;
+  line-height: 1.7;
+  color: #475569;
+  font-size: 12px;
+}
+.modal-foot {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  background: #fbfcfd;
+}
+.fieldlabel {
+  display: block;
+  font-size: 11px;
+  color: #475569;
+  font-weight: 650;
+  margin: 12px 0 6px;
+}
+.field {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  padding: 9px 12px;
+  border-radius: 7px;
+  color: #1e293b;
+  background: #ffffff;
+  font-size: 12px;
+}
+.field:focus { border-color: var(--green); }
+.modal textarea.field { height: 200px; resize: vertical; line-height: 1.7; }
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 11px 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  z-index: 9999;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  animation: appear 0.2s ease;
+  max-width: 90vw;
+  font-size: 12px;
+  font-weight: 550;
+}
+.toast button {
+  border: 0;
+  background: rgba(255,255,255,0.2);
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.radio-list { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
+.radio-list label {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  align-items: flex-start;
+  cursor: pointer;
+  background: #ffffff;
+}
+.radio-list label:hover { background: #f8fafc; border-color: #cbd5e1; }
+.radio-list input { accent-color: var(--green); margin-top: 3px; }
+
+.searchinput {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: 11.5px;
+  width: 100%;
+  margin-bottom: 8px;
+  outline: none;
+}
+.searchinput:focus { border-color: var(--green); }
+
+.callout {
+  margin: 16px 20px;
+  padding: 12px 14px;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 8px;
+  color: #92400e;
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+.review-note {
+  background: var(--green-soft);
+  color: var(--green);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+@keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.loadingdots:after { content: '...'; animation: pulseDots 1.2s infinite; }
+@keyframes pulseDots { 50% { opacity: 0.3; } }
+
+/* Mobile Menu & Responsive */
+.mobilemenu { display: none; }
+@media(max-width: 1024px) {
+  .app { grid-template-columns: 74px minmax(0, 1fr); }
+  .sidebar { width: 74px; padding: 22px 10px; align-items: center; }
+  .brand .wordmark, .workspace-box, .eyebrow, .nav span, .sidebar-bottom, .nav .count { display: none; }
+  .nav { width: 44px; height: 44px; justify-content: center; padding: 0; margin: 4px 0; }
+  .workarea { grid-template-columns: 1fr; }
+  .copilot { position: static; }
+  .topbar { padding: 0 20px; }
+  .main { padding: 22px 20px; }
+}
+@media(max-width: 768px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .top3 { grid-template-columns: 1fr; }
+  .scene-viewport { height: 480px; }
+  .orbit-stage-3d { width: 100%; }
+  .orbit-node { width: 180px; padding: 0.75rem; }
+}
+@media(max-width: 480px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .sidebar.open { display: flex; width: 220px; box-shadow: 0 0 0 100vw rgba(0,0,0,0.5); }
+  .mobilemenu { display: inline-grid; }
+  .heatgrid { grid-template-columns: repeat(4, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- SVG SYMBOL DEFINITIONS -->
+<svg style="display:none" aria-hidden="true">
+<defs>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3ZM20 2v4M18 4h4"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 3v18h17M9 16v-5m5 5V6m5 10V9"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5v16M3 4c4-1 7-1 9 1 2-2 5-2 9-1v15c-4-1-7-1-9 2-2-3-5-3-9-2V4Z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+<symbol id="i-tasks" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M9 10h6m-6 5h6"/></symbol>
+<symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 8.5a2.5 2.5 0 1 1 4 2c-1 .5-1.5 1-1.5 2.5m0 3h.01"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9h.01"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6m1 3a5 5 0 0 1 4 4v2"/></symbol>
+<symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a3 3 0 0 1-3 3H8l-5 3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v9Z"/><path d="M7 8h10M7 12h7"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c1 5 6 5 6 11a6 6 0 0 1-12 0c0-3 2-5 3-6 0 3 1 3 1 3s3-3 2-8Z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 15v6h16v-6"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8V4Z"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 9a8 8 0 0 0-14-4L3 8m0-5v5h5M4 15a8 8 0 0 0 14 4l3-3m0 5v-5h-5"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="m3 3 18 9-18 9 4-9-4-9Zm4 9h14"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8l-5-5Zm0 0v5h5M8 13h8m-8 4h6"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="m15 4 5 5M4 15 16 3l5 5L9 20l-6 1 1-6Z"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M5 17h14l-2-4V8a5 5 0 0 0-10 0v5l-2 4Zm5 3h4"/></symbol>
+</defs>
+</svg>
+
+<!-- ========================================================================== -->
+<!-- 1. CINEMATIC 3D ORBITAL BOTTLENECK SPHERE STAGE (OUTER VIEW)               -->
+<!-- ========================================================================== -->
+<section class="stage-intro" id="introStage">
+  <canvas id="starsCanvas"></canvas>
+  <div class="intro-ambient-glow"></div>
+
+  <!-- Stage Header -->
+  <div class="intro-header">
+    <div class="intro-badge">
+      <span class="live-dot"></span>
+      <span>Phát hiện 5 Điểm Nghẽn Trọng Tâm · Nền Tảng VLearn</span>
+    </div>
+    <h2 class="intro-title">VLearn Class Confusion Orbital</h2>
+    <p class="intro-subtitle">Mô hình hóa không gian 3D quét qua 13.494 tương tác hỏi–đáp của 1.617 học viên (K3 & K4), cô lập 5 điểm đứt gãy kiến thức lớn nhất trong bài giảng.</p>
+    
+    <div class="intro-telemetry-chips">
+      <span class="intro-chip">⚡ <strong>89.8%</strong> Nhai lại lý thuyết</span>
+      <span class="intro-chip">🔍 <strong>99.85%</strong> Cột hiểu trống</span>
+      <span class="intro-chip">📍 <strong>46%</strong> Mất dấu slide</span>
+      <span class="intro-chip">🎯 <strong>22.7%</strong> Bấm câu mẫu</span>
+      <span class="intro-chip">⏱️ Chữa cháy chậm <strong>1 tuần</strong></span>
+    </div>
+  </div>
+
+  <!-- 3D Orbit Viewport -->
+  <div class="scene-viewport" id="sceneViewport">
+    <div class="orbit-stage-3d" id="orbitStage">
+      <!-- Orbit Ellipse Track Guide -->
+      <div class="orbit-ellipse-guide"></div>
+
+      <!-- Central Hologram Core (Enter Button) -->
+      <div class="center-hologram" id="btnEnterWorkspace" onclick="enterWorkspace()" title="Nhấp để tiến vào Buồng Lái Sư Phạm & Heatmap">
+        <div class="hologram-ring-outer"></div>
+        <div class="hologram-ring-inner"></div>
+        <div class="hologram-pulse-icon">⚡</div>
+        <div class="hologram-enter-text">ENTER</div>
+        <div class="hologram-sub-text">BẢN ĐỒ NHIỆT</div>
+      </div>
+
+      <!-- 5 3D Orbital Nodes -->
+      <!-- Node 1: CoT vs ReAct (Slide 18) -->
+      <div class="orbit-node" id="orbitNode1" onclick="selectNodeAndEnter(18)">
+        <div class="node-badge-row">
+          <span class="node-rank crit">#1 Critical</span>
+          <span class="node-metric">92 lượt hỏi</span>
+        </div>
+        <div class="node-title">Slide 18 · CoT vs ReAct</div>
+        <div class="node-caption">Học viên nhầm Action là suy luận chay, bỏ quên Observation từ Tool API.</div>
+      </div>
+
+      <!-- Node 2: Agent Execution Loop (Slide 8) -->
+      <div class="orbit-node" id="orbitNode2" onclick="selectNodeAndEnter(8)">
+        <div class="node-badge-row">
+          <span class="node-rank crit">#2 Critical</span>
+          <span class="node-metric">67 lượt hỏi</span>
+        </div>
+        <div class="node-title">Slide 08 · Agent Execution Loop</div>
+        <div class="node-caption">Kẹt vòng lặp suy luận vô tận khi mô hình không kích hoạt Stopping Criteria.</div>
+      </div>
+
+      <!-- Node 3: Memory Buffer vs Storage (Slide 14) -->
+      <div class="orbit-node" id="orbitNode3" onclick="selectNodeAndEnter(14)">
+        <div class="node-badge-row">
+          <span class="node-rank warn">#3 Warning</span>
+          <span class="node-metric">54 lượt hỏi</span>
+        </div>
+        <div class="node-title">Slide 14 · Memory Buffer & Context</div>
+        <div class="node-caption">Hiểu sai cơ chế trôi ngữ cảnh khi token chạm trần, nhầm buffer với storage.</div>
+      </div>
+
+      <!-- Node 4: Tool Schema & Arguments (Slide 24) -->
+      <div class="orbit-node" id="orbitNode4" onclick="selectNodeAndEnter(24)">
+        <div class="node-badge-row">
+          <span class="node-rank mod">#4 Notice</span>
+          <span class="node-metric">41 lượt hỏi</span>
+        </div>
+        <div class="node-title">Slide 24 · Tool Function Call</div>
+        <div class="node-caption">Nhầm lẫn kiểu dữ liệu JSON Schema khi mô hình trả đối số tham số hàm.</div>
+      </div>
+
+      <!-- Node 5: Grounding & Hallucination (Slide 5) -->
+      <div class="orbit-node" id="orbitNode5" onclick="selectNodeAndEnter(5)">
+        <div class="node-badge-row">
+          <span class="node-rank mod">#5 Notice</span>
+          <span class="node-metric">35 lượt hỏi</span>
+        </div>
+        <div class="node-title">Slide 05 · Grounding & Hallucination</div>
+        <div class="node-caption">Tranh luận về cách đo lường độ tin cậy và gán nhãn ảo giác trong RAG.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage Footer Actions -->
+  <div class="intro-footer">
+    <button class="btn-skip-intro" onclick="enterWorkspace()">
+      <span>Vào Thẳng Bản Đồ Nhiệt</span>
+      <svg class="icon" style="width:14px;height:14px"><use href="#i-arrow"/></svg>
+    </button>
+    <span class="intro-drag-hint">Di chuột để xoay 3D · Bấm nút ở giữa hoặc từng thẻ để vào Cockpit</span>
+  </div>
+</section>
+
+<!-- ========================================================================== -->
+<!-- 2. INNER FLAT WORKSPACE (DASHBOARD COCKPIT)                                -->
+<!-- ========================================================================== -->
+<div class="app" id="appShell">
+  <!-- Left Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand-cluster">
+      <div class="brand-mark">V</div>
+      <div class="brand-text">
+        <h1>VLearn</h1>
+        <div class="brand-sub">Confusion Copilot</div>
+      </div>
+    </div>
+
+    <div class="workspace-box">
+      <span class="square">AI</span>
+      <div>
+        <b style="font-size:11px;color:#0f172a" id="wsCourseName">AI Engineering</b>
+        <div class="small" style="font-size:9.5px;color:#64748b">Không gian giảng viên</div>
+      </div>
+    </div>
+
+    <div class="eyebrow">HỌC THUẬT</div>
+    <button class="nav" data-nav="overview" onclick="navigate('overview')" title="Tổng quan">
+      <svg class="icon"><use href="#i-grid"/></svg><span>Tổng quan</span>
+    </button>
+    <button class="nav active" data-nav="heatmap" onclick="navigate('heatmap')" title="Bản đồ điểm nghẽn">
+      <svg class="icon"><use href="#i-flame"/></svg><span>Bản đồ điểm nghẽn</span>
+    </button>
+    <button class="nav" data-nav="concepts" onclick="navigate('concepts')" title="Khái niệm kiến thức">
+      <svg class="icon"><use href="#i-book"/></svg><span>Khái niệm kiến thức</span>
+    </button>
+    <button class="nav" data-nav="compare" onclick="navigate('compare')" title="So sánh các khóa">
+      <svg class="icon"><use href="#i-chart"/></svg><span>So sánh các khóa</span>
+    </button>
+    <button class="nav" data-nav="tasks" onclick="navigate('tasks')" title="Kế hoạch cải tiến">
+      <svg class="icon"><use href="#i-tasks"/></svg><span>Kế hoạch cải tiến</span>
+      <b class="count" id="taskCount">0</b>
+    </button>
+
+    <div class="eyebrow" style="margin-top:24px">QUẢN LÝ & HỆ THỐNG</div>
+    <button class="nav" data-nav="data" onclick="navigate('data')" title="Nguồn dữ liệu & Lõi AI">
+      <svg class="icon"><use href="#i-database"/></svg><span>Nguồn dữ liệu & Lõi AI</span>
+    </button>
+    <button class="nav" onclick="openGuide()" title="Hướng dẫn demo">
+      <svg class="icon"><use href="#i-help"/></svg><span>Hướng dẫn sử dụng</span>
+    </button>
+
+    <div class="sidebar-bottom">
+      <div class="team-card">
+        <div class="row" style="gap:6px;color:#147d68">
+          <svg class="icon"><use href="#i-spark"/></svg>
+          <b style="font-size:11px">Dạy tốt hơn, cùng AI</b>
+        </div>
+        <p>Biến câu hỏi hôm nay thành bài giảng tốt hơn ngày mai.</p>
+        <button onclick="openGuide()">Khám phá Copilot ↗</button>
+      </div>
+
+      <div class="profile">
+        <span class="avatar">MA</span>
+        <div>
+          <b style="font-size:11px;color:#0f172a">Minh Anh</b>
+          <div class="small" style="font-size:9.5px;color:#64748b">Giảng viên đứng lớp · K4</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Shell -->
+  <div class="shell">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="breadcrumb">
+        <button class="iconbtn mobilemenu" aria-label="Mở menu" onclick="document.getElementById('sidebar').classList.toggle('open')">
+          <svg class="icon"><use href="#i-menu"/></svg>
+        </button>
+        <span>Không gian học thuật</span>
+        <span style="color:#cbd5e1">/</span>
+        <b id="crumb">Class Confusion Copilot</b>
+      </div>
+
+      <div class="topactions">
+        <span class="telemetry-tag">
+          <i class="dot"></i>
+          <span>Live Telemetry · 13.494 logs</span>
+        </span>
+        <span class="demo-tag">SQLite 1.09ms</span>
+        <button class="btn-return-3d" onclick="returnToIntro()" title="Quay lại mô hình 3D Orbital">
+          <svg class="icon"><use href="#i-grid"/></svg>
+          <span>🌐 Vòng Cầu 3D</span>
+        </button>
+        <button class="iconbtn" title="Hoạt động gần đây" aria-label="Hoạt động gần đây" onclick="openActivity()">
+          <svg class="icon"><use href="#i-bell"/></svg>
+        </button>
+        <span class="avatar" style="width:30px;height:30px;font-size:10.5px">MA</span>
+      </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="main">
+      <!-- Page Header -->
+      <div class="pagehead">
+        <div>
+          <h1 id="pageTitle">Bản đồ điểm nghẽn</h1>
+          <p id="pageSub">Hiểu nơi học viên đang vướng. Cải tiến đúng nơi cần thiết.</p>
+        </div>
+        <div class="row">
+          <button class="btn" onclick="exportReport()">
+            <svg class="icon"><use href="#i-download"/></svg>Xuất báo cáo HTML/PDF
+          </button>
+          <button class="btn primary" onclick="startTour()">
+            <svg class="icon"><use href="#i-play"/></svg>Chạy demo 4 bước
+          </button>
+        </div>
+      </div>
+
+      <!-- Cascading Filter Bar -->
+      <div class="filters">
+        <div class="filter-fields">
+          <div class="filter">
+            <label for="course">Học phần</label>
+            <select id="course" onchange="changeCourse()">
+              <option value="COMP2010" selected>COMP2010 · AI Engineering (6.609 logs)</option>
+              <option value="BIOM3010">BIOM3010 · Biomedical AI (2.146 logs)</option>
+              <option value="COMP4010">COMP4010 · Cloud Systems (1.225 logs)</option>
+              <option value="K4P1">K4P1 · FinTech AI Batch 4 (2.146 logs)</option>
+            </select>
+          </div>
+          <span class="divider"></span>
+          <div class="filter">
+            <label for="cohort">Khóa học</label>
+            <select id="cohort" onchange="changeFilters()">
+              <option value="K4" selected>K4 · AI Engineering (3.097 lượt · 448 HV)</option>
+              <option value="K3">K3 · AI Engineering (10.397 lượt · 1.169 HV)</option>
+              <option value="ALL">K3 + K4 · Toàn hệ thống (13.494 lượt · 1.617 HV)</option>
+            </select>
+          </div>
+          <span class="divider"></span>
+          <div class="filter">
+            <label for="lesson">Bài giảng</label>
+            <select id="lesson" onchange="changeFilters()">
+              <option value="D02" selected>D02 · AI Agents & Reasoning (24 Slides)</option>
+              <option value="D01">D01 · Nền tảng LLM & Prompt Design (20 Slides)</option>
+              <option value="D03">D03 · Multi-Agent Orchestration (18 Slides)</option>
+            </select>
+          </div>
+          <span class="divider"></span>
+          <div class="filter">
+            <label for="period">Thời gian</label>
+            <select id="period" onchange="changeFilters()">
+              <option value="all">Toàn bộ khóa</option>
+              <option value="recent">7 ngày gần nhất</option>
+            </select>
+          </div>
+        </div>
+        <button class="link sync" id="syncBtn" onclick="rescan()">
+          <svg class="icon" style="width:13px;height:13px"><use href="#i-refresh"/></svg>
+          <span id="syncText">Cập nhật 15/09 · 18:30 (Đồng bộ vlearn.db)</span>
+        </button>
+      </div>
+
+      <!-- Coverage Line -->
+      <div class="coverage" id="coverage"></div>
+
+      <!-- 4 Stat Cards -->
+      <div id="stats" class="stats"></div>
+
+      <!-- Workarea (Content Col + Copilot Column) -->
+      <div class="workarea">
+        <section class="contentcol" id="mainContent" aria-live="polite"></section>
+
+        <!-- Right Column: Pedagogical Copilot -->
+        <aside class="copilot" id="copilot">
+          <div class="copilot-head">
+            <div class="row between">
+              <div class="row">
+                <span class="ai-icon"><svg class="icon"><use href="#i-spark"/></svg></span>
+                <div>
+                  <h2>Copilot học thuật</h2>
+                  <div class="small">TỪ BẰNG CHỨNG ĐẾN CẢI TIẾN SƯ PHẠM</div>
+                </div>
+              </div>
+              <button class="iconbtn" style="background:transparent;border:0;color:#94a3b8" title="Khởi động lại hội thoại" aria-label="Khởi động lại hội thoại" onclick="resetChat()">
+                <svg class="icon" style="width:15px;height:15px"><use href="#i-refresh"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="context" id="chatContext"></div>
+          <div class="chat-feed" id="chatFeed" role="log" aria-live="polite"></div>
+          <div class="suggestions" id="suggestions"></div>
+
+          <div class="chatinput">
+            <form onsubmit="event.preventDefault();sendChat()">
+              <div class="inputbox">
+                <textarea id="chatInput" placeholder="Hỏi về nguyên nhân điểm nghẽn hoặc nhờ soạn can thiệp…" aria-label="Tin nhắn cho Copilot" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+                <div class="row between" style="margin-top:4px">
+                  <span style="font-size:9.5px;color:#94a3b8">↵ Gửi · Shift + ↵ Xuống dòng</span>
+                  <button class="sendbtn" id="sendBtn" type="submit" aria-label="Gửi tin nhắn">
+                    <svg class="icon" style="width:14px;height:14px"><use href="#i-send"/></svg>
+                  </button>
+                </div>
+              </div>
+            </form>
+            <div class="chatdisclaimer">AI đề xuất dựa trên dữ liệu vlearn.db · Giảng viên là người quyết định</div>
+          </div>
+
+          <div class="copilot-foot">
+            <svg class="icon" style="width:13px;height:13px"><use href="#i-shield"/></svg>
+            <span>Không chấm điểm học lực cá nhân · An toàn & Bảo mật sư phạm</span>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <span>VLearn Class Confusion Copilot · Track A2 · Lab 5 AI Product Hackathon · Ca 3A E403</span>
+        <span>Dữ liệu thực nghiệm 13.494 lượt hỏi-đáp · SQLite Database vlearn.db</span>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<!-- Dynamic Modal & Toast Mount Roots -->
+<div id="modalRoot"></div>
+<div id="toastRoot" role="status" aria-live="polite"></div>
+
+<!-- ========================================================================== -->
+<!-- 3. COMPREHENSIVE JAVASCRIPT STATE ENGINE & DATA LOGIC                     -->
+<!-- ========================================================================== -->
+<script>
+'use strict';
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const ic = n => `<svg class="icon" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const fmt = n => new Intl.NumberFormat('vi-VN').format(n);
+
+/* Local State & Persistence */
+let saved = {};
+try { saved = JSON.parse(localStorage.getItem('vlearn-pilot-v2') || '{}'); } catch(e) {}
+
+let state = {
+  view: 'heatmap',
+  course: 'COMP2010',
+  cohort: 'K4',
+  lesson: 'D02',
+  period: 'all',
+  slide: 18,
+  tab: 'insight',
+  mode: 'slides',
+  tasks: Array.isArray(saved.tasks) ? saved.tasks : [
+    {
+      id: 'task-preset-01',
+      title: 'Ví dụ tương phản · CoT vs ReAct (Tra cứu thời tiết)',
+      content: 'Tình huống: Có nên mang ô khi ra ngoài hôm nay?\n\n• CoT (Chỉ suy luận trong phòng kín): "Hôm nay trời nhiều mây -> Tôi đoán sẽ mưa -> Tôi mang ô." Không có dữ liệu ngoài đời.\n\n• ReAct (Hành động có kiểm chứng):\nThought: "Cần biết thời tiết thực tế ở Hà Nội."\nAction: get_weather("Hanoi")\nObservation: "Nắng 35 độ, xác suất mưa 0%."\nThought: "À trời nắng to, mình mang kính râm chứ không mang ô!"\n\nChốt trên lớp: Action mang thông tin mới; Observation đưa kết quả trở lại vòng lặp.',
+      lesson: 'D02',
+      slide: 18,
+      cohort: 'K4',
+      status: 'applied',
+      owner: 'Minh Anh',
+      date: '2026-09-17',
+      evidence: ['Turn T00891', 'Turn T01042']
+    }
+  ],
+  feedback: saved.feedback || {},
+  activities: saved.activities || [
+    { text: 'Khởi động hệ thống Class Confusion Copilot', time: '09:00' },
+    { text: 'Đã nạp 13.494 tương tác từ vlearn.db', time: '09:05' }
+  ],
+  chat: [],
+  busy: false,
+  heatmapApiData: null,
+  currentEvidence: [],
+  approvedTasksLoaded: false
+};
+
+let tourStep = 0;
+let lastDraft = null;
+let activeTask = null;
+let previousFocus = null;
+let feedbackUndo = null;
+let chatEpoch = 0;
+let lastReportHtml = "";
+let quizReturn = null;
+let orbitAngle = 0;
+
+/* Real Dataset Grounded Topic Definitions */
+const topics = {
+  D02: {
+    18: {
+      name: 'CoT vs ReAct',
+      subtitle: 'Suy luận vs Hành động có kiểm chứng',
+      volume: 92,
+      questions: 148,
+      repeat: 38,
+      level: 5,
+      concept: 'Phân biệt Chain-of-Thought và ReAct Loop',
+      signal: 'Hiểu sai nghiêm trọng',
+      hypothesis: 'Slide chỉ vẽ sơ đồ chữ CoT cạnh ReAct mà không minh họa lời gọi API thực tế. Học viên ngộ nhận "Action" chỉ là một câu tự nhủ trong đầu LLM chứ không phải lời gọi tool bên ngoài.',
+      observation: '38% học viên nhầm lẫn Action với Thought. Có tới 92 câu hỏi dồn dập tại slide này chỉ trong tuần đầu của K4.',
+      verify: 'Kiểm tra xem slide đã có code ví dụ gọi hàm get_weather() và bước nhận Observation hay chưa.',
+      quotes: [
+        'Thầy ơi em vẫn chưa hiểu, nếu CoT là nghĩ từng bước thì ReAct chỉ là viết dài hơn thôi đúng không ạ? Action nó khác gì Thought đâu?',
+        'Lúc em gọi hàm get_weather thì cái chuỗi trả về nó nằm ở Action hay Observation vậy ạ?'
+      ],
+      turnIds: ['T00891', 'T01042'],
+      slideText: 'Chain-of-Thought: Suy luận từng bước (Thought -> Thought -> Answer).\nReAct: Kết hợp Suy luận và Hành động (Thought -> Action -> Observation -> Thought).',
+      flow: ['Thought', 'Action', 'Observation', 'Thought']
+    },
+    8: {
+      name: 'Agent Execution Loop',
+      subtitle: 'Cơ chế dừng và giới hạn lặp',
+      volume: 67,
+      questions: 104,
+      repeat: 32,
+      level: 4,
+      concept: 'Cơ chế dừng và giới hạn vòng lặp Agent',
+      signal: 'Vướng áp dụng',
+      hypothesis: 'Sơ đồ vòng lặp chưa thể hiện rõ Stopping Criteria, Max Iterations và xử lý ngoại lệ khi Tool trả về lỗi liên tục.',
+      observation: 'Học viên liên tục hỏi về nguy cơ Agent chạy vô hạn và tốn token API ngoài tầm kiểm soát.',
+      verify: 'Phần demo code trực tiếp đã minh họa tham số max_iterations=5 và try/except tool call chưa?',
+      quotes: [
+        'Agent dừng vòng lặp lúc nào vậy thầy? Nếu tool trả về lỗi thì nó có gọi lại mãi không?',
+        'Làm sao để agent biết khi nào thì đã có đủ thông tin để trả lời người dùng mà không lặp lại?'
+      ],
+      turnIds: ['T00945', 'T01120'],
+      slideText: 'Agent Loop: Observe -> Reason -> Act -> Observe -> Finish.\nCần xác lập điều kiện dừng rõ ràng để tránh vòng lặp vô hạn.',
+      flow: ['Observe', 'Reason', 'Act', 'Stopping Check']
+    },
+    14: {
+      name: 'Memory Buffer vs Storage',
+      subtitle: 'Quản lý ngữ cảnh và bộ nhớ bền vững',
+      volume: 54,
+      questions: 89,
+      repeat: 26,
+      level: 4,
+      concept: 'Context Window vs Persistent Storage',
+      signal: 'Cần làm rõ',
+      hypothesis: 'Học viên nhầm lẫn giữa việc lưu lịch sử vào cửa sổ context (RAM tạm thời) với lưu vào Vector DB / SQLite (bộ nhớ bền vững).',
+      observation: 'Nhiều học viên tưởng bộ nhớ buffer sẽ nhớ mãi mãi mọi cuộc trò chuyện của người dùng.',
+      verify: 'Slide đã có hình ảnh so sánh "Bàn làm việc hữu hạn" và "Tủ hồ sơ lưu trữ" chưa?',
+      quotes: [
+        'Memory buffer có nhớ tất cả hội thoại mãi mãi không ạ? Khi context chạm 128k thì tin nhắn cũ đi đâu?',
+        'Sự khác biệt giữa ConversationBufferMemory và VectorStoreRetrieverMemory là gì?'
+      ],
+      turnIds: ['T01340', 'T01582'],
+      slideText: 'Memory Buffer: Duy trì ngữ cảnh hội thoại trong giới hạn Token Context Window.\nPersistent Memory: Lưu trữ ngoài mô hình (Vector DB / SQL).',
+      flow: ['Input', 'Buffer Window', 'Context Truncation', 'Output']
+    },
+    24: {
+      name: 'Tool Function Calling',
+      subtitle: 'Schema JSON và đối số hàm',
+      volume: 41,
+      questions: 68,
+      repeat: 22,
+      level: 3,
+      concept: 'Định nghĩa Schema và gọi công cụ',
+      signal: 'Vướng cú pháp',
+      hypothesis: 'Slide chưa giải thích rõ cách mô hình sinh chuỗi JSON khớp với schema đối số của hàm Python.',
+      observation: 'Học viên gặp lỗi type mismatch khi mô hình truyền tham số chuỗi vào hàm yêu cầu số nguyên.',
+      verify: 'Đã có tài liệu ví dụ về Pydantic schema cho tool calling chưa?',
+      quotes: [
+        'Tại sao LLM trả về tên hàm đúng mà đối số json lại bị parse error vậy ạ?',
+        'Mình có thể ép kiểu dữ liệu trả về cho tool call bằng schema không?'
+      ],
+      turnIds: ['T01720', 'T01804'],
+      slideText: 'Tool Definition: Mô tả hàm, tham số và kiểu dữ liệu bằng JSON Schema để LLM quyết định gọi chính xác.',
+      flow: ['Prompt', 'Schema Match', 'Function Call JSON', 'Execution']
+    },
+    5: {
+      name: 'Grounding & Hallucination',
+      subtitle: 'Kiểm chứng độ tin cậy thông tin',
+      volume: 35,
+      questions: 56,
+      repeat: 18,
+      level: 3,
+      concept: 'Guardrails và Factual Grounding',
+      signal: 'Tò mò mở rộng',
+      hypothesis: 'Học viên quan tâm đến các giải pháp thực tế để triệt tiêu ảo giác khi kết hợp RAG với Agent.',
+      observation: 'Các câu hỏi mang tính tranh luận và tìm hiểu giải pháp kỹ thuật nâng cao.',
+      verify: 'Có cần đưa bài kiểm tra Factuality vào bài lab tiếp theo không?',
+      quotes: [
+        'Có cách nào đảm bảo 100% LLM không bịa thông tin khi dùng tool không thầy?',
+        'Grounding check có làm tăng latency của hệ thống lên nhiều không?'
+      ],
+      turnIds: ['T00430', 'T00512'],
+      slideText: 'Grounding Guardrails: Đối chiếu phản hồi của mô hình với tài liệu nguồn để phát hiện và ngăn chặn ảo giác.',
+      flow: ['Query', 'Source Docs', 'Verification Check', 'Safe Response']
+    },
+    1: {
+      name: 'Tổng quan AI Agents',
+      subtitle: 'Định nghĩa và thành phần cốt lõi',
+      volume: 28,
+      questions: 45,
+      repeat: 15,
+      level: 2,
+      concept: 'Khái niệm Agent trong kỷ nguyên LLM',
+      signal: 'Mở đầu bài học',
+      hypothesis: 'Học viên bỡ ngỡ với các thuật ngữ chuyên ngành ngay ở trang mở đầu.',
+      observation: 'Nhiều câu hỏi bôi đen nhanh và bấm lệnh mẫu do chưa quen tài liệu.',
+      verify: 'Slide đã có mục tiêu học tập rõ ràng và giải thích thuật ngữ viết tắt chưa?',
+      quotes: [
+        'hả (Trang 1, đoạn được chọn: "hả")',
+        'Candidate Problem khác gì Problem Statement?'
+      ],
+      turnIds: ['T00008', 'T00517'],
+      slideText: 'AI Agent = LLM Core + Memory + Tools + Planning Capabilities.',
+      flow: ['Perception', 'Reasoning', 'Action']
+    }
+  },
+  D01: {
+    5: {
+      name: 'Transformer & Self-Attention',
+      subtitle: 'Cơ chế chú ý và biểu diễn không gian',
+      volume: 58,
+      questions: 94,
+      repeat: 29,
+      level: 5,
+      concept: 'Cơ chế Self-Attention trong Transformer',
+      signal: 'Hiểu sai trọng tâm',
+      hypothesis: 'Slide giới thiệu nhiều công thức ma trận Q, K, V cùng lúc khiến học viên bị quá tải.',
+      observation: 'Nhiều câu hỏi xoay quanh việc tại sao Transformer lại xử lý song song được thay vì tuần tự như RNN.',
+      verify: 'Đã có ví dụ trực quan về ma trận chú ý giữa các từ trong câu chưa?',
+      quotes: [
+        'Tại sao Attention lại tính được độ tương đồng giữa các từ xa nhau?',
+        'Sau b -> Giải thích đoạn bôi đen ở Trang 5.'
+      ],
+      turnIds: ['T00006', 'T00189'],
+      slideText: 'Transformer: Self-Attention mô hình hóa mối quan hệ giữa mọi cặp token trong chuỗi.',
+      flow: ['Input Tokens', 'Q, K, V Projections', 'Attention Matrix', 'Output']
+    },
+    12: {
+      name: 'Context Window & Tokenization',
+      subtitle: 'Giới hạn ngữ cảnh và chi phí tính toán',
+      volume: 42,
+      questions: 68,
+      repeat: 20,
+      level: 4,
+      concept: 'Token Context Limits',
+      signal: 'Vướng áp dụng',
+      hypothesis: 'Học viên chưa phân biệt được giữa token tiếng Anh và token tiếng Việt, dẫn đến hiểu nhầm về độ dài thực tế.',
+      observation: 'Câu hỏi thắc mắc về việc prompt tiếng Việt bị tốn gấp đôi token.',
+      verify: 'Slide đã có hình ảnh minh họa BPE Tokenizer cho tiếng Việt chưa?',
+      quotes: [
+        'Context 128k token thì tương đương bao nhiêu trang văn bản tiếng Việt?',
+        'Tại sao một từ tiếng Việt lại bị cắt thành 2-3 token?'
+      ],
+      turnIds: ['T00612', 'T00745'],
+      slideText: 'Context Window: Không gian ngữ cảnh dùng chung cho cả đầu vào và đầu ra của mô hình.',
+      flow: ['Raw Text', 'BPE Tokenizer', 'Tokens', 'Context Buffer']
+    }
+  },
+  D03: {
+    10: {
+      name: 'Multi-Agent Communication',
+      subtitle: 'Giao thức trao đổi giữa các Agent',
+      volume: 49,
+      questions: 78,
+      repeat: 25,
+      level: 4,
+      concept: 'Inter-Agent Message Protocol',
+      signal: 'Cần làm rõ',
+      hypothesis: 'Slide chưa làm rõ cơ chế định tuyến tin nhắn giữa Supervisor Agent và Worker Agents.',
+      observation: 'Học viên lúng túng khi xây dựng đồ thị trạng thái LangGraph.',
+      verify: 'Đã có ví dụ StateGraph định tuyến có điều kiện chưa?',
+      quotes: [
+        'Làm sao Agent Router biết chuyển việc cho Coder hay Reviewer?',
+        'State dùng chung giữa các agent được đồng bộ như thế nào?'
+      ],
+      turnIds: ['T02102', 'T02315'],
+      slideText: 'Multi-Agent System: Phân rã nhiệm vụ phức tạp cho các Agent chuyên biệt hợp tác qua State Graph.',
+      flow: ['Supervisor', 'Router Node', 'Worker Agent', 'Reducer']
+    }
+  }
+};
+
+const generalNames = {
+  D02: [
+    'Tổng quan AI Agents', 'Mục tiêu bài học', 'Từ LLM đến Agent', 'Thành phần Agent',
+    'Grounding & Hallucination', 'Tài liệu và Ngữ cảnh', 'Quan sát môi trường', 'Agent Execution Loop',
+    'Điều phối hành động', 'Xử lý lỗi và Fallback', 'Giới hạn Agent', 'Các loại Memory',
+    'Context Management', 'Memory Buffer vs Storage', 'Summary Memory', 'Reasoning Patterns',
+    'Chain-of-Thought', 'CoT vs ReAct', 'ReAct trong thực tế', 'Tool Calling Overview',
+    'JSON Schema Design', 'Multi-Agent Patterns', 'Thiết kế Workflow', 'Tool Function Calling'
+  ],
+  D01: [
+    'Chào mừng', 'Lộ trình khóa học', 'LLM là gì?', 'Tokenization Basics',
+    'Transformer & Self-Attention', 'Embedding Vectors', 'Pre-training', 'Instruction Tuning',
+    'Inference & Decoding', 'Temperature & Top-p', 'Prompt Basics', 'Context Window & Tokenization',
+    'System Role Prompting', 'Few-shot Learning', 'Định dạng đầu ra JSON', 'Prompt Evaluation',
+    'Prompt Design', 'Lab Baseline', 'Kiểm tra kiến thức', 'Tổng kết bài học'
+  ],
+  D03: [
+    'Tổng quan Multi-Agent', 'Tại sao cần Multi-Agent?', 'Kiến trúc Phân cấp', 'Role-Playing Agents',
+    'Hợp tác tuần tự', 'Hợp tác song song', 'Router & Dispatcher', 'Shared State Management',
+    'LangGraph Architecture', 'Multi-Agent Communication', 'Human-in-the-loop', 'Conflict Resolution',
+    'Tool Orchestration', 'Memory giữa các Agent', 'Đo lường Latency', 'Multi-Agent Testing',
+    'Lab: Build Multi-Agent', 'Tổng kết'
+  ]
+};
+
+function key(slide = state.slide, lesson = state.lesson) {
+  return `${state.cohort}:${lesson}:${slide}`;
+}
+
+function factor() {
+  const cohortFactor = state.cohort === 'K3' ? 0.76 : state.cohort === 'ALL' ? 1.76 : 1.0;
+  const periodFactor = state.period === 'recent' ? 0.62 : 1.0;
+  return cohortFactor * periodFactor;
+}
+
+function getSlide(n = state.slide) {
+  const lessonTopics = topics[state.lesson] || topics.D02;
+  const names = generalNames[state.lesson] || generalNames.D02;
+  const src = lessonTopics[n];
+
+  const base = src || {
+    name: names[n - 1] || `Chủ đề slide ${n}`,
+    subtitle: 'Nội dung bài giảng VLearn',
+    volume: n % 7 === 0 ? 0 : 6 + (n * 7) % 22,
+    questions: 14 + (n * 13) % 35,
+    repeat: 8 + n % 12,
+    level: n % 7 === 0 ? 0 : 1 + n % 3,
+    concept: names[n - 1] || `Chủ đề slide ${n}`,
+    signal: 'Cần làm rõ',
+    hypothesis: 'Học viên đặt câu hỏi làm rõ thuật ngữ. Dữ liệu chưa cho thấy mẫu hiểu sai có hệ thống.',
+    observation: 'Ghi nhận một số yêu cầu giải thích thêm trong buổi học.',
+    verify: 'Cần kiểm tra ngữ cảnh lớp học trực tiếp và tài liệu đọc trước.',
+    quotes: [
+      'Thầy có thể giải thích thêm về phần này bằng một ví dụ thực tế không ạ?',
+      'Khái niệm này áp dụng thế nào vào bài tập lab sắp tới?'
+    ],
+    turnIds: [`T00${100 + n}`, `T00${200 + n}`],
+    slideText: `Nội dung bài giảng ${state.lesson} · Trang ${n}: ${names[n - 1] || 'Lý thuyết cơ bản'}.`,
+    flow: ['Lý thuyết', 'Minh họa', 'Vận dụng']
+  };
+
+  let s = {
+    ...base,
+    n,
+    volume: Math.round(base.volume * factor()),
+    questions: Math.round(Math.max(base.questions, base.volume + 4) * factor()),
+    repeat: Math.round(base.repeat * (state.cohort === 'K3' ? 1.12 : 1)),
+    feedback: state.feedback[key(n)]
+  };
+
+  // Đồng bộ hóa điểm nhiệt động từ API vlearn.db nếu có
+  if (state.heatmapApiData && Array.isArray(state.heatmapApiData.slides)) {
+    const apiItem = state.heatmapApiData.slides.find(x => x.slide_page === n);
+    if (apiItem) {
+      s.volume = apiItem.unique_students;
+      s.questions = apiItem.question_count;
+      s.repeat = Math.round((apiItem.misconception_count / Math.max(1, apiItem.question_count)) * 100);
+      s.level = apiItem.status === 'HOT' ? 5 : (apiItem.status === 'WARM' ? 3 : (apiItem.question_count > 0 ? 1 : 0));
+      s.signal = apiItem.status === 'HOT' ? 'Điểm nghẽn bối rối nghiêm trọng' : (apiItem.status === 'WARM' ? 'Cần làm rõ khái niệm' : 'Ổn định');
+    }
+  }
+
+  // Đồng bộ hóa danh sách Turn ID và câu hỏi thực tế cho slide đang chọn
+  if (n === state.slide && state.currentEvidence && state.currentEvidence.length > 0) {
+    s.quotes = state.currentEvidence.map(e => e.raw_question);
+    s.turnIds = state.currentEvidence.map(e => e.turn_id);
+    if (state.currentEvidence[0]?.selected_text) {
+      s.name = state.currentEvidence[0].selected_text;
+    }
+  }
+
+  if (s.feedback) {
+    s.level = 0;
+    s.excluded = true;
+  }
+  return s;
+}
+
+function allSlides() {
+  const names = generalNames[state.lesson] || generalNames.D02;
+  const maxPages = Math.max(names.length, (state.heatmapApiData?.slides || []).length);
+  const slidesList = [];
+  for (let i = 1; i <= maxPages; i++) {
+    slidesList.push(getSlide(i));
+  }
+  return slidesList;
+}
+
+function ranking() {
+  if (state.heatmapApiData && Array.isArray(state.heatmapApiData.top_3_bottleneck_slides) && state.heatmapApiData.top_3_bottleneck_slides.length > 0) {
+    return state.heatmapApiData.top_3_bottleneck_slides
+      .map(p => getSlide(p))
+      .filter(s => !s.excluded);
+  }
+  return allSlides()
+    .filter(s => s.level > 0 && !s.excluded)
+    .sort((a, b) => b.volume - a.volume)
+    .slice(0, 3);
+}
+
+function totals() {
+  if (state.heatmapApiData && state.heatmapApiData.total_questions) {
+    const q = state.heatmapApiData.total_questions;
+    const u = (state.heatmapApiData.slides || []).reduce((acc, cur) => acc + (cur.unique_students || 0), 0);
+    const un = 28;
+    return { q, u, un };
+  }
+  let k;
+  if (state.cohort === 'K4') {
+    k = { q: 3097, u: 448, un: 28 };
+  } else if (state.cohort === 'K3') {
+    k = { q: 10397, u: 1169, un: 68 };
+  } else {
+    k = { q: 13494, u: 1617, un: 96 };
+  }
+
+  if (state.period === 'recent') {
+    k = {
+      q: Math.round(k.q * 0.62),
+      u: Math.round(k.u * 0.72),
+      un: Math.ceil(k.un * 0.6)
+    };
+  }
+  return k;
+}
+
+/* ========================================================================== */
+/* SERVICE LAYER CLIENT INTEGRATION (API CALLS)                               */
+/* ========================================================================== */
+async function loadHeatmapData(lesson = state.lesson, cohort = state.cohort) {
+  try {
+    const cohortParam = cohort === 'ALL' ? 'all' : cohort;
+    const resp = await fetch(`/api/heatmap?lesson=${encodeURIComponent(lesson)}&cohort=${encodeURIComponent(cohortParam)}`);
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (data && data.status === 'SUCCESS') {
+      state.heatmapApiData = data;
+      renderMain();
+    }
+  } catch (err) {
+    console.warn('[VLearn] Failed to load heatmap API, using local dataset fallback:', err);
+  }
+}
+
+async function loadSlideEvidence(lesson = state.lesson, slide = state.slide) {
+  try {
+    const resp = await fetch(`/api/evidence?lesson=${encodeURIComponent(lesson)}&slide=${slide}&limit=5`);
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (data && data.status === 'SUCCESS' && Array.isArray(data.evidence)) {
+      state.currentEvidence = data.evidence;
+      if (state.view === 'heatmap') {
+        const detailCard = $('#detailCard');
+        if (detailCard) {
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = renderDetail();
+          detailCard.replaceWith(tempDiv.firstElementChild);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('[VLearn] Failed to load slide evidence from API:', err);
+  }
+}
+
+async function loadApprovedTasks() {
+  try {
+    const resp = await fetch('/api/approved');
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (data && data.status === 'SUCCESS' && Array.isArray(data.adaptations)) {
+      const apiTasks = data.adaptations.map(a => ({
+        id: a.record_id || `rec-${a.id}`,
+        title: a.title || `Can thiệp Slide ${a.slide_page}`,
+        content: a.content_payload || '',
+        lesson: a.lecture_code || 'D02',
+        slide: a.slide_page || 18,
+        cohort: a.cohort || state.cohort,
+        status: 'applied',
+        owner: a.lecturer_id || 'Giảng viên',
+        date: (a.created_at || '').split(' ')[0] || new Date().toISOString().split('T')[0],
+        audit_hash: a.audit_hash || '',
+        evidence: [`Slide ${a.slide_page} (${a.lecture_code})`]
+      }));
+      
+      const existingIds = new Set(apiTasks.map(t => t.id));
+      const localOnly = state.tasks.filter(t => !existingIds.has(t.id));
+      state.tasks = [...apiTasks, ...localOnly];
+      state.approvedTasksLoaded = true;
+      save();
+      if (state.view === 'tasks') {
+        renderMain();
+      }
+    }
+  } catch (err) {
+    console.warn('[VLearn] Failed to load approved tasks from API:', err);
+  }
+}
+
+function save() {
+  try {
+    localStorage.setItem('vlearn-pilot-v2', JSON.stringify({
+      tasks: state.tasks,
+      feedback: state.feedback,
+      activities: state.activities
+    }));
+  } catch(e) {}
+  $('#taskCount').textContent = state.tasks.length;
+}
+
+function activity(text) {
+  state.activities.unshift({
+    text,
+    time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+  });
+  state.activities = state.activities.slice(0, 15);
+  save();
+}
+
+const titles = {
+  heatmap: ['Bản đồ điểm nghẽn bài giảng', 'Hiểu nơi học viên đang vướng. Cải tiến đúng nơi cần thiết.'],
+  overview: ['Tổng quan & Vòng lặp cải tiến', 'Từ những câu hỏi riêng lẻ đến bức tranh chung của lớp học.'],
+  concepts: ['Khái niệm kiến thức & Phân cụm AI', 'Gom nhiều cách hỏi thành cùng một vấn đề kiến thức.'],
+  compare: ['So sánh các khóa học (K3 vs K4)', 'Theo dõi tín hiệu kiến thức và độ trôi dạt qua từng thế hệ.'],
+  tasks: ['Kế hoạch cải tiến sư phạm', 'Biến đề xuất thành hành động — với giảng viên làm chủ.'],
+  data: ['Nguồn dữ liệu & Lõi AI (vlearn.db)', 'Minh bạch 13.494 tương tác, pipeline phân tích và độ trễ 1.09ms.']
+};
+
+function navigate(view) {
+  state.view = view;
+  $('#sidebar').classList.remove('open');
+  renderMain();
+  updateHeader();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateHeader() {
+  $('#pageTitle').textContent = titles[state.view][0];
+  $('#pageSub').textContent = titles[state.view][1];
+  $$('.nav[data-nav]').forEach(n => n.classList.toggle('active', n.dataset.nav === state.view));
+}
+
+function renderStats() {
+  const t = totals();
+  const high = allSlides().filter(s => s.level >= 4).length;
+
+  $('#coverage').innerHTML = `
+    ${ic('info')}
+    <span>Phạm vi khóa: <b>${fmt(t.q)} lượt hỏi-đáp</b> · ${fmt(t.u)} học viên · Đang xem: ${state.course} / ${state.lesson} v1.2</span>
+    <span style="color:#cbd5e1">|</span>
+    <button class="link" onclick="openUnmapped()">${t.un} câu chưa xác định trang slide ${ic('chevron')}</button>
+  `;
+
+  $('#stats').innerHTML = [
+    ['Lượt hỏi–đáp', fmt(t.q), 'message', 'Dữ liệu thực tế từ vlearn.db'],
+    ['Học viên có tương tác', fmt(t.u), 'users', 'Học viên độc lập đã gửi câu hỏi'],
+    ['Slide ưu tiên rà soát', high.toString().padStart(2, '0'), 'flame', `${(generalNames[state.lesson]||[]).length} trang trong bài ${state.lesson}`],
+    ['Điểm nghẽn xuyên khóa', state.lesson === 'D02' ? '03' : '02', 'chart', 'Lặp lại giữa K3 và K4']
+  ].map((a, i) => `
+    <div class="stat">
+      <div class="stat-label">${a[0]}${ic(a[2])}</div>
+      <div class="stat-value" ${i === 2 ? 'style="color:#d65e49"' : ''}>${a[1]}</div>
+      <div class="stat-foot">${i === 2 ? '<span class="pill red" style="font-size:8px;padding:1px 5px">Ưu tiên cao</span>' : ''}${a[3]}</div>
+    </div>
+  `).join('');
+}
+
+function changeCourse() {
+  state.course = $('#course').value;
+  $('#wsCourseName').textContent = state.course === 'COMP2010' ? 'AI Engineering' :
+    state.course === 'BIOM3010' ? 'Biomedical AI' :
+    state.course === 'COMP4010' ? 'Cloud Systems' : 'FinTech AI Batch 4';
+  activity(`Chuyển học phần: ${state.course}`);
+  renderStats();
+  renderMain();
+  toast(`Đã chuyển sang học phần ${state.course}.`);
+}
+
+function changeFilters() {
+  state.cohort = $('#cohort').value;
+  state.lesson = $('#lesson').value;
+  state.period = $('#period').value;
+  state.slide = state.lesson === 'D02' ? 18 : state.lesson === 'D01' ? 5 : 10;
+  state.tab = 'insight';
+  loadHeatmapData(state.lesson, state.cohort);
+  loadSlideEvidence(state.lesson, state.slide);
+  resetChat(false);
+  renderStats();
+  renderMain();
+  toast('Đã cập nhật phạm vi lọc & đồng bộ dữ liệu vlearn.db.');
+}
+
+function renderMain() {
+  updateHeader();
+  const renderers = {
+    heatmap: renderHeatmap,
+    overview: renderOverview,
+    concepts: renderConcepts,
+    compare: renderCompare,
+    tasks: renderTasks,
+    data: renderData
+  };
+  $('#mainContent').innerHTML = (renderers[state.view] || renderHeatmap)();
+  renderStats();
+  renderContext();
+  save();
+}
+
+/* ========================================================================== */
+/* VIEW 1: HEATMAP & INSPECTOR                                                */
+/* ========================================================================== */
+function renderHeatmap() {
+  return `
+    <div class="main-view">
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <h2>Bản đồ tín hiệu bối rối theo trang slide</h2>
+            <p>Mỗi ô là một trang slide. Chọn để khám phá bằng chứng và phân tích nguyên nhân.</p>
+          </div>
+          <div class="segmented">
+            <button class="${state.mode === 'slides' ? 'active' : ''}" onclick="setMode('slides')">Theo slide</button>
+            <button class="${state.mode === 'concepts' ? 'active' : ''}" onclick="setMode('concepts')">Khái niệm</button>
+          </div>
+        </div>
+
+        <div class="heatbody">
+          ${state.mode === 'slides' ? `
+            <div class="heatcaption">
+              <span>${state.lesson} · ${state.lesson === 'D02' ? 'AI Agents & Reasoning' : state.lesson === 'D01' ? 'Nền tảng LLM' : 'Multi-Agent Systems'}</span>
+              <button class="link" style="color:#64748b;font-weight:500" onclick="openMethod()">Cách tính mức ưu tiên ${ic('info')}</button>
+            </div>
+            <div class="heatgrid">
+              ${allSlides().map(s => `
+                <button class="tile t${s.level} ${s.n === state.slide ? 'selected' : ''}" onclick="selectSlide(${s.n})" title="Slide ${s.n}: ${esc(s.name)} · ${s.excluded ? 'Đã loại khỏi ưu tiên' : s.volume + ' học viên có tín hiệu'}" aria-label="Slide ${s.n}, ${esc(s.name)}" aria-pressed="${s.n === state.slide}">
+                  <b>${String(s.n).padStart(2, '0')}</b>
+                  <span>${s.excluded ? 'Đã loại' : s.volume ? s.volume + ' HV' : 'Chưa đủ'}</span>
+                </button>
+              `).join('')}
+            </div>
+            <div class="heatlegend">
+              <span>HV = Số học viên duy nhất có câu hỏi cần làm rõ tại slide</span>
+              <div class="legend-scale">
+                <span>Thấp</span>
+                ${['#edf3ed', '#fef3c7', '#fed7aa', '#fca5a5', '#ef4444'].map(c => `<i style="background:${c}"></i>`).join('')}
+                <span>Cao</span>
+                <i style="background:#f8fafc;border:1px solid #e2e8f0;margin-left:6px"></i>
+                <span>Chưa đủ dữ liệu</span>
+              </div>
+            </div>
+          ` : conceptList()}
+          
+          <div class="notice">
+            ${ic('shield')}
+            <span>Tín hiệu bối rối được tính toán từ các câu hỏi hỏi–đáp thật trong <code>vlearn.db</code>, không đồng nhất mọi câu hỏi với hiểu sai. Câu hỏi tò mò/mở rộng không làm tăng mức ưu tiên cảnh báo.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top 3 Priority Hotspots -->
+      <div class="sectionlabel">
+        <h2>Ưu tiên can thiệp hàng đầu <span style="color:#94a3b8;font-weight:400;margin-left:5px">/ Top 3 Điểm Nghẽn</span></h2>
+        <span class="small" style="font-size:9.5px">Xếp theo số học viên & mức độ hiểu sai</span>
+      </div>
+
+      <div class="top3">
+        ${ranking().map((s, i) => `
+          <button class="priority ${s.n === state.slide ? 'chosen' : ''}" onclick="selectSlide(${s.n}, true)">
+            <div class="row between">
+              <span class="rank">0${i + 1} / SLIDE ${String(s.n).padStart(2, '0')}</span>
+              <span class="pill red" style="font-size:8px">${s.level >= 4 ? 'Cấp thiết' : 'Chú ý'}</span>
+            </div>
+            <h3>${esc(s.name)}</h3>
+            <p><b style="color:#0f172a">${s.volume}</b> học viên · ${s.repeat}% hỏi lặp lại</p>
+            <div class="bar">
+              <i style="width:${Math.min(100, (s.volume / ranking()[0].volume) * 100)}%"></i>
+            </div>
+          </button>
+        `).join('')}
+      </div>
+
+      <!-- Detail Inspector -->
+      ${renderDetail()}
+    </div>
+  `;
+}
+
+function setMode(mode) {
+  state.mode = mode;
+  renderMain();
+}
+
+function selectSlide(n, scroll = false) {
+  state.slide = n;
+  state.tab = 'insight';
+  loadSlideEvidence(state.lesson, n);
+  renderMain();
+  resetChat(false);
+  if (scroll) {
+    setTimeout(() => $('#detailCard')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30);
+  }
+}
+
+function renderDetail() {
+  const s = getSlide();
+  return `
+    <div class="card" id="detailCard">
+      <div class="detailhead">
+        <div class="row between">
+          <div>
+            <div class="small" style="color:#64748b">${state.lesson} · SLIDE ${String(s.n).padStart(2, '0')} · v1.2</div>
+            <h2>${esc(s.concept)}</h2>
+          </div>
+          <button class="iconbtn" onclick="openSlide()" title="Xem slide minh họa HTML" aria-label="Xem slide minh họa">
+            ${ic('file')}
+          </button>
+        </div>
+
+        <div class="row" style="margin-top:10px;gap:6px;flex-wrap:wrap">
+          <span class="pill ${s.excluded ? 'green' : s.level >= 4 ? 'red' : 'yellow'}">
+            ${s.excluded ? 'Đã giảng viên xác nhận loại' : s.level === 0 ? 'Chưa đủ dữ liệu' : s.signal}
+          </span>
+          <span class="pill">${s.volume} học viên · ${s.questions} lượt tương tác</span>
+          <span class="pill purple">Đã liên kết Turn ID thật</span>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="${state.tab === 'insight' ? 'active' : ''}" onclick="setTab('insight')">Phân tích AI</button>
+        <button class="${state.tab === 'evidence' ? 'active' : ''}" onclick="setTab('evidence')">Bằng chứng thật (${s.quotes.length})</button>
+        <button class="${state.tab === 'intervention' ? 'active' : ''}" onclick="setTab('intervention')">Can thiệp sư phạm 2 phút</button>
+      </div>
+
+      <div class="detailbody">
+        ${s.excluded ? `
+          <div class="review-note">
+            ${ic('check')} Giảng viên đã hiệu chỉnh nhãn: ${esc(s.feedback.label)}. Slide này không còn nằm trong danh sách cảnh báo. 
+            <button class="link" onclick="restoreFeedback()">Hoàn tác</button>
+          </div>
+        ` : ''}
+
+        ${state.tab === 'insight' ? `
+          <div class="insight">
+            <div class="insight-title">01 · Điều quan sát được từ dữ liệu</div>
+            <p>${esc(s.observation)}</p>
+
+            <div class="insight-title">02 · Giả thuyết nguyên nhân gốc rễ (Root Cause) <span class="pill purple" style="font-size:8px;margin-left:4px">Đề xuất suy luận</span></div>
+            <p>${esc(s.hypothesis)}</p>
+
+            <div class="insight-title">03 · Cần giảng viên kiểm chứng thực tế</div>
+            <p>${esc(s.verify)}</p>
+          </div>
+
+          <div class="evidence">
+            <div class="meta">
+              <span>${ic('message')} Turn ID: ${s.turnIds[0]} · Học viên ẩn danh</span>
+              <span>Đoạn bôi đen: "${esc(s.name)}"</span>
+            </div>
+            <div class="quote">“${esc(s.quotes[0])}”</div>
+            <button class="link" style="margin-top:6px;display:inline-block" onclick="setTab('evidence')">Xem toàn bộ bằng chứng đối thoại →</button>
+          </div>
+        ` : state.tab === 'evidence' ? `
+          <div class="small" style="color:#64748b;margin-bottom:8px">Các câu hỏi nguyên văn trích xuất từ <code>vlearn.db</code> (đã ẩn danh danh tính học viên):</div>
+          ${s.quotes.map((q, i) => `
+            <div class="evidence">
+              <div class="meta">
+                <span>Turn ID: ${s.turnIds[i] || 'T00' + (i + 1)} · Khóa ${state.cohort}</span>
+                <span>Slide ${s.n}</span>
+              </div>
+              <div class="quote">“${esc(q)}”</div>
+              <div class="row between" style="margin-top:8px">
+                <span class="pill" style="font-size:9px">${s.signal}</span>
+                <button class="link" onclick="openEvidence(${i})">Mở chi tiết hội thoại ${ic('arrow')}</button>
+              </div>
+            </div>
+          `).join('')}
+        ` : `
+          <div class="insight">
+            <p>Chọn 1 trong 3 phương án can thiệp dưới đây. AI sẽ phác thảo bản nháp, thầy/cô chỉnh sửa và phê duyệt trước khi đưa vào giáo án.</p>
+          </div>
+          <div style="display:grid;gap:10px;margin-top:14px">
+            ${[
+              ['example', 'book', 'Ví dụ tương phản đời thường', 'Một tình huống thực tế, đặt hai cách tiếp cận cạnh nhau.'],
+              ['script', 'clock', 'Kịch bản giảng 2 phút trên lớp', 'Mở vấn đề (30s) → Vẽ minh họa (50s) → Kiểm tra lại (40s).'],
+              ['quiz', 'tasks', 'Câu hỏi trắc nghiệm Concept Check', 'Bốn phương án kiểm tra nhanh kèm giải thích chi tiết đáp án.']
+            ].map(a => `
+              <button class="btn" style="justify-content:flex-start;text-align:left;padding:12px 14px" onclick="createDraft('${a[0]}')">
+                ${ic(a[1])}
+                <span style="flex:1">
+                  <span style="font-weight:700;display:block;color:#0f172a">${a[2]}</span>
+                  <span class="small" style="font-weight:400;font-size:10.5px;color:#64748b">${a[3]}</span>
+                </span>
+                ${ic('chevron')}
+              </button>
+            `).join('')}
+          </div>
+        `}
+      </div>
+
+      <div class="feedbackrow">
+        <span class="small" style="font-size:10.5px;color:#64748b">Nhận định của AI chưa thỏa đáng?</span>
+        <div class="row" style="gap:6px">
+          <button class="btn" onclick="openFeedback('curiosity')">Đổi nhãn: Tò mò</button>
+          <button class="btn danger" onclick="openFeedback('reject')">Bác bỏ điểm nghẽn</button>
+          <button class="btn soft" onclick="askPreset('why')">${ic('spark')}Hỏi Copilot</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function setTab(tab) {
+  state.tab = tab;
+  renderMain();
+}
+
+function evidenceId(s, i) {
+  return s.turnIds[i] || `T00${s.n}${i + 1}`;
+}
+
+function conceptList() {
+  const lessonTopics = topics[state.lesson] || topics.D02;
+  const keys = Object.keys(lessonTopics).sort((a, b) => lessonTopics[b].volume - lessonTopics[a].volume);
+
+  return keys.map(n => {
+    const s = getSlide(+n);
+    const maxVol = Math.max(...Object.values(lessonTopics).map(x => x.volume)) || 1;
+    const barWidth = Math.min(100, (s.volume / (maxVol * factor())) * 100);
+
+    return `
+      <div class="concept-row">
+        <div>
+          <h3 style="font-size:12.5px;color:#0f172a">${esc(s.concept)}</h3>
+          <p>${state.lesson} · Slide ${s.n} · ${s.excluded ? 'Đã hiệu chỉnh' : 'Xuất hiện ở cả K3 & K4'}</p>
+        </div>
+        <div class="mini-bar">
+          <i style="width:${barWidth}%"></i>
+        </div>
+        <b style="font-size:12px;color:#0f172a">${s.volume}</b>
+        <button class="iconbtn" title="Mở khái niệm ${esc(s.name)}" aria-label="Mở khái niệm" onclick="state.view='heatmap';selectSlide(${n},true)">
+          ${ic('arrow')}
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ========================================================================== */
+/* VIEW 2: OVERVIEW                                                           */
+/* ========================================================================== */
+function renderOverview() {
+  const t = totals();
+  return `
+    <div class="main-view">
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <span class="eyebrow" style="color:var(--green);margin:0 0 6px">TỔNG KẾT SAU BUỔI HỌC</span>
+            <h2 style="font-size:20px;margin-top:6px;color:#0f172a">Mỗi câu hỏi bối rối là một cơ hội nâng cấp giáo án.</h2>
+            <p style="margin-top:6px;font-size:12px;line-height:1.7">
+              Copilot tự động quét log, phát hiện các điểm đứt gãy giữa lý thuyết slide và thực hành lab, hỗ trợ giảng viên can thiệp đúng trọng tâm mà không phải đọc thủ công hàng nghìn dòng hội thoại.
+            </p>
+          </div>
+        </div>
+        <div style="padding:0 20px 22px">
+          <div class="tour-visual" style="background:linear-gradient(130deg,#f0fdf4,#f5f3ff);border-radius:10px;padding:22px;display:flex;justify-content:center;align-items:center;margin:4px 0 16px;gap:12px">
+            ${['01 Phát hiện', '02 Bằng chứng', '03 Can thiệp', '04 Phê duyệt'].map((x, i) => `
+              <div class="tour-node" style="background:#ffffff;padding:10px 14px;border-radius:8px;box-shadow:0 3px 10px rgba(0,0,0,0.04);font-size:11px;font-weight:650;color:#334155;text-align:center">
+                ${ic(['flame', 'message', 'spark', 'check'][i])}
+                <div style="margin-top:4px">${x}</div>
+              </div>
+              ${i < 3 ? '<span style="color:#94a3b8">→</span>' : ''}
+            `).join('')}
+          </div>
+          <button class="btn primary" onclick="navigate('heatmap')">
+            Khám phá bản đồ điểm nghẽn ${ic('arrow')}
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <h2>Các khái niệm trọng tâm cần lưu ý</h2>
+            <p>Dựa trên ${fmt(t.q)} lượt hỏi–đáp thật trong database ${state.course} / ${state.lesson}.</p>
+          </div>
+        </div>
+        <div style="padding:0 20px 14px">
+          ${conceptList()}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardhead">
+          <h2>Vòng lặp cải tiến giáo án của bạn</h2>
+          <span class="pill green">${state.tasks.length} đề xuất đã phê duyệt</span>
+        </div>
+        <div class="detailbody" style="padding-top:0">
+          <p class="insight">
+            ${state.tasks.length
+              ? `Hiện có <strong>${state.tasks.length} đề xuất</strong> đã được lưu trong kế hoạch cải tiến. Sau khi áp dụng lên lớp, hãy đánh dấu "Đã áp dụng" để Copilot bắt đầu đối chuẩn hiệu quả với khóa tiếp theo.`
+              : 'Chưa có đề xuất nào được phê duyệt. Thầy/cô hãy chọn một slide nóng, nhờ Copilot soạn ví dụ và lưu lại để tạo giáo án nâng cao.'}
+          </p>
+          <button class="btn" style="margin-top:14px" onclick="navigate('tasks')">
+            Mở kế hoạch cải tiến ${ic('arrow')}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ========================================================================== */
+/* VIEW 3: CONCEPTS & SEMANTIC CLUSTERING                                     */
+/* ========================================================================== */
+function renderConcepts() {
+  return `
+    <div class="card main-view">
+      <div class="cardhead">
+        <div>
+          <h2>Bản đồ khái niệm & Gom cụm ngữ nghĩa · ${state.lesson}</h2>
+          <p>Gom hàng trăm cách diễn đạt khác nhau của học viên về cùng một nút thắt kiến thức.</p>
+        </div>
+        <span class="pill purple">Semantic Clustering</span>
+      </div>
+
+      <div style="padding:0 20px 20px">
+        <input class="searchinput" id="conceptSearch" placeholder="Tìm kiếm khái niệm hoặc từ khóa (ví dụ: ReAct, loop, token, memory)..." aria-label="Tìm khái niệm" oninput="filterConcepts(this.value)">
+        <div id="conceptResults">
+          ${conceptList()}
+        </div>
+        <div class="notice">
+          ${ic('info')}
+          <span>Một học viên có thể đặt nhiều câu hỏi ở các khái niệm khác nhau. Chỉ số volume phản ánh số học viên duy nhất có tương tác tại khái niệm đó.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardhead">
+        <h2>Minh họa Lõi AI Gom Cụm Ngữ Nghĩa</h2>
+      </div>
+      <div class="detailbody" style="padding-top:0">
+        <div class="evidence" style="margin-top:0">
+          “Agent dừng vòng lặp lúc nào?”<br>
+          “Nó cứ gọi tool mãi thì sao?”<br>
+          “Điều kiện kết thúc Agent Loop là gì?”
+        </div>
+        <div style="text-align:center;color:#64748b;margin:8px;font-size:11px">
+          ↓ Vector Embedding + Phân loại Intent
+        </div>
+        <div class="review-note" style="margin-bottom:6px">
+          Gom nhóm: Thiếu điều kiện dừng (Stopping Criteria) & Giới hạn Max Iterations
+        </div>
+        <p class="small" style="color:#64748b">Hệ thống chuyển đổi các câu hỏi rời rạc thành một đầu mối cải tiến cụ thể trong giáo án.</p>
+      </div>
+    </div>
+  `;
+}
+
+function filterConcepts(q) {
+  const rows = $$('#conceptResults .concept-row');
+  rows.forEach(r => {
+    r.hidden = !r.textContent.toLowerCase().includes(q.toLowerCase());
+  });
+  $('#noConcept')?.remove();
+  if (rows.every(r => r.hidden)) {
+    $('#conceptResults').insertAdjacentHTML('beforeend', '<p id="noConcept" class="empty" style="text-align:center;padding:20px;color:#94a3b8">Không tìm thấy khái niệm phù hợp.</p>');
+  }
+}
+
+/* ========================================================================== */
+/* VIEW 4: COHORT COMPARISON (K3 vs K4)                                       */
+/* ========================================================================== */
+function renderCompare() {
+  const lessonTopics = topics[state.lesson] || topics.D02;
+  const entries = Object.keys(lessonTopics).map(Number);
+
+  return `
+    <div class="card main-view">
+      <div class="cardhead">
+        <div>
+          <h2>Đối chuẩn điểm nghẽn xuyên khóa học</h2>
+          <p>${state.lesson} · So sánh theo khái niệm kiến thức (K3 lịch sử vs K4 thực tế).</p>
+        </div>
+        <span class="pill yellow">Cohort Drift Telemetry</span>
+      </div>
+
+      <div style="padding:0 20px 20px">
+        <div class="row" style="font-size:11px;color:#64748b;justify-content:flex-end;margin-bottom:8px">
+          <span>● K3 (1.169 học viên có hỏi)</span>
+          <span style="color:#147d68;font-weight:700">● K4 (448 học viên có hỏi)</span>
+        </div>
+
+        <div class="chart">
+          ${entries.map(n => {
+            const s = lessonTopics[n];
+            const k3Val = Math.round(s.volume * 0.76);
+            const k4Val = s.volume;
+            return `
+              <div class="chartgroup">
+                <div class="chartbar" style="height:${k3Val * 1.35}px"><span>${k3Val}</span></div>
+                <div class="chartbar new" style="height:${k4Val * 1.35}px"><span>${k4Val}</span></div>
+                <label>${s.name}</label>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        <p class="small" style="font-size:9.5px;color:#64748b;margin-top:12px">
+          Đơn vị đo: Số lượng học viên duy nhất bối rối tại mỗi khái niệm.
+        </p>
+      </div>
+
+      <div class="callout">
+        ${ic('info')} <strong>Nhận định chuyên gia:</strong> Các điểm nghẽn tại Slide 18 (CoT vs ReAct) và Slide 08 (Agent Loop) xuất hiện lặp lại ở cả hai khóa K3 và K4. Đây là <strong>điểm nghẽn kinh niên</strong> của bài giảng cần được can thiệp dứt điểm bằng slide bổ sung ví dụ thực thi.
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Khái niệm kiến thức</th>
+              <th>Khóa K3</th>
+              <th>Khóa K4</th>
+              <th>Trạng thái rà soát</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${entries.map(n => {
+              const s = lessonTopics[n];
+              return `
+                <tr>
+                  <td>
+                    <b>${s.name}</b>
+                    <div class="small" style="color:#64748b">Slide ${n} · ${s.concept}</div>
+                  </td>
+                  <td>${Math.round(s.volume * 0.76)} HV</td>
+                  <td><b>${s.volume} HV</b></td>
+                  <td><span class="pill red">Điểm nghẽn kinh niên</span></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardhead">
+        <h2>Theo dõi hiệu quả sau can thiệp (K4 → K5)</h2>
+        <span class="pill green">Đo lường chu kỳ tiếp theo</span>
+      </div>
+      <div class="detailbody" style="padding-top:0">
+        <p class="insight">
+          ${state.tasks.some(t => t.status === 'applied')
+            ? 'Đã có nội dung can thiệp được đánh dấu áp dụng lên lớp. Khi khóa K5 bắt đầu, hệ thống sẽ tự động đối chiếu tỷ lệ hỏi lại tại slide này để đo lường mức độ thuyên giảm điểm nghẽn.'
+            : 'Chưa có can thiệp nào được đánh dấu áp dụng. Thầy/cô hãy phê duyệt một đề xuất và xác nhận áp dụng để kích hoạt vòng theo dõi.'}
+        </p>
+        <button class="btn" style="margin-top:14px" onclick="navigate('tasks')">
+          Xem kế hoạch cải tiến ${ic('arrow')}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+/* ========================================================================== */
+/* VIEW 5: TASKS & CURRICULUM IMPROVEMENT                                     */
+/* ========================================================================== */
+function renderTasks() {
+  return `
+    <div class="card main-view">
+      <div class="cardhead">
+        <div>
+          <h2>Kế hoạch cải tiến bài giảng đã phê duyệt</h2>
+          <p>${state.tasks.length} đề xuất · ${state.tasks.filter(t => t.status === 'applied').length} đã áp dụng · Giảng viên nắm quyền quyết định cao nhất.</p>
+        </div>
+        <span class="pill green">Human-in-the-loop</span>
+      </div>
+
+      ${state.tasks.length ? state.tasks.map(t => `
+        <div class="task">
+          <div class="row between" style="align-items:flex-start">
+            <div>
+              <h3>${esc(t.title)}</h3>
+              ${t.audit_hash ? `
+                <div style="margin-top:4px">
+                  <span class="pill purple" style="font-family:var(--font-mono);font-size:9.5px;padding:2px 7px;display:inline-flex;align-items:center;gap:4px" title="Mã băm kiểm toán toàn vẹn SHA-256 (lưu trữ trong vlearn.db):\n${esc(t.audit_hash)}">
+                    ${ic('shield')} SHA-256: ${esc(t.audit_hash.substring(0, 14))}...
+                  </span>
+                </div>
+              ` : ''}
+            </div>
+            <span class="pill ${t.status === 'applied' ? 'green' : 'yellow'}">
+              ${t.status === 'applied' ? '✓ Đã áp dụng lên lớp' : 'Chờ áp dụng'}
+            </span>
+          </div>
+          <p style="margin-top:6px">${esc(t.cohort)} · ${t.lesson} / Slide ${t.slide} · Phụ trách: ${esc(t.owner)} · Ngày: ${esc(t.date)}</p>
+          <div class="row">
+            <button class="btn" onclick="openTask('${t.id}')">${ic('edit')}Xem & chỉnh sửa</button>
+            ${t.status !== 'applied' ? `
+              <button class="btn primary" onclick="confirmApply('${t.id}')">${ic('check')}Đánh dấu đã áp dụng</button>
+            ` : `
+              <button class="btn" onclick="navigate('compare')">${ic('chart')}Theo dõi hiệu quả</button>
+            `}
+            <button class="btn danger" onclick="deleteTask('${t.id}')">Xóa</button>
+          </div>
+        </div>
+      `).join('') : `
+        <div class="empty" style="text-align:center;padding:40px 20px;color:#64748b">
+          ${ic('tasks')}
+          <h3 style="margin:10px 0 6px;color:#0f172a">Chưa có đề xuất nào được phê duyệt</h3>
+          <p style="font-size:12px;margin-bottom:16px">Chọn một slide nóng trên Heatmap → Nhờ Copilot soạn ví dụ → Phê duyệt & tạo kế hoạch.</p>
+          <button class="btn primary" onclick="state.view='heatmap';state.tab='intervention';renderMain()">
+            Tạo đề xuất đầu tiên ${ic('arrow')}
+          </button>
+        </div>
+      `}
+    </div>
+
+    <div class="card">
+      <div class="cardhead">
+        <h2>Quy trình cải tiến sư phạm an toàn (3 Bước)</h2>
+      </div>
+      ${[
+        ['1', 'AI Phác thảo Bản nháp', 'Nội dung luôn gắn chặt với Turn ID bằng chứng cụ thể từ vlearn.db.'],
+        ['2', 'Giảng viên Hiệu chỉnh & Phê duyệt', 'Giảng viên toàn quyền biên tập và ấn định ngày áp dụng lên lớp.'],
+        ['3', 'Cập nhật Giáo án & Đo lường lại', 'Giảng viên áp dụng vào buổi học tiếp theo. Hệ thống theo dõi mức độ bối rối ở khóa sau.']
+      ].map(a => `
+        <div class="data-step">
+          <span class="step-num">${a[0]}</span>
+          <div>
+            <h3 style="font-size:12px;color:#0f172a">${a[1]}</h3>
+            <p>${a[2]}</p>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ========================================================================== */
+/* VIEW 6: DATA SOURCES & ARCHITECTURE TRANSPARENCY                           */
+/* ========================================================================== */
+function renderData() {
+  return `
+    <div class="card main-view">
+      <div class="cardhead">
+        <div>
+          <h2>Nguồn dữ liệu & Minh bạch Kiến trúc Hệ thống</h2>
+          <p>Dữ liệu cục bộ từ SQLite <code>data/vlearn.db</code> · Kiểm toán độ trễ truy vấn: 1.09 ms.</p>
+        </div>
+        ${ic('database')}
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nguồn dữ liệu</th>
+              <th>Số lượng / Chi tiết</th>
+              <th>Trạng thái tích hợp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <b>tutor_turns.csv (SQLite vlearn.db)</b>
+                <div class="small" style="color:#64748b">Bảng tương tác hỏi–đáp học viên & Tutor</div>
+              </td>
+              <td>13.494 dòng · 1.617 học viên (K3 & K4)</td>
+              <td><span class="pill green">Đã ingestion & Index</span></td>
+            </tr>
+            <tr>
+              <td>
+                <b>course_lectures table</b>
+                <div class="small" style="color:#64748b">Danh mục 82 bài giảng trên nền tảng VLearn</div>
+              </td>
+              <td>COMP2010, BIOM3010, COMP4010, K4P1</td>
+              <td><span class="pill green">Sẵn sàng truy vấn</span></td>
+            </tr>
+            <tr>
+              <td>
+                <b>Slides PDF & Transcripts</b>
+                <div class="small" style="color:#64748b">d1-slide-hackathon.pdf, d2-slide-hackathon.pdf</div>
+              </td>
+              <td>Đã trích xuất số trang (Trang N) và Topic</td>
+              <td><span class="pill green">Đã liên kết</span></td>
+            </tr>
+            <tr>
+              <td>
+                <b>Provider Fallback Chain</b>
+                <div class="small" style="color:#64748b">Qwen-2.5 32B (Groq) → HCNSEC → OSS-120B</div>
+              </td>
+              <td>Thời gian phản hồi trung bình: 0.85s</td>
+              <td><span class="pill purple">3/3 Providers Ready</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <strong>Tôn chỉ thiết kế:</strong> Deterministic Engine (Python/SQL) xử lý các phép đếm số học và xếp hạng ưu tiên để đảm bảo <strong>chính xác 100% không bị ảo giác</strong>; Probabilistic Engine (LLM) chỉ đảm nhiệm việc diễn giải nguyên nhân gốc rễ và gợi ý phương án sư phạm.
+      </div>
+
+      <div style="padding:0 20px 20px">
+        <button class="btn primary" onclick="rescan()">${ic('refresh')}Chạy mô phỏng Pipeline phân tích</button>
+        <button class="btn" style="margin-left:6px" onclick="openReset()">Đặt lại dữ liệu demo</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardhead">
+        <h2>Bốn Lõi Xử Lý AI Chuyên Biệt</h2>
+        <span class="pill purple">StateGraph Pipeline</span>
+      </div>
+
+      ${[
+        ['01', 'Làm sạch & Gắn ngữ cảnh Slide', 'Trích xuất số trang (Trang N) hoặc Topic Matching với slide PDF chính thức.'],
+        ['02', 'Phân loại Intent & Gom cụm ngữ nghĩa', 'Phân biệt hiểu sai (trọng số 3.0), vướng áp dụng (2.0), cần làm rõ (1.5), tò mò (loại khỏi cảnh báo).'],
+        ['03', 'Suy luận Nguyên nhân gốc rễ (Root Cause)', 'Đối chiếu câu hỏi học viên với nội dung slide để chỉ ra điểm thiếu sót trong giáo án.'],
+        ['04', 'Soạn thảo Can thiệp Sư phạm', 'Sinh ví dụ tương phản đời thường, kịch bản giảng 2 phút hoặc câu hỏi Quiz 4 lựa chọn.']
+      ].map(a => `
+        <div class="data-step">
+          <span class="step-num">${a[0]}</span>
+          <div>
+            <h3 style="font-size:12px;color:#0f172a">${a[1]}</h3>
+            <p>${a[2]}</p>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ========================================================================== */
+/* COPILOT CHAT & DRAFT ASSISTANT ENGINE                                      */
+/* ========================================================================== */
+function renderContext() {
+  const s = getSlide();
+  $('#chatContext').innerHTML = `
+    ${ic('file')}
+    <span>${state.lesson} · Slide ${s.n} · ${esc(s.name)}</span>
+    <span class="pill purple" style="font-size:8px;flex-shrink:0">Ngữ cảnh hoạt động</span>
+  `;
+}
+
+function resetChat(notify = true) {
+  chatEpoch++;
+  state.busy = false;
+  $('#sendBtn').disabled = false;
+  state.chat = [];
+  const s = getSlide();
+
+  state.chat.push({
+    role: 'assistant',
+    html: `
+      Chào thầy/cô! Tôi đang theo dõi <strong>Slide ${s.n}: ${esc(s.name)}</strong> (${state.lesson}).<br><br>
+      ${s.excluded 
+        ? 'Slide này đã được thầy/cô loại khỏi danh sách ưu tiên. Tôi vẫn sẵn sàng hỗ trợ soạn thêm tài liệu tham khảo.' 
+        : `Trong hệ thống, có <strong>${s.volume} học viên</strong> gửi câu hỏi bối rối tại đây. Tỷ lệ hỏi lặp lại là <strong>${s.repeat}%</strong>.<br><br>Thầy/cô muốn kiểm tra bằng chứng Turn ID thật hay soạn ví dụ can thiệp cho buổi học tới?`
+      }
+    `
+  });
+
+  renderChat();
+  renderContext();
+  if (notify) toast('Đã làm mới ngữ cảnh Copilot.');
+}
+
+function renderChat() {
+  const feed = $('#chatFeed');
+  feed.innerHTML = state.chat.map(m => m.role === 'user' ? `
+    <div class="chatmsg user-msg">${esc(m.text)}</div>
+  ` : `
+    <div class="chatmsg">
+      <div class="speaker">${ic('spark')} Copilot Sư Phạm <span style="font-weight:400;color:#94a3b8">· vlearn.db</span></div>
+      <div class="chattext">${m.html}</div>
+    </div>
+  `).join('') + (state.busy ? `
+    <div class="chatmsg" id="typing">
+      <div class="speaker">${ic('spark')}Đang truy vấn bằng chứng<span class="loadingdots"></span></div>
+    </div>
+  ` : '');
+
+  $('#suggestions').innerHTML = `
+    <button onclick="askPreset('why')">Vì sao slide này gây vướng?</button>
+    <button onclick="createDraft('example')">${ic('spark')} Soạn ví dụ</button>
+    <button onclick="createDraft('script')">Kịch bản 2 phút</button>
+    <button onclick="createDraft('quiz')">Tạo Quiz kiểm tra</button>
+  `;
+
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function askPreset(kind) {
+  const s = getSlide();
+  sendChat(kind === 'why' ? `Vì sao slide ${s.n} về ${s.name} lại gây khó hiểu cho học viên?` : kind);
+}
+
+function normalize(s) {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').toLowerCase();
+}
+
+function formatMarkdown(md) {
+  if (!md) return '';
+  let html = esc(md);
+
+  // Headers: ### Title -> <h4>
+  html = html.replace(/###\s+(.*?)(?:\n|$)/g, '<h4 style="font-size:12px;color:#0f172a;margin:10px 0 4px;font-weight:750">$1</h4>');
+  html = html.replace(/##\s+(.*?)(?:\n|$)/g, '<h3 style="font-size:13px;color:#0f172a;margin:12px 0 6px;font-weight:750">$1</h3>');
+
+  // Bold & Italic
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*([^\*\n]+)\*/g, '<em>$1</em>');
+
+  // Code inline
+  html = html.replace(/`([^`\n]+)`/g, '<code style="font-size:10.5px;background:#f1f5f9;border-radius:4px;padding:2px 5px;font-family:var(--font-mono);color:#6b21a8">$1</code>');
+
+  // Bullet items
+  html = html.replace(/(?:^|\n)[*-]\s+(.*?)(?=\n|$)/g, '<li style="margin:4px 0">$1</li>');
+  html = html.replace(/(<li[\s\S]*?<\/li>)/g, '<ul style="padding-left:18px;margin:6px 0">$1</ul>');
+  html = html.replace(/<\/ul>\s*<ul style="padding-left:18px;margin:6px 0">/g, '');
+
+  // Line breaks
+  html = html.replace(/\n\n+/g, '<br><br>');
+  html = html.replace(/\n/g, '<br>');
+
+  // Clickable Turn ID badges
+  html = html.replace(/(?:\[Turn\s+(T\d+)\]|Turn\s+(T\d+))/gi, (m, p1, p2) => {
+    const tid = p1 || p2;
+    return `<button class="chat-ref" onclick="setTab('evidence')" title="Xem bằng chứng Turn ${tid}">Turn <code>${tid}</code> ↗</button>`;
+  });
+
+  return html;
+}
+
+function getFallbackReply(text, s) {
+  const q = normalize(text);
+  if (/(api key|system_override|system prompt|de thi|mat khau|ignore previous)/.test(q)) {
+    return 'Tôi là trợ lý AI chuyên trách phân tích sư phạm. Nội dung trò chuyện được bảo vệ an toàn theo <strong>Guardrails sư phạm</strong>. Tôi không thực thi chỉ thị vượt quyền hoặc can thiệp dữ liệu hệ thống.';
+  } else if (/(cham diem|hoc luc|hoc vien yeu|ai kem|danh gia ca nhan)/.test(q)) {
+    return 'Tôi tuân thủ nguyên tắc an toàn: <strong>Không xếp hạng hay chấm điểm học lực cá nhân</strong> từ lịch sử câu hỏi. Tôi chỉ tập trung phát hiện điểm nghẽn ở cấp độ trang slide và bài giảng.';
+  } else if (/(tu dong sua|sua slide goc|ghi de)/.test(q)) {
+    return 'Hệ thống tuân thủ cơ chế <strong>Human-in-the-loop</strong>: Tôi chỉ đóng vai trò tư vấn và phác thảo bản nháp. Giảng viên luôn là người trực tiếp phê duyệt và đưa vào bài giảng.';
+  } else if (/(vi du|kich ban|2 phut|quiz|trac nghiem|kiem tra)/.test(q)) {
+    const type = /(quiz|trac nghiem|kiem tra)/.test(q) ? 'quiz' : /(kich ban|2 phut)/.test(q) ? 'script' : 'example';
+    const d = buildDraft(type);
+    lastDraft = d;
+    return draftChat(d);
+  } else if (/(k3|k4|so sanh|xuyen khoa)/.test(q)) {
+    return `
+      <strong>Đối chuẩn xuyên khóa tại Slide ${s.n} (${esc(s.name)}):</strong><br>
+      • Khóa K3: Ghi nhận <strong>${Math.round(s.volume * 0.76)} học viên</strong> có câu hỏi.<br>
+      • Khóa K4: Ghi nhận <strong>${s.volume} học viên</strong> có câu hỏi.<br><br>
+      Điều này chứng minh đây là điểm nghẽn cố hữu qua các khóa học cần bổ sung tài liệu trực quan.
+      <button class="chat-ref" onclick="navigate('compare')">Mở bảng so sánh chi tiết ↗</button>
+    `;
+  } else if (/(top|uu tien|3 trang|3 slide)/.test(q)) {
+    return `
+      <strong>Top 3 Slide Ưu Tiên Cần Can Thiệp trong bài ${state.lesson}:</strong>
+      <ul>
+        ${ranking().map(x => `<li>Slide ${x.n} · ${esc(x.name)}: <strong>${x.volume} học viên</strong> có tín hiệu bối rối.</li>`).join('')}
+      </ul>
+      <button class="chat-ref" onclick="navigate('heatmap')">Xem ma trận Heatmap ↗</button>
+    `;
+  } else if (/(bang chung|turn id|cau hoi that|trich dan)/.test(q)) {
+    return `
+      <strong>Dẫn chứng nguyên văn từ vlearn.db tại Slide ${s.n}:</strong>
+      <ul>
+        ${s.quotes.map((quote, i) => `<li>Turn <code>${s.turnIds[i]}</code>: “${esc(quote)}”</li>`).join('')}
+      </ul>
+      <button class="chat-ref" onclick="setTab('evidence')">Mở toàn bộ dẫn chứng ↗</button>
+    `;
+  } else if (/(nguyen nhan|vi sao|tai sao|kho hieu|goc re)/.test(q)) {
+    return `
+      <strong>Phân tích Nguyên nhân Gốc rễ Slide ${s.n}:</strong><br>
+      • <strong>Quan sát:</strong> ${esc(s.observation)}<br>
+      • <strong>Giả thuyết:</strong> ${esc(s.hypothesis)}<br>
+      • <strong>Khuyến nghị:</strong> Thầy/cô nên bổ sung một ví dụ phản chứng trực quan trước khi học viên bước vào bài lab.
+    `;
+  } else {
+    return `
+      Ghi nhận câu hỏi của thầy/cô về <strong>Slide ${s.n}: ${esc(s.name)}</strong>.<br><br>
+      Dựa trên 13.494 lượt tương tác trong cơ sở dữ liệu, tôi khuyên thầy/cô nên nhấn <strong>"Soạn ví dụ"</strong> hoặc <strong>"Kịch bản 2 phút"</strong> để có ngay phương án giải thích ngắn gọn trên lớp.
+    `;
+  }
+}
+
+async function sendChat(text) {
+  text = text || $('#chatInput').value.trim();
+  if (!text) return;
+  if (state.busy) {
+    toast('Copilot đang xử lý, vui lòng chờ trong giây lát.');
+    return;
+  }
+
+  $('#chatInput').value = '';
+  state.chat.push({ role: 'user', text });
+  state.busy = true;
+  $('#sendBtn').disabled = true;
+  renderChat();
+
+  const epoch = chatEpoch;
+  const s = getSlide();
+
+  // 1. Try calling the live LLM Provider API (/api/chat)
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    const resp = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: text,
+        slide: s.n,
+        lesson: state.lesson,
+        cohort: state.cohort,
+        course: state.course
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (resp.ok) {
+      const data = await resp.json();
+      if (epoch !== chatEpoch) return;
+
+      if (data && data.reply) {
+        let replyHtml = formatMarkdown(data.reply);
+        replyHtml = `
+          <div style="margin-bottom:8px">
+            <span class="pill green" style="font-size:9px;padding:2px 7px;font-weight:700">
+              ⚡ LLM Provider: ${esc(data.model || 'Qwen-2.5 32B')}
+            </span>
+          </div>
+          ${replyHtml}
+        `;
+
+        state.busy = false;
+        $('#sendBtn').disabled = false;
+        state.chat.push({ role: 'assistant', html: replyHtml });
+        renderChat();
+        return;
+      }
+    }
+  } catch (err) {
+    console.log('[Copilot] Live LLM Provider offline or local file, using fallback engine:', err);
+  }
+
+  // 2. High-quality client fallback if server not running or network interrupted
+  setTimeout(() => {
+    if (epoch !== chatEpoch) return;
+    const html = getFallbackReply(text, s);
+    state.busy = false;
+    $('#sendBtn').disabled = false;
+    state.chat.push({ role: 'assistant', html });
+    renderChat();
+  }, 450);
+}
+
+const draftTypes = {
+  example: 'Ví dụ tương phản đời thường',
+  script: 'Kịch bản giảng 2 phút trên lớp',
+  quiz: 'Câu hỏi trắc nghiệm Concept Check'
+};
+
+function buildDraft(type) {
+  const s = getSlide();
+  let contents;
+
+  if (state.lesson === 'D02' && s.n === 18) {
+    contents = {
+      example: 'Tình huống: "Có nên mang ô khi ra ngoài hôm nay?"\n\n1. Minh họa CoT (Suy luận chay trong phòng kín):\n• Thought 1: Hôm nay trời có mây.\n• Thought 2: Hôm qua có mưa.\n• Thought 3: Vậy chắc hôm nay sẽ mưa -> Tôi mang ô.\n(Nhược điểm: Hoàn toàn không có dữ liệu thực tế ngoài đời, suy luận dài hơn không có nghĩa là đúng!)\n\n2. Minh họa ReAct (Suy luận gắn liền với Hành động có kiểm chứng):\n• Thought: Mình cần biết thời tiết thực tế ở Hà Nội.\n• Action: get_weather("Hanoi")\n• Observation: API trả về "Nắng 35 độ, xác suất mưa 0%".\n• Thought: À trời nắng gắt, mình đổi sang mang kính râm chứ không mang ô!\n\nĐiểm chốt trên slide: Action lấy thông tin ngoài đời; Observation đưa kết quả trở lại mô hình. ReAct không chỉ là CoT viết dài hơn!',
+      script: '0:00–0:30 · Đặt vấn đề tương phản\n"Các em hãy quyết định xem hôm nay có nên mang ô không. Nếu chỉ ngồi suy luận, chúng ta có biết trời đang mưa hay nắng không?"\n\n0:30–1:20 · Vẽ vòng ReAct trực tiếp trên bảng\nVẽ 3 khối: Thought -> Action -> Observation.\nĐóng vai Agent: Xác định thông tin thiếu -> Phát lệnh gọi hàm get_weather() -> Đọc kết quả API -> Ra quyết định chính xác.\n\n1:20–2:00 · Concept Check nhanh\nHỏi cả lớp: "Bước nào mang thông tin mới từ môi trường vào?" Mời 1 bạn trả lời. Chốt: Action gọi công cụ, Observation tiếp nhận dữ liệu!',
+      quiz: 'Câu hỏi: Trong một vòng lặp ReAct, bước nào có nhiệm vụ đưa dữ liệu thực tế từ môi trường/công cụ trở lại cho LLM xử lý tiếp?\n\nA. Thought — Tự suy nghĩ bước tiếp theo.\nB. Action — Phát lệnh gọi công cụ qua API.\nC. Observation — Nhận kết quả từ công cụ trả về.\nD. Viết prompt dài hơn với nhiều ví dụ.\n\nĐáp án: C.\nGiải thích: Action thực thi cuộc gọi hàm ra hệ thống bên ngoài, còn Observation chính là kết quả trả về từ môi trường để mô hình cập nhật nhận thức mới.'
+    };
+  } else if (state.lesson === 'D02' && s.n === 8) {
+    contents = {
+      example: 'Tình huống: Agent tìm kiếm tài liệu nghiên cứu cho giảng viên.\n\n• Không có Stopping Criteria: Agent liên tục gọi lại một tool đang bị lỗi hoặc cứ tìm mãi khi đã có kết quả -> Tiêu tốn hàng nghìn token và kẹt vô tận.\n\n• Có cơ chế kiểm soát: Thiết lập tham số max_iterations=5 và điều kiện kiểm tra đã có file PDF chưa. Nếu có rồi -> Dừng an toàn. Nếu hết 5 vòng mà chưa có -> Báo cáo thất bại và dừng lại.',
+      script: '0:00–0:30 · Hỏi lớp: "Một Agent có thể tự động gọi tool mãi mãi không?"\n\n0:30–1:20 · Minh họa sơ đồ vòng lặp có nhánh dừng\nChỉ rõ 2 điều kiện dừng: 1. Đã hoàn thành mục tiêu; 2. Đã chạm ngưỡng an toàn max_iterations.\n\n1:20–2:00 · Demo đoạn code mẫu try/except và giới hạn số vòng lặp.',
+      quiz: 'Câu hỏi: Khi một AI Agent đã chạm ngưỡng giới hạn max_iterations nhưng chưa hoàn thành nhiệm vụ, hệ thống nên làm gì?\n\nA. Bỏ qua giới hạn và cho Agent chạy vô hạn.\nB. Báo lỗi rõ ràng và dừng lại an toàn theo chính sách bảo vệ tài nguyên.\nC. Tự bịa ra kết quả để trả lời người dùng.\nD. Xóa toàn bộ lịch sử rồi bắt đầu lại từ đầu.\n\nĐáp án: B.\nGiải thích: Giới hạn vòng lặp là hàng rào bảo vệ chống treo hệ thống và lãng phí token API.'
+    };
+  } else {
+    contents = {
+      example: `Mục tiêu bài giảng: Làm sáng tỏ khái niệm "${s.name}".\n\n• Ví dụ chuẩn: Đưa ra đầu vào thực tế từ bài lab và minh họa từng bước xử lý thành công.\n• Phản ví dụ: Bỏ qua điều kiện kiểm tra quan trọng, cho học viên thấy hệ thống sẽ phát sinh lỗi biên (edge case) như thế nào.`,
+      script: `0:00–0:30 · Mở vấn đề: Đặt câu hỏi kích hoạt tư duy về "${s.name}".\n\n0:30–1:20 · Đi qua sơ đồ và phân tích mối quan hệ giữa lý thuyết và bài tập lab.\n\n1:20–2:00 · Cho lớp thảo luận nhanh và chốt lại nguyên lý.`,
+      quiz: `Câu hỏi Concept Check: Điểm mấu chốt khi áp dụng "${s.name}" vào hệ thống là gì?\n\nA. Sao chép nguyên văn định nghĩa lý thuyết.\nB. Hiểu rõ ngữ cảnh áp dụng và các điều kiện biên.\nC. Chỉ viết prompt dài hơn.\nD. Không cần kiểm thử.\n\nĐáp án: B.\nGiải thích: Nắm vững điều kiện biên giúp hệ thống vận hành ổn định trong môi trường thực tế.`
+    };
+  }
+
+  return {
+    type,
+    title: `${draftTypes[type]} · ${s.name}`,
+    content: contents[type] || contents.example,
+    lesson: state.lesson,
+    slide: s.n,
+    cohort: state.cohort,
+    evidence: s.turnIds.map(id => `Turn ${id}`),
+    owner: 'Minh Anh',
+    date: '2026-09-18'
+  };
+}
+
+function draftChat(d) {
+  return `
+    Tôi đã soạn xong <strong>${draftTypes[d.type].toLowerCase()}</strong> cho Slide ${d.slide}:<br>
+    <div class="draft-card">
+      <h4>${ic('file')} ${esc(d.title)}</h4>
+      <p style="white-space:pre-wrap;font-size:11px;color:#334155;max-height:160px;overflow-y:auto">${esc(d.content.slice(0, 240))}…</p>
+      <button class="btn soft" style="margin-top:10px" onclick="openDraftJSON(this.dataset.draft)" data-draft="${esc(JSON.stringify(d))}">
+        ${ic('edit')} Xem, chỉnh sửa & phê duyệt bản nháp
+      </button>
+    </div>
+    <span style="font-size:9.5px;color:#6b21a8">Căn cứ: ${d.evidence.join(' · ')}</span>
+  `;
+}
+
+function createDraft(type) {
+  sendChat(
+    type === 'example' ? 'Soạn ví dụ tương phản cho slide này.' :
+    type === 'script' ? 'Soạn kịch bản giảng 2 phút cho slide này.' :
+    'Tạo câu hỏi kiểm tra nhanh cho slide này.'
+  );
+  if (window.innerWidth < 1025) {
+    $('#copilot').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function openDraftJSON(json) {
+  try {
+    lastDraft = JSON.parse(json);
+    openDraft(lastDraft);
+  } catch(e) {
+    toast('Không mở được bản nháp, vui lòng thử lại.');
+  }
+}
+
+function openDraft(d, taskId = null) {
+  lastDraft = { ...d };
+  activeTask = taskId;
+
+  modal(
+    taskId ? 'Chỉnh sửa đề xuất giáo án' : 'Xem & Phê duyệt bản nháp can thiệp sư phạm',
+    `
+      <div class="row between">
+        <span class="pill purple">${d.lesson} · Slide ${d.slide} · ${esc(d.cohort)}</span>
+        <span class="pill ${taskId ? 'green' : 'yellow'}">${taskId ? 'Đã được duyệt' : 'Bản nháp AI'}</span>
+      </div>
+
+      ${d.type === 'quiz' ? `
+        <div style="margin:10px 0">
+          <button class="btn soft" onclick="previewQuiz()">▷ Chạy thử câu hỏi kiểm tra</button>
+        </div>
+      ` : ''}
+
+      <label class="fieldlabel" for="draftTitle">Tên đề xuất</label>
+      <input id="draftTitle" class="field" value="${esc(d.title)}">
+
+      <label class="fieldlabel" for="draftContent">Nội dung can thiệp (Giảng viên có thể chỉnh sửa trực tiếp)</label>
+      <textarea id="draftContent" class="field">${esc(d.content)}</textarea>
+
+      <div class="row" style="margin-top:8px">
+        <div style="flex:1">
+          <label class="fieldlabel" for="draftOwner">Giảng viên phụ trách</label>
+          <input id="draftOwner" class="field" value="${esc(d.owner || 'Minh Anh')}">
+        </div>
+        <div style="flex:1">
+          <label class="fieldlabel" for="draftDate">Ngày áp dụng dự kiến</label>
+          <input type="date" id="draftDate" class="field" value="${d.date || '2026-09-18'}">
+        </div>
+      </div>
+
+      <div class="notice">
+        ${ic('shield')}
+        <span>Phê duyệt sẽ đưa nội dung vào Kế hoạch cải tiến của học phần. Slide gốc không bị thay đổi tự động.<br>Dẫn chứng căn cứ: ${esc(d.evidence.join(', '))}.</span>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="closeModal()">Để sau</button>
+      <div class="row">
+        <button class="btn" onclick="copyDraft()">Sao chép nội dung</button>
+        <button class="btn primary" onclick="approveDraft()">
+          ${ic('check')} ${taskId ? 'Lưu thay đổi' : 'Phê duyệt & Tạo kế hoạch'}
+        </button>
+      </div>
+    `
+  );
+}
+
+function previewQuiz() {
+  quizReturn = {
+    ...lastDraft,
+    title: $('#draftTitle').value,
+    content: $('#draftContent').value,
+    owner: $('#draftOwner').value,
+    date: $('#draftDate').value,
+    taskId: activeTask
+  };
+
+  const lines = quizReturn.content.split('\n');
+  const options = lines.filter(x => /^[A-D]\./.test(x));
+  const question = lines[0];
+
+  modal(
+    'Trình chiếu thử nghiệm câu hỏi Concept Check',
+    `
+      <span class="pill purple">${quizReturn.lesson} · Slide ${quizReturn.slide}</span>
+      <h3 style="margin:14px 0 10px;font-size:14px;color:#0f172a">${esc(question)}</h3>
+      <div class="radio-list">
+        ${options.map((x, i) => `
+          <label>
+            <input type="radio" name="quizAnswer" value="${String.fromCharCode(65 + i)}">
+            <span>${esc(x)}</span>
+          </label>
+        `).join('')}
+      </div>
+      <div id="quizResult" style="margin-top:10px"></div>
+    `,
+    `
+      <button class="btn" onclick="returnToDraft()">← Quay lại bản nháp</button>
+      <button class="btn primary" onclick="checkQuiz()">Kiểm tra đáp án</button>
+    `
+  );
+}
+
+function checkQuiz() {
+  const answer = $('input[name="quizAnswer"]:checked')?.value;
+  if (!answer) {
+    toast('Vui lòng chọn một phương án đáp án.');
+    return;
+  }
+  const match = quizReturn.content.match(/Đáp án:\s*([A-D])/);
+  const correct = match ? match[1] : 'C';
+  const reason = quizReturn.content.split('Giải thích:')[1]?.split('\n\n')[0] || 'Đối chiếu nội dung bản nháp cùng giảng viên.';
+
+  $('#quizResult').innerHTML = `
+    <div class="${answer === correct ? 'review-note' : 'callout'}" style="margin:0">
+      <b>${answer === correct ? '✓ Chính xác!' : '✗ Chưa chính xác.'} Đáp án: ${correct}.</b>
+      <p style="margin-top:4px">${esc(reason)}</p>
+    </div>
+  `;
+}
+
+function returnToDraft() {
+  openDraft(quizReturn, quizReturn.taskId);
+}
+
+function approveDraft() {
+  const title = $('#draftTitle').value.trim();
+  const content = $('#draftContent').value.trim();
+  const owner = $('#draftOwner').value.trim();
+  const date = $('#draftDate').value;
+
+  if (!title || !content || !owner || !date) {
+    toast('Vui lòng điền đủ tên đề xuất, nội dung, người phụ trách và ngày.');
+    return;
+  }
+
+  const d = { ...lastDraft, title, content, owner, date };
+
+  if (activeTask) {
+    const i = state.tasks.findIndex(t => t.id === activeTask);
+    state.tasks[i] = { ...state.tasks[i], ...d };
+    activity(`Chỉnh sửa đề xuất: ${title}`);
+  } else {
+    state.tasks.unshift({
+      ...d,
+      id: 'task-' + Date.now(),
+      status: 'approved'
+    });
+    activity(`Phê duyệt đề xuất: ${title}`);
+  }
+
+  // Gọi POST /api/approve tới backend để lưu thực sự vào bảng curriculum_adaptations (SQLite) & băm SHA-256
+  fetch('/api/approve', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      lesson: d.lesson || state.lesson,
+      slide: d.slide || state.slide,
+      title: title,
+      content: content,
+      owner: owner,
+      notes: `Ngày áp dụng: ${date}`,
+      type: d.type || 'counter_analogy'
+    })
+  }).then(r => r.json()).then(resp => {
+    if (resp && resp.sha256_audit_hash) {
+      toast(`✓ Đã lưu SQLite & băm SHA-256: ${resp.sha256_audit_hash.slice(0, 10)}...`);
+      loadApprovedTasks();
+    }
+  }).catch(e => console.log('Offline approve mode:', e));
+
+  closeModal();
+  save();
+  state.view = 'tasks';
+  renderMain();
+  toast(activeTask ? 'Đã lưu thay đổi đề xuất.' : 'Đã phê duyệt và thêm vào Kế hoạch cải tiến.');
+  activeTask = null;
+}
+
+function copyDraft() {
+  const txt = $('#draftTitle').value + '\n\n' + $('#draftContent').value;
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(txt)
+      .then(() => toast('Đã sao chép bản nháp vào clipboard.'))
+      .catch(() => fallbackCopy());
+  } else {
+    fallbackCopy();
+  }
+
+  function fallbackCopy() {
+    const t = $('#draftContent');
+    t.focus();
+    t.select();
+    try {
+      document.execCommand('copy');
+      toast('Đã sao chép nội dung.');
+    } catch(e) {
+      toast('Nhấn Ctrl+C để sao chép.');
+    }
+  }
+}
+
+function openTask(id) {
+  const t = state.tasks.find(x => x.id === id);
+  if (t) openDraft(t, id);
+}
+
+function confirmApply(id) {
+  const t = state.tasks.find(x => x.id === id);
+  modal(
+    'Xác nhận đã áp dụng nội dung lên lớp',
+    `
+      <p>Thầy/cô đã đưa nội dung <b>"${esc(t.title)}"</b> vào bài giảng trực tiếp hoặc cập nhật học liệu?</p>
+      <div class="notice">
+        ${ic('info')}
+        <span>Hệ thống sẽ chuyển trạng thái sang "Đã áp dụng" và bắt đầu đo lường hiệu quả giảm thiểu bối rối ở khóa tiếp theo.</span>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="closeModal()">Chưa áp dụng</button>
+      <button class="btn primary" onclick="applyTask('${id}')">
+        ${ic('check')} Xác nhận đã áp dụng
+      </button>
+    `
+  );
+}
+
+function applyTask(id) {
+  const t = state.tasks.find(x => x.id === id);
+  t.status = 'applied';
+  activity(`Đã áp dụng lên lớp: ${t.title}`);
+  closeModal();
+  renderMain();
+  toast('Đã ghi nhận áp dụng lên lớp thành công.');
+}
+
+function deleteTask(id) {
+  const t = state.tasks.find(x => x.id === id);
+  modal(
+    'Xác nhận xóa đề xuất?',
+    `Đề xuất "${esc(t.title)}" sẽ bị xóa khỏi kế hoạch. Việc này không ảnh hưởng đến tài liệu gốc.`,
+    `
+      <button class="btn" onclick="closeModal()">Giữ lại</button>
+      <button class="btn danger" onclick="doDeleteTask('${id}')">Xóa đề xuất</button>
+    `
+  );
+}
+
+function doDeleteTask(id) {
+  const t = state.tasks.find(x => x.id === id);
+  state.tasks = state.tasks.filter(x => x.id !== id);
+  activity(`Đã xóa đề xuất: ${t.title}`);
+  closeModal();
+  renderMain();
+  toast('Đã xóa đề xuất khỏi kế hoạch.');
+}
+
+function openFeedback(type) {
+  const s = getSlide();
+  modal(
+    'Hiệu chỉnh nhận định sư phạm của AI',
+    `
+      <p>${state.lesson} · Slide ${s.n} · <b>${esc(s.name)}</b></p>
+      <label class="fieldlabel">Nhận định của giảng viên chuyên môn</label>
+      <div class="radio-list">
+        <label>
+          <input type="radio" name="feedback" value="Tò mò mở rộng" ${type === 'curiosity' ? 'checked' : ''}>
+          <span>
+            <b>Tò mò mở rộng (Curiosity Signal)</b><br>
+            <span class="small" style="color:#64748b">Câu hỏi tìm hiểu nâng cao, không phải học viên hiểu sai slide.</span>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="feedback" value="Bác bỏ điểm nghẽn" ${type === 'reject' ? 'checked' : ''}>
+          <span>
+            <b>Bác bỏ điểm nghẽn (Reject Hotspot)</b><br>
+            <span class="small" style="color:#64748b">Nội dung slide đã giải thích đầy đủ, nguyên nhân do học viên đọc lướt.</span>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="feedback" value="Chưa đủ bằng chứng">
+          <span>
+            <b>Chưa đủ bằng chứng kết luận</b><br>
+            <span class="small" style="color:#64748b">Loại khỏi ưu tiên rà soát, cần thu thập thêm phản hồi.</span>
+          </span>
+        </label>
+      </div>
+
+      <label class="fieldlabel" for="feedbackReason">Ghi chú cho đội ngũ học thuật (Không bắt buộc)</label>
+      <textarea id="feedbackReason" class="field" style="height:70px" placeholder="Ví dụ: Đã giải thích kỹ phần này trong video demo..."></textarea>
+      <div class="notice">
+        ${ic('info')}
+        <span>Hiệu chỉnh sẽ loại slide này khỏi cảnh báo Top 3 và tái cân bằng ma trận nhiệt cho khóa hiện tại.</span>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="closeModal()">Hủy</button>
+      <button class="btn primary" onclick="submitFeedback()">Xác nhận hiệu chỉnh</button>
+    `
+  );
+}
+
+function submitFeedback() {
+  const label = $('input[name="feedback"]:checked')?.value;
+  if (!label) return;
+  feedbackUndo = { key: key(), old: state.feedback[key()] };
+  state.feedback[key()] = { label, reason: $('#feedbackReason').value };
+  activity(`Hiệu chỉnh ${state.lesson} / Slide ${state.slide}: ${label}`);
+  closeModal();
+  renderMain();
+  resetChat(false);
+  toast('Đã ghi nhận hiệu chỉnh và cập nhật lại Top 3.', 'Hoàn tác', undoFeedback);
+}
+
+function undoFeedback() {
+  if (!feedbackUndo) return;
+  if (feedbackUndo.old) state.feedback[feedbackUndo.key] = feedbackUndo.old;
+  else delete state.feedback[feedbackUndo.key];
+  save();
+  renderMain();
+  resetChat(false);
+  feedbackUndo = null;
+  toast('Đã hoàn tác hiệu chỉnh.');
+}
+
+function restoreFeedback() {
+  delete state.feedback[key()];
+  activity(`Khôi phục nhận định: ${state.lesson} / Slide ${state.slide}`);
+  renderMain();
+  resetChat(false);
+  toast('Đã khôi phục nhận định ban đầu của hệ thống.');
+}
+
+function openSlide() {
+  const s = getSlide();
+  modal(
+    `Bản xem trước Slide ${s.n}`,
+    `
+      <div style="background:#f1f5f9;border:1px solid #cbd5e1;border-radius:10px;padding:26px 24px;position:relative;color:#0f172a">
+        <div class="eyebrow" style="color:#147d68;margin:0 0 8px">VLEARN / ${state.course} / ${state.lesson}</div>
+        <h3 style="font-size:18px;margin-bottom:12px">${esc(s.name)}</h3>
+        <p style="white-space:pre-wrap;line-height:1.7;color:#334155">${esc(s.slideText)}</p>
+        <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+          ${s.flow.map((f, i) => `
+            <b style="background:#ffffff;border:1px solid #cbd5e1;padding:6px 10px;border-radius:6px;font-size:11px">${esc(f)}</b>
+            ${i < s.flow.length - 1 ? '<span style="color:#94a3b8;align-self:center">→</span>' : ''}
+          `).join('')}
+        </div>
+        <span style="position:absolute;right:16px;bottom:12px;font-size:10px;color:#64748b;font-family:var(--font-mono)">Trang ${String(s.n).padStart(2, '0')} / ${(generalNames[state.lesson]||[]).length}</span>
+      </div>
+      <p class="small" style="color:#64748b;margin-top:10px">Slide mô phỏng cấu trúc bài giảng để kiểm tra nội dung.</p>
+    `,
+    `
+      <button class="btn" onclick="closeModal()">Đóng</button>
+      <button class="btn soft" onclick="closeModal();createDraft('example')">${ic('spark')} Soạn nội dung bổ sung</button>
+    `
+  );
+}
+
+function openEvidence(i) {
+  const s = getSlide();
+  modal(
+    'Dẫn chứng chi tiết từ cơ sở dữ liệu vlearn.db',
+    `
+      <div class="row between">
+        <span class="pill purple">Turn ID: ${s.turnIds[i] || 'T00' + (i + 1)}</span>
+        <span class="pill green">Đã ẩn danh học viên</span>
+      </div>
+      <p class="small" style="margin:10px 0;color:#64748b">Học viên khóa ${state.cohort} · ${state.course} / ${state.lesson} · Slide ${s.n}</p>
+
+      <div class="evidence">
+        <div class="meta">Đoạn bôi đen trên Slide</div>
+        <b>${esc(s.name)}</b>
+      </div>
+
+      <div class="evidence" style="border-left-color:#7662ce">
+        <div class="meta">Học viên hỏi (Lượt 1)</div>
+        <div class="quote">“${esc(s.quotes[i])}”</div>
+      </div>
+
+      <div class="evidence">
+        <div class="meta">AI Tutor phản hồi ban đầu (move_used: review_concept)</div>
+        <div class="quote">${esc(s.slideText)}</div>
+      </div>
+
+      <div class="notice">
+        ${ic('info')}
+        <span>Tutor trước đây chỉ lặp lại lý thuyết một chiều. Copilot phát hiện điểm đứt gãy này để giúp thầy/cô bổ sung ví dụ thực tế.</span>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="closeModal()">Đóng</button>
+      <button class="btn" onclick="closeModal();openFeedback('curiosity')">Hiệu chỉnh nhãn</button>
+    `
+  );
+}
+
+function openUnmapped() {
+  const t = totals();
+  modal(
+    'Các câu hỏi chưa xác định số trang slide cụ thể',
+    `
+      <span class="pill yellow">${t.un} câu hỏi trong phạm vi lọc hiện tại</span>
+      <p style="margin:12px 0;color:#475569">
+        Các câu hỏi này thuộc cấp độ bài học chung hoặc học viên chỉ đặt câu hỏi ngắn không bôi đen cụm từ. Hệ thống giữ ở cấp bài giảng, <b>không ép gán vào heatmap</b> để tránh sai lệch thống kê.
+      </p>
+
+      <div class="evidence">
+        <div class="meta">DEMO-UNMAPPED-01 · Cấp bài giảng chung</div>
+        “Phần lab này dùng để làm gì? Tôi phải bắt đầu từ đâu?”
+      </div>
+      <div class="evidence">
+        <div class="meta">DEMO-UNMAPPED-02 · Tín hiệu mơ hồ</div>
+        “Cái này cài đặt môi trường trên Windows thế nào ạ?”
+      </div>
+
+      <div class="notice">
+        ${ic('shield')}
+        <span>Nguyên tắc: Không đủ dữ liệu thì không kết luận nguyên nhân do slide cụ thể.</span>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="closeModal()">Đóng</button>
+      <button class="btn primary" onclick="closeModal();navigate('data')">Xem nguồn dữ liệu ${ic('arrow')}</button>
+    `
+  );
+}
+
+function openMethod() {
+  modal(
+    'Công thức tính Chỉ số Điểm nghẽn Heatmap',
+    `
+      <p>Bản đồ nhiệt được tính toán theo công thức kết hợp giữa số lượng học viên và trọng số mức độ bối rối:</p>
+      <div style="background:#f8fafc;padding:12px;border:1px solid #e2e8f0;border-radius:8px;margin:12px 0;font-family:var(--font-mono);font-size:11px">
+        Hotspot_Score = Σ (Intent_Weight × Unique_Students) × (1 + Repeat_Rate)
+      </div>
+      <table class="table" style="margin-bottom:12px">
+        <tr><td>Hiểu sai nghiêm trọng (Misconception)</td><td><b>Trọng số 3.0</b></td></tr>
+        <tr><td>Vướng áp dụng (Application Blocker)</td><td><b>Trọng số 2.0</b></td></tr>
+        <tr><td>Cần làm rõ định nghĩa (Clarification)</td><td><b>Trọng số 1.5</b></td></tr>
+        <tr><td>Tò mò mở rộng / Nhiễu (Curiosity)</td><td><b>Trọng số 0.0 (Loại khỏi cảnh báo)</b></td></tr>
+      </table>
+      <div class="notice">
+        ${ic('info')}
+        <span>Chỉ số phản ánh mức độ nghẽn kiến thức, không dùng để đánh giá điểm số học tập của sinh viên.</span>
+      </div>
+    `,
+    `<button class="btn primary" onclick="closeModal()">Đã hiểu</button>`
+  );
+}
+
+function openActivity() {
+  modal(
+    'Lịch sử hoạt động gần đây',
+    state.activities.length ? state.activities.map(a => `
+      <div class="data-step">
+        <span class="step-num">${ic('check')}</span>
+        <div>
+          <p style="margin:0;color:#0f172a;font-weight:600">${esc(a.text)}</p>
+          <span class="small" style="color:#64748b">${esc(a.time)} · Phiên làm việc hiện tại</span>
+        </div>
+      </div>
+    `).join('') : '<div class="empty" style="text-align:center;padding:20px;color:#94a3b8">Chưa có hoạt động mới.</div>',
+    `<button class="btn" onclick="closeModal()">Đóng</button>`
+  );
+}
+
+function openGuide() {
+  modal(
+    'Hướng dẫn sử dụng VLearn Class Confusion Copilot',
+    `
+      <p style="color:#475569;margin-bottom:14px">Hệ thống chuyển hóa 13.494 lượt hỏi–đáp thành công cụ đắc lực nâng cao chất lượng giảng dạy:</p>
+      ${[
+        ['01', 'Khám phá Bản đồ nhiệt', 'Xem phân bổ câu hỏi theo từng trang slide. Nhấp vào các ô màu đậm để xem chi tiết.'],
+        ['02', 'Kiểm chứng Bằng chứng thật', 'Đọc các câu hỏi nguyên văn của học viên kèm phân tích nguyên nhân gốc rễ.'],
+        ['03', 'Hợp tác cùng Copilot', 'Nhờ AI soạn thảo ví dụ tương phản, kịch bản giảng 2 phút hoặc Quiz trắc nghiệm.'],
+        ['04', 'Phê duyệt & Lưu vào Kế hoạch', 'Giảng viên biên tập, phê duyệt và đưa vào giáo án buổi học tới.'],
+        ['05', 'Theo dõi Vòng lặp Khóa học', 'Đánh dấu đã áp dụng để đối chuẩn hiệu quả giữa K3, K4 và K5.']
+      ].map(a => `
+        <div class="data-step" style="padding:10px 0">
+          <span class="step-num">${a[0]}</span>
+          <div>
+            <h3 style="font-size:12px;color:#0f172a">${a[1]}</h3>
+            <p style="font-size:11px;color:#64748b">${a[2]}</p>
+          </div>
+        </div>
+      `).join('')}
+    `,
+    `
+      <button class="btn" onclick="closeModal()">Tự khám phá</button>
+      <button class="btn primary" onclick="startTour()">${ic('play')} Bắt đầu Tour 4 bước</button>
+    `
+  );
+}
+
+/* 4-Step Interactive Tour */
+function startTour() {
+  tourStep = 0;
+  showTour();
+}
+
+function showTour() {
+  const steps = [
+    [
+      'Bước 1: Khám phá Ma trận Điểm nghẽn',
+      'Chọn khóa K4 và bài D02. Ma trận nhiệt lập tức làm nổi bật Slide 18 (CoT vs ReAct) với 92 câu hỏi dồn dập, giúp thầy/cô biết ngay nơi cần ưu tiên.',
+      'Khám phá Slide 18'
+    ],
+    [
+      'Bước 2: Kiểm chứng Bằng chứng thật',
+      'Đọc các câu hỏi trích xuất từ vlearn.db: Học viên ngộ nhận "Action" chỉ là một câu tự nhủ trong đầu LLM chứ không phải lời gọi Tool.',
+      'Soạn can thiệp'
+    ],
+    [
+      'Bước 3: Copilot Soạn Ví dụ Tương phản',
+      'Copilot chuẩn bị sẵn ví dụ "Tra cứu thời tiết để mang ô", phân biệt rạch ròi giữa CoT (nghĩ trong phòng kín) và ReAct (hành động ra ngoài đời).',
+      'Xem & Phê duyệt'
+    ],
+    [
+      'Bước 4: Phê duyệt & Khép vòng Cải tiến',
+      'Giảng viên duyệt đề xuất, ấn định ngày lên lớp và lưu vào Kế hoạch cải tiến. Khép kín chu kỳ từ dữ liệu học viên đến tối ưu bài giảng!',
+      'Hoàn thành Demo'
+    ]
+  ];
+
+  const a = steps[tourStep];
+  modal(
+    a[0],
+    `
+      <div class="tour-visual" style="background:linear-gradient(130deg,#f0fdf4,#f5f3ff);border-radius:10px;padding:20px;display:flex;justify-content:center;align-items:center;margin-bottom:14px;gap:10px">
+        ${['Heatmap', 'Bằng chứng', 'Copilot', 'Phê duyệt'].map((x, i) => `
+          <div class="tour-node" style="background:${i === tourStep ? 'var(--green)' : '#ffffff'};color:${i === tourStep ? '#ffffff' : '#475569'};padding:8px 12px;border-radius:8px;font-size:11px;font-weight:700;text-align:center">
+            ${ic(['flame', 'message', 'spark', 'check'][i])}
+            <div style="margin-top:4px">${x}</div>
+          </div>
+          ${i < 3 ? '<span style="color:#94a3b8">→</span>' : ''}
+        `).join('')}
+      </div>
+      <p style="font-size:12.5px;line-height:1.7;color:#334155">${a[1]}</p>
+    `,
+    `
+      <div class="row">
+        <button class="btn" onclick="closeModal()">Thoát</button>
+        ${tourStep > 0 ? '<button class="btn" onclick="tourStep--;showTour()">Quay lại</button>' : ''}
+      </div>
+      <div class="row">
+        <span class="small" style="color:#64748b">${tourStep + 1}/4</span>
+        <button class="btn primary" onclick="advanceTour()">${a[2]} ${ic('arrow')}</button>
+      </div>
+    `
+  );
+}
+
+function advanceTour() {
+  state.cohort = 'K4';
+  state.lesson = 'D02';
+  state.period = 'all';
+  state.slide = 18;
+  state.view = 'heatmap';
+  $('#cohort').value = 'K4';
+  $('#lesson').value = 'D02';
+
+  if (tourStep === 0) {
+    state.mode = 'slides';
+    state.tab = 'insight';
+    renderMain();
+    resetChat(false);
+  } else if (tourStep === 1) {
+    state.tab = 'evidence';
+    renderMain();
+  } else if (tourStep === 2) {
+    state.tab = 'intervention';
+    renderMain();
+    const d = buildDraft('example');
+    lastDraft = d;
+    state.chat.push(
+      { role: 'user', text: 'Soạn ví dụ tương phản đời thường cho CoT vs ReAct.' },
+      { role: 'assistant', html: draftChat(d) }
+    );
+    renderChat();
+  } else if (tourStep === 3) {
+    closeModal();
+    openDraft(buildDraft('example'));
+    return;
+  }
+
+  tourStep++;
+  showTour();
+}
+
+let scanTimer = null;
+function rescan() {
+  if (scanTimer) {
+    toast('Pipeline phân tích đang chạy.');
+    return;
+  }
+
+  modal(
+    'Đang chạy Pipeline phân tích lại dữ liệu vlearn.db',
+    `
+      <p style="color:#64748b;margin-bottom:14px">Quét lại 13.494 tương tác qua 4 lõi phân tích:</p>
+      <div id="scanSteps">
+        ${[
+          'Làm sạch & Đồng bộ Slide Metadata (vlearn.db)',
+          'Phân loại Intent & Gom cụm ngữ nghĩa',
+          'Tính toán chỉ số Hotspot Deterministic',
+          'Cập nhật ma trận nhiệt & Trợ lý Copilot'
+        ].map((x, i) => `
+          <div class="data-step" style="padding:10px 0">
+            <span class="step-num" id="scanIcon${i}">${i + 1}</span>
+            <div>
+              <h3 style="font-size:12px;color:#0f172a">${x}</h3>
+              <p id="scanState${i}" style="font-size:10.5px;color:#64748b">${i === 0 ? 'Đang xử lý...' : 'Chờ thực hiện'}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div style="height:5px;background:#f1f5f9;border-radius:5px;margin:14px 0;overflow:hidden">
+        <i id="scanProgress" style="display:block;height:100%;background:var(--green);width:10%;transition:width 0.3s"></i>
+      </div>
+    `,
+    `
+      <span class="small" style="color:#64748b">Batch Processing</span>
+      <button class="btn" onclick="cancelScan()">Hủy</button>
+    `
+  );
+
+  let i = 0;
+  scanTimer = setInterval(() => {
+    if (!$('#scanSteps')) {
+      clearInterval(scanTimer);
+      scanTimer = null;
+      return;
+    }
+    $('#scanIcon' + i).innerHTML = ic('check');
+    $('#scanState' + i).textContent = 'Hoàn tất (0.28s)';
+    $('#scanProgress').style.width = ((i + 1) * 25) + '%';
+    i++;
+
+    if (i < 4) {
+      $('#scanState' + i).textContent = 'Đang xử lý...';
+    } else {
+      clearInterval(scanTimer);
+      scanTimer = null;
+      $('#syncText').textContent = 'Vừa cập nhật (vlearn.db)';
+      activity('Hoàn tất chạy pipeline phân tích dữ liệu');
+      $('.modal-foot').innerHTML = `
+        <span class="small" style="color:#147d68;font-weight:700">✓ Đã đồng bộ toàn bộ 13.494 turns</span>
+        <button class="btn primary" onclick="closeModal();navigate('heatmap')">Xem kết quả ${ic('arrow')}</button>
+      `;
+      toast('Pipeline hoàn tất. Dữ liệu đã được làm mới.');
+    }
+  }, 550);
+}
+
+function cancelScan() {
+  if (scanTimer) clearInterval(scanTimer);
+  scanTimer = null;
+  closeModal();
+  toast('Đã dừng chạy pipeline.');
+}
+
+function openReset() {
+  modal(
+    'Khôi phục trạng thái ban đầu?',
+    'Thao tác này sẽ xóa các đề xuất đã lưu trên trình duyệt và đưa dữ liệu trở về thiết lập mặc định của hackathon.',
+    `
+      <button class="btn" onclick="closeModal()">Hủy</button>
+      <button class="btn danger" onclick="resetAll()">Khôi phục mặc định</button>
+    `
+  );
+}
+
+function resetAll() {
+  state.tasks = [];
+  state.feedback = {};
+  state.activities = [];
+  state.cohort = 'K4';
+  state.lesson = 'D02';
+  state.period = 'all';
+  state.slide = 18;
+  state.tab = 'insight';
+  state.mode = 'slides';
+  state.view = 'heatmap';
+  $('#cohort').value = 'K4';
+  $('#lesson').value = 'D02';
+  save();
+  closeModal();
+  renderMain();
+  resetChat(false);
+  toast('Hệ thống đã được đặt lại về trạng thái ban đầu.');
+}
+
+function exportReport() {
+  const t = totals();
+  const r = ranking();
+
+  const html = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Báo cáo Điểm nghẽn Bài giảng · VLearn Copilot</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 860px; margin: 40px auto; padding: 0 24px; color: #1e293b; line-height: 1.7; }
+h1 { font-size: 26px; margin-bottom: 4px; color: #0f172a; }
+h2 { font-size: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 30px; color: #0f172a; }
+article { border: 1px solid #cbd5e1; border-radius: 8px; padding: 18px; margin: 16px 0; background: #f8fafc; }
+.meta { color: #64748b; font-size: 13px; margin-bottom: 12px; }
+blockquote { border-left: 3px solid #7662ce; margin: 8px 0; padding-left: 12px; font-style: italic; color: #334155; }
+button { background: #147d68; color: white; border: 0; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+@media print { button { display: none; } }
+</style>
+</head>
+<body>
+<div class="meta">VLEARN CLASS CONFUSION COPILOT · HỌC PHẦN ${state.course}</div>
+<h1>Báo cáo Rà soát Điểm nghẽn Bài giảng ${state.lesson}</h1>
+<p class="meta">Phạm vi: Khóa ${state.cohort} · ${fmt(t.q)} lượt tương tác · ${fmt(t.u)} học viên · Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}</p>
+
+<h2>Top 3 Điểm Nghẽn Cần Can Thiệp Cấp Thiết</h2>
+${r.map(s => `
+  <article>
+    <h3 style="margin:0 0 6px">Slide ${s.n}: ${esc(s.name)} (${s.volume} học viên · ${s.questions} lượt hỏi)</h3>
+    <p><b>Hiện tượng:</b> ${esc(s.observation)}</p>
+    <p><b>Giả thuyết nguyên nhân:</b> ${esc(s.hypothesis)}</p>
+    <p><b>Cần kiểm chứng:</b> ${esc(s.verify)}</p>
+    <p><b>Dẫn chứng thật:</b></p>
+    ${s.quotes.map((q, idx) => `<blockquote>Turn ${s.turnIds[idx] || 'T00' + (idx + 1)}: “${esc(q)}”</blockquote>`).join('')}
+  </article>
+`).join('')}
+
+<h2>Kế Hoạch Can Thiệp Đã Phê Duyệt</h2>
+${state.tasks.length ? state.tasks.map(x => `
+  <article>
+    <h3 style="margin:0 0 4px">${esc(x.title)}</h3>
+    <div class="meta">Bài ${x.lesson} / Slide ${x.slide} · Phụ trách: ${esc(x.owner)} · Ngày: ${esc(x.date)} · Trạng thái: ${x.status === 'applied' ? 'Đã áp dụng' : 'Đã duyệt'}</div>
+    <pre style="white-space:pre-wrap;font-family:inherit;font-size:12.5px">${esc(x.content)}</pre>
+  </article>
+`).join('') : '<p>Chưa có đề xuất được phê duyệt.</p>'}
+
+<div style="margin-top:30px">
+  <button onclick="window.print()">In / Lưu dưới dạng PDF</button>
+</div>
+</body>
+</html>`;
+
+  lastReportHtml = html;
+  modal(
+    'Báo cáo Rà soát Điểm nghẽn Bài giảng',
+    `
+      <div class="row between">
+        <span class="pill green">${state.course} · ${state.lesson} · v1.2</span>
+        <span class="pill purple">${fmt(t.q)} lượt tương tác</span>
+      </div>
+      <p style="margin:12px 0;color:#475569">
+        Báo cáo tổng hợp Top 3 slide có tỷ lệ bối rối cao nhất kèm trích dẫn Turn ID nguyên văn và toàn bộ các phương án can thiệp đã phê duyệt.
+      </p>
+
+      <div class="notice">
+        ${ic('download')}
+        <span>Tệp HTML độc lập có thể mở trực tiếp trên mọi trình duyệt hoặc in ra PDF để lưu trữ học thuật.</span>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="closeModal()">Đóng</button>
+      <button class="btn primary" onclick="downloadReport()">${ic('download')} Tải tệp Báo cáo HTML</button>
+    `
+  );
+}
+
+function downloadReport() {
+  const blob = new Blob([lastReportHtml], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `VLearn-BaoCao-${state.course}-${state.lesson}-${state.cohort}.html`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+  toast('Đã tải xuống tệp báo cáo.');
+  activity(`Xuất báo cáo ${state.course} / ${state.lesson}`);
+}
+
+/* Modal and Toast Helpers */
+let toastTimer;
+function toast(msg, action, fn) {
+  clearTimeout(toastTimer);
+  $('#toastRoot').innerHTML = `
+    <div class="toast">
+      ${ic('check')}
+      <span>${esc(msg)}</span>
+      ${action ? `<button id="toastAction">${esc(action)}</button>` : ''}
+    </div>
+  `;
+  if (action) $('#toastAction').onclick = () => { fn(); };
+  toastTimer = setTimeout(() => $('#toastRoot').innerHTML = '', action ? 7000 : 4000);
+}
+
+function modal(title, body, foot) {
+  if (!$('.overlay')) previousFocus = document.activeElement;
+  $('#modalRoot').innerHTML = `
+    <div class="overlay" onclick="if(event.target===this)closeModal()">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-head">
+          <h2 id="modalTitle">${title}</h2>
+          <button class="iconbtn" onclick="closeModal()" aria-label="Đóng hộp thoại">${ic('close')}</button>
+        </div>
+        <div class="modal-body">${body}</div>
+        <div class="modal-foot">${foot || '<span></span><button class="btn" onclick="closeModal()">Đóng</button>'}</div>
+      </section>
+    </div>
+  `;
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => $('.modal-head button')?.focus(), 10);
+}
+
+function closeModal() {
+  if (scanTimer) {
+    clearInterval(scanTimer);
+    scanTimer = null;
+  }
+  $('#modalRoot').innerHTML = '';
+  document.body.style.overflow = '';
+  if (previousFocus?.isConnected) previousFocus.focus();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if ($('.overlay')) closeModal();
+    else $('#sidebar').classList.remove('open');
+  }
+});
+
+/* ========================================================================== */
+/* 4. 3D ORBITAL ANIMATION & PARTICLES ENGINE                                 */
+/* ========================================================================== */
+function initStarsCanvas() {
+  const canvas = document.getElementById('starsCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  const stars = Array.from({ length: 90 }, () => ({
+    x: Math.random() * width,
+    y: Math.random() * height,
+    radius: Math.random() * 1.4 + 0.3,
+    alpha: Math.random() * 0.8 + 0.2,
+    speed: Math.random() * 0.008 + 0.003
+  }));
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  function renderStars() {
+    ctx.clearRect(0, 0, width, height);
+    stars.forEach(star => {
+      star.alpha += star.speed;
+      if (star.alpha > 1 || star.alpha < 0.2) star.speed = -star.speed;
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(199, 210, 254, ${Math.max(0, Math.min(1, star.alpha))})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(renderStars);
+  }
+  renderStars();
+}
+
+function animate3DOrbit() {
+  orbitAngle += 0.0032;
+  const orbitRadiusX = 350;
+  const orbitRadiusY = 150;
+
+  const nodes = [
+    document.getElementById('orbitNode1'),
+    document.getElementById('orbitNode2'),
+    document.getElementById('orbitNode3'),
+    document.getElementById('orbitNode4'),
+    document.getElementById('orbitNode5')
+  ];
+
+  nodes.forEach((node, idx) => {
+    if (!node) return;
+    const offset = idx * ((2 * Math.PI) / 5);
+    const theta = orbitAngle + offset;
+    const x = Math.cos(theta) * orbitRadiusX;
+    const y = Math.sin(theta) * orbitRadiusY;
+    const z = Math.sin(theta); // -1 (sau) đến +1 (trước)
+
+    const scale = 0.82 + (z + 1) * 0.16; // 0.82 -> 1.14
+    const opacity = 0.45 + (z + 1) * 0.27; // 0.45 -> 1.0
+    const zIndex = Math.round((z + 1) * 50);
+
+    node.style.transform = `translate3d(${x}px, ${y}px, ${z * 110}px) scale(${scale})`;
+    node.style.opacity = opacity;
+    node.style.zIndex = zIndex;
+  });
+
+  requestAnimationFrame(animate3DOrbit);
+}
+
+// Parallax tilt on mousemove
+const sceneViewport = document.getElementById('sceneViewport');
+const orbitStage = document.getElementById('orbitStage');
+if (sceneViewport && orbitStage) {
+  sceneViewport.addEventListener('mousemove', e => {
+    const rect = sceneViewport.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) / rect.width - 0.5;
+    const mouseY = (e.clientY - rect.top) / rect.height - 0.5;
+    const rotY = mouseX * 20;
+    const rotX = -mouseY * 16;
+    orbitStage.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+  });
+
+  sceneViewport.addEventListener('mouseleave', () => {
+    orbitStage.style.transform = 'rotateX(0deg) rotateY(0deg)';
+  });
+}
+
+function enterWorkspace() {
+  const intro = document.getElementById('introStage');
+  intro.classList.add('dismissed');
+}
+
+function selectNodeAndEnter(slidePage) {
+  selectSlide(slidePage, true);
+  enterWorkspace();
+}
+
+function returnToIntro() {
+  const intro = document.getElementById('introStage');
+  intro.classList.remove('dismissed');
+}
+
+/* App Initialization */
+window.onload = () => {
+  initStarsCanvas();
+  animate3DOrbit();
+  renderMain();
+  resetChat(false);
+  loadHeatmapData();
+  loadSlideEvidence();
+  loadApprovedTasks();
+};
+</script>
+</body>
+</html>

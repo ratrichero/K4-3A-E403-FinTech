@@ -8,12 +8,19 @@
 
 | Họ và Tên | Mã Học Viên | Vai trò chính | Phần việc đảm nhiệm trong dự án |
 |---|---|---|---|
-| Tạ Việt Cường | 2A0202602560 | TechLead | Spec,Prototype,Eval |  |
-| Dương Đạt Khang | 2A0202602624 | UX/UI Designer | Prototype,Demo |  |
-| Chung Văn Duy | 2A0202602854 | Data,Prototype,Eval |  |
-| Nguyễn Thị Chinh | 2A0202602876 | Data,Prototype,Eval |  |
+| **Tạ Việt Cường** | `2A0202602560` | **TechLead / Full-stack** | Kiến trúc tổng thể, Backend HTTP Server & REST API (`server.py`), LangGraph StateGraph (`agent.py`), SQLite Data Layer, Khóa `spec.md`, Đại diện nộp form CP1–CP6 |
+| **Dương Đạt Khang** | `2A0202602624` | **Data Scientist / UX** | Khai phá dữ liệu 13.494 logs, thuật toán tính điểm nhiệt tất định (`tools.py`), Xây dựng bộ Golden Set 20 cases, Validation log R6 |
+| **Chung Văn Duy** | `2A0202602854` | **Prompt Engineer** | Thiết kế Prompt sư phạm 3 phần (`prompts.py`), HAX Guardrails (G10/G11), Cấu hình Fallback Gateway đa tầng (`Provider/llm.py`), Benchmark số đo CP3 |
+| **Nguyễn Thị Chinh** | `2A0202602876` | **Product Manager / UX** | JTBD & Khảo sát Pain Point, Giao diện Web Cockpit (`index.html`), Phỏng vấn kiểm chứng Willing Users, Soạn Slide Pitch 6 trang (`CP5`), Kịch bản demo |
 
-> Nhóm copy nguyên file README này về repo của mình, rồi điền bảng trên. Cột **Phần việc đảm nhiệm** ghi càng cụ thể càng tốt.
+> **Cấu trúc dữ liệu Repository chuẩn hóa theo đúng yêu cầu đề bài:**
+> - [`spec.md`](spec.md) : AI Spec chuẩn 8 phần (khóa cứng tại hạn chốt CP4)
+> - [`demo-slides.pdf`](demo-slides.pdf) : Bộ Slide thuyết trình 6 trang PDF chuẩn 16:9 theo `02-guide.md §5.1`
+> - [`codebase/`](codebase/) : Prototype hoàn chỉnh (chạy thật trên dữ liệu SQLite 13.494 turns, ghi rõ phần mock SVG)
+> - [`eval/`](eval/) : Bộ Golden Set 20 ca, script kiểm thử tự động, và bảng kết quả các lượt chạy (Pass 80.0%)
+> - [`validation/`](validation/) : Nhật ký kiểm chứng thực tế với 2 Willing Users (Khối R6 — nhận +8 điểm bonus)
+> - [`reflection/`](reflection/) : Bản chiêm nghiệm cá nhân của từng thành viên (4 tệp riêng biệt)
+
 
 - Thời lượng: **47,5 giờ** từ phát đề đến thuyết trình (ca 3A) — LAB 5 (phát đề + build) · LEC 6 (tiếp tục build theo ca) · LAB 6 (vòng thi)
 - Nhóm: **3-4 người** · thi theo phòng (E403 / E402), chia cụm rồi chung kết phòng — xem *Thể thức thi*

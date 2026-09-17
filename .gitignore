@@ -1,7 +1,33 @@
+# System & Editor
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Python & Virtual Environments
 __pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
 .env
+*.env
+codebase/.env
+*.log
+
+# Build & Dependency Artifacts
 node_modules/
+
+# Security Rule: Hackathon Dataset & SQLite DBs are strictly confidential (DO NOT COMMIT)
 data/
-repo/
+**/data/
+codebase/data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Internal documentation, scratchpads & raw challenge briefs
 docs/
+scratch/
+repo/
+scripts/
