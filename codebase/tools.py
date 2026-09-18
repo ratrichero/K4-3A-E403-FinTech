@@ -369,7 +369,14 @@ def execute_get_slide_evidence(
             FROM tutor_turns
             WHERE lecture_code = ? AND slide_page = ?
             ORDER BY 
-                CASE WHEN intent = 'explicit_misconception' THEN 0 ELSE 1 END,
+                CASE 
+                    WHEN intent = 'explicit_misconception' THEN 1
+                    WHEN intent = 'missing_prerequisite' THEN 2
+                    WHEN intent = 'syntax_implementation_struggle' THEN 3
+                    WHEN intent = 'broad_curiosity' THEN 4
+                    WHEN intent = 'procedural_administrative' THEN 5
+                    ELSE 6 
+                END ASC,
                 asked_at_vn DESC
             LIMIT ?
             """,
