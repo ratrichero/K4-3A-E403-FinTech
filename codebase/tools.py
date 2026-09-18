@@ -202,6 +202,8 @@ def execute_get_slide_heatmap(
         conn = get_db_connection()
         cur = conn.cursor()
 
+        target_lecture = "D02" if (not lecture_code or lecture_code.upper() == "ALL") else lecture_code
+
         query = """
             SELECT 
                 slide_page,
@@ -211,7 +213,7 @@ def execute_get_slide_heatmap(
             FROM tutor_turns
             WHERE lecture_code = ? AND slide_page IS NOT NULL AND slide_page > 0
         """
-        params: List[Any] = [lecture_code]
+        params: List[Any] = [target_lecture]
 
         if cohort and cohort.lower() != "all":
             query += " AND cohort_hint = ?"
@@ -237,7 +239,7 @@ def execute_get_slide_heatmap(
                 FROM tutor_turns
                 WHERE lecture_code = ? AND slide_page IS NOT NULL AND slide_page > 0
                 GROUP BY slide_page ORDER BY slide_page ASC
-            """, (lecture_code,))
+            """, (target_lecture,))
             rows = cur.fetchall()
             if rows:
                 is_benchmark_fallback = True
@@ -245,8 +247,8 @@ def execute_get_slide_heatmap(
         if not rows:
             return json.dumps({
                 "status": "NOT_FOUND",
-                "lecture_code": lecture_code,
-                "message": f"Không tìm thấy dữ liệu tương tác có đánh dấu slide cho bài giảng {lecture_code}"
+                "lecture_code": target_lecture,
+                "message": f"Không tìm thấy dữ liệu tương tác có đánh dấu slide cho bài giảng {target_lecture}"
             }, ensure_ascii=False)
 
         slides_stats = []
@@ -259,12 +261,34 @@ def execute_get_slide_heatmap(
             stu_cnt = r["unique_students"]
             mis_cnt = r["misconception_count"] or 0
             
-            # Công thức tính điểm nhiệt: heat_score = (misconceptions * 2.5) + (unique_students * 1.5) + q_cnt
+            # Công thức tính điểm nhiệt: heat_score = (misconceptions * 2.5) + (unique_students * 1.5) + (q_cnt * 0.5)
             heat_score = round((mis_cnt * 2.5) + (stu_cnt * 1.5) + (q_cnt * 0.5), 1)
             confusion_rate = round((mis_cnt / q_cnt * 100), 1) if q_cnt > 0 else 0.0
 
             total_q += q_cnt
             total_mis += mis_cnt
+
+            # Phân tầng ngưỡng 5 cấp độ chuẩn hóa (Calibrated Multi-Tier Pedagogical Thresholds)
+            if heat_score >= 120:
+                level = 5
+                status = "HOT"
+                signal = "Điểm nghẽn bối rối nghiêm trọng"
+            elif heat_score >= 60:
+                level = 4
+                status = "HIGH"
+                signal = "Ưu tiên can thiệp cao"
+            elif heat_score >= 25:
+                level = 3
+                status = "WARM"
+                signal = "Cần làm rõ khái niệm"
+            elif heat_score >= 10:
+                level = 2
+                status = "NORMAL"
+                signal = "Tiếp thu bình thường"
+            else:
+                level = 1 if q_cnt > 0 else 0
+                status = "COLD"
+                signal = "Chưa đủ dữ liệu tín hiệu"
 
             slides_stats.append({
                 "slide_page": page,
@@ -273,20 +297,39 @@ def execute_get_slide_heatmap(
                 "misconception_count": mis_cnt,
                 "confusion_rate": confusion_rate,
                 "heat_score": heat_score,
-                "status": "HOT" if heat_score >= 30 else ("WARM" if heat_score >= 15 else "COLD")
+                "level": level,
+                "status": status,
+                "signal": signal
             })
 
         # Sắp xếp tìm Top 3 điểm nghẽn cao nhất
         top_bottlenecks = sorted(slides_stats, key=lambda x: x["heat_score"], reverse=True)[:3]
         top_3_pages = [s["slide_page"] for s in top_bottlenecks]
 
+        # Tính tổng số lượt và học viên thực tế của bài giảng trong phạm vi chọn (không bị giới hạn bởi slide_page > 0)
+        actual_q_sql = "SELECT COUNT(*), COUNT(DISTINCT student_id) FROM tutor_turns WHERE lecture_code = ?"
+        actual_q_params: List[Any] = [target_lecture]
+        if cohort and cohort.lower() != "all":
+            actual_q_sql += " AND cohort_hint = ?"
+            actual_q_params.append(cohort.upper())
+        if course_id and course_id.lower() != "all":
+            actual_q_sql += " AND course_id = ?"
+            actual_q_params.append(course_id)
+        cur.execute(actual_q_sql, actual_q_params)
+        actual_row = cur.fetchone()
+        actual_scope_turns = actual_row[0] if actual_row else total_q
+        actual_scope_students = actual_row[1] if actual_row else 0
+
         conn.close()
         return json.dumps({
             "status": "SUCCESS",
             "lecture_code": lecture_code,
             "cohort": cohort,
-            "total_questions": total_q,
+            "total_questions": actual_scope_turns,
+            "unique_students": actual_scope_students,
+            "tagged_slide_questions": total_q,
             "total_misconceptions": total_mis,
+            "is_benchmark_fallback": is_benchmark_fallback,
             "top_3_bottleneck_slides": top_3_pages,
             "slides": slides_stats
         }, ensure_ascii=False)
@@ -298,12 +341,19 @@ def execute_get_slide_heatmap(
 def execute_get_slide_evidence(
     lecture_code: str,
     slide_page: int,
-    limit: int = 5
+    limit: int = 10
 ) -> str:
     """Trích xuất danh sách hội thoại học viên nguyên văn kèm Turn ID (Tool T02)."""
     try:
         conn = get_db_connection()
         cur = conn.cursor()
+
+        target_lecture = "D02" if (not lecture_code or lecture_code.upper() == "ALL") else lecture_code
+
+        # Đếm tổng số câu hỏi thực tế gắn với slide này trong database
+        cur.execute("SELECT COUNT(*) FROM tutor_turns WHERE lecture_code = ? AND slide_page = ?", (target_lecture, slide_page))
+        count_row = cur.fetchone()
+        total_slide_evidence = count_row[0] if count_row else 0
 
         cur.execute(
             """
@@ -323,7 +373,7 @@ def execute_get_slide_evidence(
                 asked_at_vn DESC
             LIMIT ?
             """,
-            (lecture_code, slide_page, limit)
+            (target_lecture, slide_page, limit)
         )
         rows = cur.fetchall()
 
@@ -343,11 +393,13 @@ def execute_get_slide_evidence(
         conn.close()
         return json.dumps({
             "status": "SUCCESS",
-            "lecture_code": lecture_code,
+            "lecture_code": target_lecture,
             "slide_page": slide_page,
+            "total_questions": total_slide_evidence,
             "evidence_count": len(evidence),
             "evidence": evidence
         }, ensure_ascii=False)
+
 
     except Exception as e:
         return json.dumps({"status": "ERROR", "message": str(e)}, ensure_ascii=False)
@@ -574,36 +626,85 @@ def execute_get_filters_catalog() -> str:
                 })
             courses_by_cohort[c] = c_list
 
-        cur.execute("""
-            SELECT cohort_hint, course_id, lecture_code, lecture_title, total_turns, unique_students, explicit_slide_turns
-            FROM course_lectures
-            WHERE total_turns > 0
-            ORDER BY total_turns DESC
-        """)
-        lec_rows = cur.fetchall()
+        # 3. Danh mục Bài giảng theo (Cohort:Course)
+        # Bao gồm lựa chọn đầu tiên: ALL - Toàn bộ bài giảng (khớp đúng tổng lượt của phạm vi đó)
+        TITLE_MAP = {
+            'D01': 'Nền tảng LLM & Prompt Design',
+            'D02': 'AI Agents & Reasoning',
+            'D03': 'Multi-Agent Orchestration',
+            'D04': 'Agent Patterns & Tools',
+            'D05': 'Context Window & Memory',
+            'D06': 'LangChain & Evaluation',
+            'D07': 'Vector Store & Feature Store',
+            'D08': 'LLM Evaluation & Benchmarks',
+            'D09': 'Model Serving & Deployment',
+            'D10': 'CI/CD for AI Systems',
+            'D11': 'LLMOps Prompt Versioning',
+            'D12': 'Platform Engineering',
+            'D14': 'Disaster Recovery & HA'
+        }
+
+        def get_lessons_for_scope(cohort_val, course_val):
+            where_clauses = []
+            params = []
+            if cohort_val and cohort_val != "ALL":
+                where_clauses.append("cohort_hint = ?")
+                params.append(cohort_val)
+            if course_val and course_val != "ALL":
+                where_clauses.append("course_id = ?")
+                params.append(course_val)
+            
+            w_sql = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
+            
+            # Đếm tổng lượt và học viên duy nhất cho toàn phạm vi (cohort:course)
+            cur.execute(f"SELECT COUNT(*), COUNT(DISTINCT student_id) FROM tutor_turns {w_sql}", params)
+            tot_row = cur.fetchone()
+            tot_turns = tot_row[0]
+            tot_students = tot_row[1]
+            
+            sql = f"""
+                SELECT lecture_code, COUNT(*) as turns, COUNT(DISTINCT student_id) as students,
+                       SUM(CASE WHEN slide_page IS NOT NULL AND slide_page > 0 THEN 1 ELSE 0 END) as slide_turns
+                FROM tutor_turns
+                {w_sql}
+                GROUP BY lecture_code
+                ORDER BY turns DESC
+            """
+            cur.execute(sql, params)
+            rows = cur.fetchall()
+            
+            # Mục 0: Toàn bộ bài giảng
+            items = [{
+                "code": "ALL",
+                "title": "Toàn bộ bài giảng",
+                "turns": tot_turns,
+                "students": tot_students,
+                "has_slides": any(r["slide_turns"] > 0 for r in rows),
+                "label": f"Toàn bộ bài giảng ({tot_turns:,} lượt)"
+            }]
+            
+            for r in rows:
+                code = r["lecture_code"]
+                title = TITLE_MAP.get(code, f"Bài giảng {code}")
+                items.append({
+                    "code": code,
+                    "title": title,
+                    "turns": r["turns"],
+                    "students": r["students"],
+                    "has_slides": (r["slide_turns"] or 0) > 0,
+                    "label": f"{code} · {title} ({r['turns']:,} lượt)"
+                })
+            return items
 
         lessons_catalog = {}
-        for r in lec_rows:
-            key = f"{r['cohort_hint']}:{r['course_id']}"
-            if key not in lessons_catalog:
-                lessons_catalog[key] = []
-            
-            title = r["lecture_title"] or f"Bài giảng {r['lecture_code']}"
-            if r["lecture_code"] == "D02" and "COMP" in r["course_id"]:
-                title = "AI Agents & Reasoning"
-            elif r["lecture_code"] == "D01" and "COMP" in r["course_id"]:
-                title = "Nền tảng LLM & Prompt Design"
-            elif r["lecture_code"] == "D03" and "COMP" in r["course_id"]:
-                title = "Multi-Agent Orchestration"
-
-            lessons_catalog[key].append({
-                "code": r["lecture_code"],
-                "title": title,
-                "turns": r["total_turns"],
-                "students": r["unique_students"],
-                "has_slides": (r["explicit_slide_turns"] or 0) > 0,
-                "label": f"{r['lecture_code']} · {title} ({r['total_turns']} lượt)"
-            })
+        for c in ["K4", "K3", "ALL"]:
+            # Khóa + Tất cả học phần
+            lessons_catalog[f"{c}:ALL"] = get_lessons_for_scope(c, "ALL")
+            # Từng học phần cụ thể
+            for crs in courses_by_cohort[c]:
+                cid = crs["id"]
+                lessons_catalog[f"{c}:{cid}"] = get_lessons_for_scope(c, cid)
+                lessons_catalog[cid] = lessons_catalog[f"{c}:{cid}"]
 
         conn.close()
         return json.dumps({

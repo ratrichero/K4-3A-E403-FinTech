@@ -53,7 +53,7 @@ from tools import (
     execute_get_filters_catalog,
     get_db_connection
 )
-from agent import execute_copilot_workflow
+from agent import execute_copilot_workflow, execute_eval_suite
 
 # Initialize LLM instance once
 print("[Server] Initializing LLM Provider fallback chain...", flush=True)
@@ -137,7 +137,18 @@ class VLearnHandler(SimpleHTTPRequestHandler):
             self._send_json(200, json.loads(result_str))
             return
 
-        # 5. Phục vụ file tĩnh thông thường (index.html, CSS, JS)
+        # 5. API: Lấy Danh mục Bộ Kiểm thử Mẫu (Golden Test Presets)
+        elif clean_path == "/api/eval/presets":
+            golden_path = os.path.join(os.path.dirname(BASE_DIR), "eval", "golden_set_20.json")
+            if os.path.exists(golden_path):
+                with open(golden_path, "r", encoding="utf-8") as f:
+                    presets = json.load(f)
+                self._send_json(200, {"status": "SUCCESS", "presets": presets})
+            else:
+                self._send_json(404, {"status": "ERROR", "message": "Golden dataset not found"})
+            return
+
+        # 6. Phục vụ file tĩnh thông thường (index.html, CSS, JS)
         super().do_GET()
 
     def do_POST(self):
@@ -235,6 +246,34 @@ class VLearnHandler(SimpleHTTPRequestHandler):
                 notes_for_class=notes
             )
             self._send_json(200, json.loads(approve_res))
+            return
+
+        # 4. API: Chạy Kiểm thử & Đánh giá Tác tử (Eval Test Bench)
+        elif clean_path == "/api/eval/run":
+            content_len = int(self.headers.get("Content-Length", 0))
+            post_data = self.rfile.read(content_len)
+            try:
+                payload = json.loads(post_data.decode("utf-8")) if content_len > 0 else {}
+            except Exception:
+                self._send_json(400, {"error": "Invalid JSON body"})
+                return
+
+            cases = payload.get("cases")
+            if not cases or not isinstance(cases, list):
+                golden_path = os.path.join(os.path.dirname(BASE_DIR), "eval", "golden_set_20.json")
+                if os.path.exists(golden_path):
+                    with open(golden_path, "r", encoding="utf-8") as f:
+                        cases = json.load(f)[:5]
+                else:
+                    cases = []
+
+            try:
+                print(f"[Server] Running Eval Test Suite on {len(cases)} cases...", flush=True)
+                eval_res = execute_eval_suite(cases)
+                self._send_json(200, eval_res)
+            except Exception as ex:
+                print(f"[Server] Eval suite error: {ex}", flush=True)
+                self._send_json(500, {"status": "ERROR", "message": str(ex)})
             return
 
         # Default POST handler
