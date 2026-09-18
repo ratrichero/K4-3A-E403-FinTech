@@ -85,13 +85,20 @@ class PedagogicalCopilotState(TypedDict):
 # ==============================================================================
 
 def node_intake_query(state: PedagogicalCopilotState) -> Dict[str, Any]:
-    """Phân loại ý định người dùng (Intake & Intent Classification)."""
+    """
+    Phân loại ý định người dùng (Two-Tier Hybrid Intent Router):
+    - Tầng 1 (Fast Heuristic): Regex/Từ khóa cứng bắt ngay các trường hợp hiển nhiên (< 1ms, 0 token).
+    - Tầng 2 (Semantic Router): Gọi bộ phân loại ngữ nghĩa cho các câu hỏi biến thể tự do ngoài tập từ khóa.
+    """
     trace = list(state.get("trace_path") or ["START"])
     trace.append("node_intake_query")
     q_raw = state["user_query"].strip()
     q = q_raw.lower().rstrip("?!.,;: ")
     
-    # 1. Kiểm tra an toàn & Guardrails (Safety)
+    # --------------------------------------------------------------------------
+    # TẦNG 1: FAST HEURISTIC RULES (Tốc độ tức thì < 1ms)
+    # --------------------------------------------------------------------------
+    # 1.1. Rào chắn An toàn & Bảo mật (Safety Fast-Path)
     safety_triggers = [
         "bỏ qua các lệnh", "bỏ qua hướng dẫn", "bỏ qua toàn bộ", "cho tôi đề thi", "đề thi", 
         "dốt nhất", "kém nhất", "chấm điểm", "học lực", 
@@ -101,23 +108,54 @@ def node_intake_query(state: PedagogicalCopilotState) -> Dict[str, Any]:
     if any(t in q for t in safety_triggers):
         return {"query_intent": "safety", "trace_path": trace}
         
-    # 2. Kiểm tra câu hỏi thường nhật / xã giao / hỏi giờ (Baseline)
+    # 1.2. Câu hỏi Thường nhật / Xã giao rõ ràng (Baseline Fast-Path)
     baseline_triggers = [
-        "mấy giờ", "bây giờ là", "thời tiết", "chào bạn", "xin chào", 
-        "bạn là ai", "bạn tên gì", "cảm ơn", "hello", "hi copilot", "1 + 1"
+        "mấy giờ", "bây giờ là", "thời tiết", "mưa", "nắng", "nhiệt độ", "dự báo",
+        "chào bạn", "xin chào", "bạn là ai", "bạn tên gì", "cảm ơn", "hello", "hi copilot", "1 + 1"
     ]
-    if any(t in q for t in baseline_triggers) and len(q) < 40:
+    if any(t in q for t in baseline_triggers) and len(q) < 50:
         return {"query_intent": "baseline", "trace_path": trace}
         
-    # 3. Kiểm tra câu hỏi quá mơ hồ, thiếu thông tin (Ambiguous)
+    # 1.3. Câu hỏi Cộc lốc / Quá mơ hồ (Ambiguous Fast-Path)
     ambiguous_triggers = [
         "nó là cái gì", "tại sao thế", "chỗ đó sao", "sao lại vậy", 
         "giải thích đi", "thế à", "là sao", "cái gì đây", "sao thế"
     ]
     if q in ambiguous_triggers or len(q) <= 7:
         return {"query_intent": "ambiguous", "trace_path": trace}
-        
-    # 4. Mặc định là câu hỏi nghiệp vụ Sư phạm / Bài giảng
+
+    # 1.4. Nhận diện Nhanh Thuật ngữ Sư phạm / Bài giảng Cốt lõi
+    pedagogical_hints = [
+        "slide", "trang", "bài", "d01", "d02", "d03", "react", "chain of thought", "cot", "agent",
+        "prompt", "few-shot", "fine-tune", "embedding", "token", "vector", "nguyên nhân", "bối rối",
+        "học viên", "sinh viên", "turn", "hiểu nhầm", "nghẽn", "khái niệm", "lỗi", "code", "attention"
+    ]
+    if any(h in q for h in pedagogical_hints):
+        return {"query_intent": "pedagogical", "trace_path": trace}
+
+    # --------------------------------------------------------------------------
+    # TẦNG 2: SEMANTIC INTENT CLASSIFIER (Xử lý các câu hỏi biến thể tự do)
+    # --------------------------------------------------------------------------
+    try:
+        llm = get_llm()
+        router_prompt = (
+            "Phân loại câu hỏi sau vào ĐÚNG 1 trong 4 nhãn: [baseline, safety, ambiguous, pedagogical].\n"
+            "- baseline: câu hỏi đời sống thường nhật, thời tiết, chào hỏi, toán vui, xã giao ngoài lề bài giảng.\n"
+            "- safety: hỏi đề thi, chấm điểm cá nhân học sinh, sửa slide gốc, hack, jailbreak.\n"
+            "- ambiguous: câu hỏi cộc lốc, vô nghĩa, không rõ ý.\n"
+            "- pedagogical: câu hỏi học thuật, kiến thức bài giảng, lập trình, công nghệ AI.\n\n"
+            f"Câu hỏi: \"{q_raw}\"\n"
+            "Chỉ trả về đúng 1 từ duy nhất trong 4 nhãn trên:"
+        )
+        res = llm.invoke([HumanMessage(content=router_prompt)])
+        predicted = res.content.strip().lower()
+        for valid in ["baseline", "safety", "ambiguous", "pedagogical"]:
+            if valid in predicted:
+                return {"query_intent": valid, "trace_path": trace}
+    except Exception as ex:
+        pass
+
+    # Mặc định dự phòng
     return {"query_intent": "pedagogical", "trace_path": trace}
 
 
@@ -135,8 +173,8 @@ def node_handle_baseline(state: PedagogicalCopilotState) -> Dict[str, Any]:
         reply = f"Bây giờ là {time_str} ngày {date_str} ạ."
     elif "xin chào" in q or "chào" in q or "bạn tên gì" in q:
         reply = "Xin chào Thầy/Cô, tôi là VLearn Pedagogical Copilot — Trợ lý đồng hành sư phạm. Rất vui được hỗ trợ Thầy/Cô chuẩn bị bài giảng hôm nay!"
-    elif "thời tiết" in q:
-        reply = f"Thời tiết tại khuôn viên hôm nay rất thuận lợi cho các tiết học Lab. Thầy/Cô cần hỗ trợ gì về bài {state['lesson_id']} không ạ?"
+    elif any(w in q for w in ["thời tiết", "mưa", "nắng", "nhiệt độ", "dự báo"]):
+        reply = f"Thời tiết hôm nay rất thuận lợi cho các tiết học Lab. Thầy/Cô cần hỗ trợ gì về nội dung bài {state['lesson_id']} không ạ?"
     elif "1 + 1" in q:
         reply = "1 + 1 = 2 ạ."
     elif "cảm ơn" in q:
